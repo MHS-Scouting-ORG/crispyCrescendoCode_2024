@@ -1,4 +1,4 @@
-package frc.robot.commands.IntakeCommands.PivotCommands;
+package frc.robot.commands.PivotCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IntakeSubsystem;

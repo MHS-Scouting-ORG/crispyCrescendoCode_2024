@@ -6,6 +6,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ShindexerConstants;
 
 public class IndexerSubsystem extends SubsystemBase {
   
@@ -14,8 +15,8 @@ public class IndexerSubsystem extends SubsystemBase {
   private RelativeEncoder indexEncoder;
 
   public IndexerSubsystem() {
-    indexMotor = new CANSparkMax(3, MotorType.kBrushless);
-    opticalSwitch = new DigitalInput(9);
+    indexMotor = new CANSparkMax(ShindexerConstants.INDEXER_PORT, MotorType.kBrushless);
+    opticalSwitch = new DigitalInput(ShindexerConstants.OPTICAL_SWITCH_PORT);
     indexEncoder = indexMotor.getEncoder();
   }
 
