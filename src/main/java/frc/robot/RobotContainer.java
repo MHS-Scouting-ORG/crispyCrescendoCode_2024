@@ -4,16 +4,24 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.IntegrationConstants.OperatorConstants;
+import frc.robot.commands.S_DriveCommand;
+import frc.robot.commands.IntakeCommands.IntakeCmd;
+import frc.robot.commands.IntakeCommands.OuttakeCmd;
+import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.UnderIntakeSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class RobotContainer {
   //////////////////////////////
   //        SUBSYSTEMS        //
   //////////////////////////////
+  private UnderIntakeSubsystem intakeSubsystem = new UnderIntakeSubsystem(); 
+  private SwerveSubsystem swerveSubsystem = new SwerveSubsystem(); 
 
 
   //////////////////////////////
@@ -25,6 +33,8 @@ public class RobotContainer {
   //      DRIVER BUTTONS      //
   //////////////////////////////
   private final JoystickButton b_resetNavx = new JoystickButton(xbox, XboxController.Button.kB.value);
+  private final JoystickButton b_intake = new JoystickButton(xbox, XboxController.Button.kRightBumper.value); 
+  private final JoystickButton b_outtake = new JoystickButton(xbox, XboxController.Button.kLeftBumper.value); 
 
   //////////////////////////////
   //     OPERATOR BUTTONS     //
@@ -36,12 +46,16 @@ public class RobotContainer {
   public SendableChooser<Command> autonomousChooser = new SendableChooser<>();
 
   public RobotContainer() {
+    swerveSubsystem.setDefaultCommand(new S_DriveCommand(swerveSubsystem, () -> xbox.getLeftY(), () -> xbox.getLeftX(), () -> -xbox.getRightX(), true));
     // Configure the trigger bindings
     configureBindings();
   }
 
   private void configureBindings() {
-
+    b_resetNavx.onTrue(new InstantCommand(() -> swerveSubsystem.resetNavx()));
+    b_intake.onTrue(new IntakeCmd(intakeSubsystem, () -> xbox.getLeftY(), () -> xbox.getLeftX())); 
+    b_outtake.toggleOnTrue(new OuttakeCmd(intakeSubsystem));
+    b_outtake.toggleOnFalse(new InstantCommand(() -> intakeSubsystem.stopIntake()));
   }
 
   public void selectAuto(){
