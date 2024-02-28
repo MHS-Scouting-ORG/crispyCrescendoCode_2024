@@ -1,6 +1,7 @@
 package frc.robot.commands.IntakeCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.UnderIntakeSubsystem;
 
 public class DeliverCmd extends Command {
@@ -20,7 +21,7 @@ public class DeliverCmd extends Command {
 
   @Override
   public void execute() {
-    intakeSubs.intake(1);
+    intakeSubs.intake(0.2);
   }
 
   @Override

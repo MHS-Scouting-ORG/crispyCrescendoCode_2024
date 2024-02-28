@@ -1,176 +1,252 @@
-package frc.robot.subsystems;
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
 
-import java.util.function.BooleanSupplier;
+package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.SwerveModuleConstants;
-import frc.robot.Constants.SwerveConstants;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants.SwerveConstants.DriveConstants;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.SwerveUtils;
 
 public class SwerveSubsystem extends SubsystemBase {
-  /* * * INITIALIZATION * * */
+  // Create MAXSwerveModules
+  private final MAXSwerveModule m_frontLeft = new MAXSwerveModule(
+      DriveConstants.kFrontLeftDrivingCanId,
+      DriveConstants.kFrontLeftTurningCanId,
+      DriveConstants.kFrontLeftChassisAngularOffset);
 
-  //initialize SwerveModules 
-  private SwerveModule[] swerveModules; 
+  private final MAXSwerveModule m_frontRight = new MAXSwerveModule(
+      DriveConstants.kFrontRightDrivingCanId,
+      DriveConstants.kFrontRightTurningCanId,
+      DriveConstants.kFrontRightChassisAngularOffset);
 
-  //odometer 
-  private SwerveDriveOdometry odometer; 
-  private AHRS navx; 
+  private final MAXSwerveModule m_rearLeft = new MAXSwerveModule(
+      DriveConstants.kRearLeftDrivingCanId,
+      DriveConstants.kRearLeftTurningCanId,
+      DriveConstants.kBackLeftChassisAngularOffset);
 
-  // private BooleanSupplier shouldFlipPath = () -> false;
+  private final MAXSwerveModule m_rearRight = new MAXSwerveModule(
+      DriveConstants.kRearRightDrivingCanId,
+      DriveConstants.kRearRightTurningCanId,
+      DriveConstants.kBackRightChassisAngularOffset);
 
+  // The gyro sensor
+  private final AHRS navx = new AHRS();
+
+  // Slew rate filter variables for controlling lateral acceleration
+  private double m_currentRotation = 0.0;
+  private double m_currentTranslationDir = 0.0;
+  private double m_currentTranslationMag = 0.0;
+
+  private SlewRateLimiter m_magLimiter = new SlewRateLimiter(DriveConstants.kMagnitudeSlewRate);
+  private SlewRateLimiter m_rotLimiter = new SlewRateLimiter(DriveConstants.kRotationalSlewRate);
+  private double m_prevTime = WPIUtilJNI.now() * 1e-6;
+
+  // Odometry class for tracking robot pose
+  SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
+      DriveConstants.kDriveKinematics,
+      Rotation2d.fromDegrees(navx.getAngle()),
+      new SwerveModulePosition[] {
+          m_frontLeft.getPosition(),
+          m_frontRight.getPosition(),
+          m_rearLeft.getPosition(),
+          m_rearRight.getPosition()
+      });
+
+  /** Creates a new DriveSubsystem. */
   public SwerveSubsystem() {
-
-    swerveModules = new SwerveModule[] {
-      new SwerveModule(0, SwerveConstants.FrontLeft.constants), 
-      new SwerveModule(1, SwerveConstants.BackLeft.constants), 
-      new SwerveModule(2, SwerveConstants.FrontRight.constants), 
-      new SwerveModule(3, SwerveConstants.BackRight.constants)
-    };
-
-    //instantiate navx 
-    navx = new AHRS();
-    navx.zeroYaw();
-
-    //instantiate odometer 
-    odometer = new SwerveDriveOdometry(
-      SwerveConstants.DRIVE_KINEMATICS, 
-      navx.getRotation2d(), 
-      getModulePositions()
-    );
-
-   
-
   }
-
-    /* * * ODOMETRY * * */
-
-  //returns the Rotation2d object 
-  //a 2d coordinate represented by a point on the unit circle (the rotation of the robot)
-  public Rotation2d getRotation2d() {
-    return navx.getRotation2d();
-  }
-
-  public void resetNavx() {
-    navx.reset();
-  }
-
-  public Pose2d getPose() {
-    return odometer.getPoseMeters();
-  }
-
-  // FIXME i dont think this works as intended,, resetPosition should reset everything to 0 
-  public void setPose(Pose2d pose) {
-    odometer.resetPosition(getRotation2d(), getModulePositions(), pose);
-  }
-
-  public void resetOdometry(Pose2d pose) {
-    odometer.resetPosition(getRotation2d(), getModulePositions(), pose);
-  }
-
-  public ChassisSpeeds getRobotRelativeSpeeds() {
-    return new ChassisSpeeds(SwerveConstants.DRIVE_KINEMATICS.toChassisSpeeds(getModuleStates()).vxMetersPerSecond, SwerveConstants.DRIVE_KINEMATICS.toChassisSpeeds(getModuleStates()).vyMetersPerSecond, SwerveConstants.DRIVE_KINEMATICS.toChassisSpeeds(getModuleStates()).omegaRadiansPerSecond);
-  }
-
-  public void driveRobotRelative(ChassisSpeeds chassis) {
-    SwerveModuleState[] state = SwerveConstants.DRIVE_KINEMATICS.toSwerveModuleStates(chassis);
-
-    setModuleStates(state);
-  }
-
-  /* * * STATES * * */
-
-  //SET STATES 
-  //gets a SwerveModuleStates array from driver control and sets each module to the corresponding SwerveModuleState
-  public void setModuleStates(SwerveModuleState[] desiredStates) {
-    SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, SwerveConstants.MAX_SPEED);
-
-    for (SwerveModule swerveMod : swerveModules) {
-      swerveMod.setState(desiredStates[swerveMod.moduleID]);
-    }
-  }
-
-  //GET STATES 
-  //returns the states of the swerve modules in an array 
-  //getState uses drive velocity and module rotation 
-  public SwerveModuleState[] getModuleStates() {
-    SwerveModuleState[] states = new SwerveModuleState[4]; 
-
-    for (SwerveModule swerveMod : swerveModules) {
-      states[swerveMod.moduleID] = swerveMod.getState();
-    }
-
-    return states; 
-  }
-
-  //GET POSITIONS
-  //returns the positions of the swerve modules in an array 
-  //getPosition uses drive enc and module rotation 
-  public SwerveModulePosition[] getModulePositions() {
-    SwerveModulePosition[] positions = new SwerveModulePosition[4]; 
-
-    for (SwerveModule swerveMod : swerveModules) {
-      positions[swerveMod.moduleID] = swerveMod.getPosition();
-    }
-
-    return positions;
-  }
-
-  //LOCK 
-  public void lock() {
-    SwerveModuleState[] states = new SwerveModuleState[4];
-
-    states[0] = new SwerveModuleState(0, new Rotation2d(Math.toRadians(45)));
-    states[1] = new SwerveModuleState(0, new Rotation2d(Math.toRadians(-45)));
-    states[2] = new SwerveModuleState(0, new Rotation2d(Math.toRadians(45)));
-    states[3] = new SwerveModuleState(0, new Rotation2d(Math.toRadians(-45)));
-
-    for (SwerveModule swerveMod : swerveModules) {
-      swerveMod.setAngle(states[swerveMod.moduleID]);
-    }
-  }
-
-  //STRAIGHTEN THE WHEELS 
-  public void straightenWheels() { //set all wheels to 0 degrees 
-    SwerveModuleState[] states = new SwerveModuleState[4]; 
-
-    states[0] = new SwerveModuleState(0, new Rotation2d(Math.toRadians(0)));
-    states[1] = new SwerveModuleState(0, new Rotation2d(Math.toRadians(0)));
-    states[2] = new SwerveModuleState(0, new Rotation2d(Math.toRadians(0)));
-    states[3] = new SwerveModuleState(0, new Rotation2d(Math.toRadians(0)));
-
-    for (SwerveModule swerveMod : swerveModules) {
-      swerveMod.setState(states[swerveMod.moduleID]);
-    }
-  }
-
-  //STOP 
-  public void stopModules() {
-    for (SwerveModule swerveMod : swerveModules) {
-      swerveMod.stop();
-    }
-}
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-    odometer.update(navx.getRotation2d(), getModulePositions());
+    // Update the odometry in the periodic block
+    m_odometry.update(
+        Rotation2d.fromDegrees(navx.getAngle()),
+        new SwerveModulePosition[] {
+            m_frontLeft.getPosition(),
+            m_frontRight.getPosition(),
+            m_rearLeft.getPosition(),
+            m_rearRight.getPosition()
+        });
+
+    m_frontLeft.print();
+    m_rearLeft.print(); 
+    m_rearRight.print(); 
+    m_frontRight.print();
+    SmartDashboard.putNumber("Navx", navx.getAngle());
+
+  }
+
+  /**
+   * Returns the currently-estimated pose of the robot.
+   *
+   * @return The pose.
+   */
+  public Pose2d getPose() {
+    return m_odometry.getPoseMeters();
+  }
+
+  /**
+   * Resets the odometry to the specified pose.
+   *
+   * @param pose The pose to which to set the odometry.
+   */
+  public void resetOdometry(Pose2d pose) {
+    m_odometry.resetPosition(
+        Rotation2d.fromDegrees(navx.getAngle()),
+        new SwerveModulePosition[] {
+            m_frontLeft.getPosition(),
+            m_frontRight.getPosition(),
+            m_rearLeft.getPosition(),
+            m_rearRight.getPosition()
+        },
+        pose);
+  }
+
+  /**
+   * Method to drive the robot using joystick info.
+   *
+   * @param xSpeed        Speed of the robot in the x direction (forward).
+   * @param ySpeed        Speed of the robot in the y direction (sideways).
+   * @param rot           Angular rate of the robot.
+   * @param fieldRelative Whether the provided x and y speeds are relative to the
+   *                      field.
+   * @param rateLimit     Whether to enable rate limiting for smoother control.
+   */
+  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean rateLimit) {
     
-    for (SwerveModule swerveMod : swerveModules) {
-      swerveMod.print();
+    double xSpeedCommanded;
+    double ySpeedCommanded;
+
+    if (rateLimit) {
+      // Convert XY to polar for rate limiting
+      double inputTranslationDir = Math.atan2(ySpeed, xSpeed);
+      double inputTranslationMag = Math.sqrt(Math.pow(xSpeed, 2) + Math.pow(ySpeed, 2));
+
+      // Calculate the direction slew rate based on an estimate of the lateral acceleration
+      double directionSlewRate;
+      if (m_currentTranslationMag != 0.0) {
+        directionSlewRate = Math.abs(DriveConstants.kDirectionSlewRate / m_currentTranslationMag);
+      } else {
+        directionSlewRate = 500.0; //some high number that means the slew rate is effectively instantaneous
+      }
+      
+
+      double currentTime = WPIUtilJNI.now() * 1e-6;
+      double elapsedTime = currentTime - m_prevTime;
+      double angleDif = SwerveUtils.AngleDifference(inputTranslationDir, m_currentTranslationDir);
+      if (angleDif < 0.45*Math.PI) {
+        m_currentTranslationDir = SwerveUtils.StepTowardsCircular(m_currentTranslationDir, inputTranslationDir, directionSlewRate * elapsedTime);
+        m_currentTranslationMag = m_magLimiter.calculate(inputTranslationMag);
+      }
+      else if (angleDif > 0.85*Math.PI) {
+        if (m_currentTranslationMag > 1e-4) { //some small number to avoid floating-point errors with equality checking
+          // keep currentTranslationDir unchanged
+          m_currentTranslationMag = m_magLimiter.calculate(0.0);
+        }
+        else {
+          m_currentTranslationDir = SwerveUtils.WrapAngle(m_currentTranslationDir + Math.PI);
+          m_currentTranslationMag = m_magLimiter.calculate(inputTranslationMag);
+        }
+      }
+      else {
+        m_currentTranslationDir = SwerveUtils.StepTowardsCircular(m_currentTranslationDir, inputTranslationDir, directionSlewRate * elapsedTime);
+        m_currentTranslationMag = m_magLimiter.calculate(0.0);
+      }
+      m_prevTime = currentTime;
+      
+      xSpeedCommanded = m_currentTranslationMag * Math.cos(m_currentTranslationDir);
+      ySpeedCommanded = m_currentTranslationMag * Math.sin(m_currentTranslationDir);
+      m_currentRotation = m_rotLimiter.calculate(rot);
+
+
+    } else {
+      xSpeedCommanded = xSpeed;
+      ySpeedCommanded = ySpeed;
+      m_currentRotation = rot;
     }
 
-    SmartDashboard.putNumber("NAVX", navx.getYaw());
-    // SmartDashboard.putString("WORKING DIR", System.getProperty("user.dir"));
-    
+    // Convert the commanded speeds into the correct units for the drivetrain
+    double xSpeedDelivered = xSpeedCommanded * DriveConstants.kMaxSpeedMetersPerSecond;
+    double ySpeedDelivered = ySpeedCommanded * DriveConstants.kMaxSpeedMetersPerSecond;
+    double rotDelivered = m_currentRotation * DriveConstants.kMaxAngularSpeed;
+
+    var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
+        fieldRelative
+            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered, navx.getRotation2d())
+            : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
+    SwerveDriveKinematics.desaturateWheelSpeeds(
+        swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
+    m_frontLeft.setDesiredState(swerveModuleStates[0]);
+    m_frontRight.setDesiredState(swerveModuleStates[1]);
+    m_rearLeft.setDesiredState(swerveModuleStates[2]);
+    m_rearRight.setDesiredState(swerveModuleStates[3]);
+  }
+
+  /**
+   * Sets the wheels into an X formation to prevent movement.
+   */
+  public void setX() {
+    m_frontLeft.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
+    m_frontRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)));
+    m_rearLeft.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)));
+    m_rearRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
+  }
+
+  /**
+   * Sets the swerve ModuleStates.
+   *
+   * @param desiredStates The desired SwerveModule states.
+   */
+  public void setModuleStates(SwerveModuleState[] desiredStates) {
+    SwerveDriveKinematics.desaturateWheelSpeeds(
+        desiredStates, DriveConstants.kMaxSpeedMetersPerSecond);
+    m_frontLeft.setDesiredState(desiredStates[0]);
+    m_frontRight.setDesiredState(desiredStates[1]);
+    m_rearLeft.setDesiredState(desiredStates[2]);
+    m_rearRight.setDesiredState(desiredStates[3]);
+  }
+
+  /** Resets the drive encoders to currently read a position of 0. */
+  public void resetEncoders() {
+    m_frontLeft.resetEncoders();
+    m_rearLeft.resetEncoders();
+    m_frontRight.resetEncoders();
+    m_rearRight.resetEncoders();
+  }
+
+  /** Zeroes the heading of the robot. */
+  public void zeroHeading() {
+    navx.reset();
+  }
+
+  /**
+   * Returns the heading of the robot.
+   *
+   * @return the robot's heading in degrees, from -180 to 180
+   */
+  public double getHeading() {
+    return navx.getYaw();
+  }
+
+  /**
+   * Returns the turn rate of the robot.
+   *
+   * @return The turn rate of the robot, in degrees per second
+   */
+  public double getTurnRate() {
+    return navx.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
   }
 }
