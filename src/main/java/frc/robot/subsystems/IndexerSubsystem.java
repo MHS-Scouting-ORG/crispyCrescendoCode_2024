@@ -18,8 +18,9 @@ public class IndexerSubsystem extends SubsystemBase {
     indexMotor = new CANSparkMax(ShindexerConstants.INDEXER_PORT, MotorType.kBrushless);
     opticalSwitch = new DigitalInput(ShindexerConstants.OPTICAL_SWITCH_PORT);
     indexEncoder = indexMotor.getEncoder();
+    indexMotor.setSmartCurrentLimit(20);
   }
-
+  
   public double getIndexerEnc(){ return indexEncoder.getPosition();}
   public void resetIndexerEnc(){ indexEncoder.setPosition(0);}
 
@@ -27,8 +28,9 @@ public class IndexerSubsystem extends SubsystemBase {
     return opticalSwitch.get();
   }
 
-  public void index(){
-    indexMotor.set(.5);
+  public void index(double speed){
+    indexMotor.setInverted(false);
+    indexMotor.set(speed);
   }
 
   public void stop(){

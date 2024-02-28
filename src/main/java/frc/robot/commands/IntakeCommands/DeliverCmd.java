@@ -20,8 +20,7 @@ public class DeliverCmd extends Command {
 
   @Override
   public void execute() {
-    // FIXME Add double param
-    //intakeSubs.intake();
+    intakeSubs.intake(1);
   }
 
   @Override
@@ -31,7 +30,6 @@ public class DeliverCmd extends Command {
 
   @Override
   public boolean isFinished() {
-    // FIXME Change end cond. to use indexer optical sensor
-    return !intakeSubs.getOpticalSensor();
+    return false;
   }
 }

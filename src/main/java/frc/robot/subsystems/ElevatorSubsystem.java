@@ -1,9 +1,8 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -13,31 +12,35 @@ import frc.robot.Constants.ElevatorConstants;
 
 public class ElevatorSubsystem extends SubsystemBase {
 
-  private CANSparkMax elevMotor;
-  private RelativeEncoder enc;
+  private TalonFX elevMotor;
 
   private PIDController pid;
   private double previousError;
   private double currentError;
+  private double setpoint;
 
   private DigitalInput topLS;
   private DigitalInput bottomLS;
 
   public ElevatorSubsystem() {
-    elevMotor = new CANSparkMax(ElevatorConstants.ELEVATOR_MOTOR_PORT, MotorType.kBrushless);
+    elevMotor = new TalonFX(ElevatorConstants.ELEVATOR_MOTOR_PORT);
 
-    elevMotor.setSmartCurrentLimit(ElevatorConstants.SMART_CURRENT_LIMIT);
+    elevMotor.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimitEnable(true));
+    elevMotor.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimit(ElevatorConstants.SMART_CURRENT_LIMIT));
 
-    elevMotor.setIdleMode(IdleMode.kBrake);
+    elevMotor.setNeutralMode(NeutralModeValue.Brake);
 
     topLS = new DigitalInput(ElevatorConstants.TOP_LS_PORT);
     bottomLS = new DigitalInput(ElevatorConstants.BOTTOM_LS_PORT);
 
-    enc = elevMotor.getEncoder();
-
+    elevMotor.setInverted(true);
+ 
     pid = new PIDController(ElevatorConstants.ELEV_KP, ElevatorConstants.ELEV_KI, ElevatorConstants.ELEV_KD);
     pid.setTolerance(ElevatorConstants.PID_TOLERANCE);
     previousError = 0;
+
+    
+    setpoint = 0;
   }
 
   ////////////////////////
@@ -45,19 +48,19 @@ public class ElevatorSubsystem extends SubsystemBase {
   ////////////////////////
 
   public double getEnc() {
-    return enc.getPosition();
+    return elevMotor.getPosition().getValue();
   }
 
   public void resetEnc(){
-    enc.setPosition(0);
+    elevMotor.setPosition(0);
   }
 
   public boolean getTopLimitSwitch() {
-    return topLS.get();
+    return !topLS.get();
   }
 
   public boolean getBottomLimitSwitch() {
-    return bottomLS.get();
+    return !bottomLS.get();
   }
 
   //////////////////////////////
@@ -124,18 +127,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   // PID Methods //
   //////////////////
 
-  public double calculateSpeed(double setpoint) {
-    double output = pid.calculate(getEnc(), setpoint);
-
-    if (output > ElevatorConstants.SPEED_CAP) {
-      return ElevatorConstants.SPEED_CAP;
-    } 
-    else if (output < -ElevatorConstants.SPEED_CAP) {
-      return -ElevatorConstants.SPEED_CAP;
-    } 
-    else {
-      return output;
-    }
+  public void setSetpoint(double setpoint) {
+    this.setpoint = setpoint;
   }
 
   public void resetI() {
@@ -151,27 +144,36 @@ public class ElevatorSubsystem extends SubsystemBase {
     previousError = currentError;
   }
 
-  public void toSetpoint(double setpoint) {
-    elevMotor.set(calculateSpeed(setpoint));
-  }
-
-  public void holdAtPoint() {
-    elevMotor.set(calculateSpeed(getEnc()));
-  }
-
   public boolean isAtSetpoint() {
-    return Math.abs(getEnc() - pid.getSetpoint()) <= 3;
+    return pid.atSetpoint();
   }
 
   @Override
   public void periodic() {
+    if(getBottomLimitSwitch()){
+      resetEnc();
+    }
 
     resetI();
 
+    double output = pid.calculate(getEnc(), setpoint);
+
+    if (  output > ElevatorConstants.SPEED_CAP) {
+      elevMotor.set(ElevatorConstants.SPEED_CAP);
+    } 
+    else if (output < -ElevatorConstants.SPEED_CAP) {
+      elevMotor.set(-ElevatorConstants.SPEED_CAP);
+    } 
+    else {
+      elevMotor.set(output);
+    }
+
     // SmartDashboard
     SmartDashboard.putNumber("[E] Enc", getEnc());
+    SmartDashboard.putNumber("[E] Output", output);
+    SmartDashboard.putNumber("[E] Setpoint",setpoint);
+    SmartDashboard.putBoolean("[E] isAtSetpoint", pid.atSetpoint());
     SmartDashboard.putBoolean("[E] Top LS", getTopLimitSwitch());
-    SmartDashboard.putBoolean("[E] isAtSetpoint", isAtSetpoint());
     SmartDashboard.putBoolean("[E] Bottom LS", getBottomLimitSwitch());
   }
 }

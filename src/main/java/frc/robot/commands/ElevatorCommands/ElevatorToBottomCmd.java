@@ -20,16 +20,16 @@ public class ElevatorToBottomCmd extends Command {
   @Override
   public void execute() {
     // FIXME Change encoder setpoint for bottom
-    elevSub.toSetpoint(-50);
+    elevSub.setSetpoint(0);
   }
 
   @Override
   public void end(boolean interrupted) {
-    elevSub.holdAtPoint();
+    elevSub.elevStop();
   }
 
   @Override
   public boolean isFinished() {
-    return elevSub.isAtSetpoint() || elevSub.getBottomLimitSwitch();
+    return elevSub.getBottomLimitSwitch() || elevSub.isAtSetpoint();
   }
 }

@@ -4,60 +4,84 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ShindexerConstants;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkLowLevel.MotorType;
 
 public class ShooterSubsystem extends SubsystemBase {
 
   // declared motors
-  //private final TalonFX tMotor1;
-  //private final TalonFX tMotor2;
-  private final CANSparkMax motor1;
-  private final CANSparkMax motor2;
-  private RelativeEncoder encoder1;
- 
+  private final TalonFX tMotor1;
+  private final TalonFX tMotor2;
+  private final PIDController shooterPID;
+  // private final SimpleMotorFeedforward feedForward;
+  private boolean shooterPIDStatus = false;
+  private double shooterSpeed = 0; 
+  
 
   public ShooterSubsystem() {
     // Instantiate motors
-    // tMotor1 = new TalonFX(1);
-    // tMotor2 = new TalonFX(2);
-    motor1 = new CANSparkMax(1, MotorType.kBrushless);
-    motor2 = new CANSparkMax(2, MotorType.kBrushless);
-    encoder1 = motor1.getEncoder();
+    tMotor1 = new TalonFX(ShindexerConstants.SHOOTER_PORT_A);
+    tMotor2 = new TalonFX(ShindexerConstants.SHOOTER_PORT_B);
+    tMotor1.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimit(50));
+    tMotor2.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimit(50));
+    tMotor1.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimitEnable(true));
+    tMotor2.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimitEnable(true));
+    tMotor1.setInverted(true);
+    tMotor2.setInverted(true);
+    // feedForward = new SimpleMotorFeedforward(0, getRPM(), tMotor1.getAcceleration().getValueAsDouble());
+    shooterPID = new PIDController(ShindexerConstants.SHOOTER_kP, ShindexerConstants.SHOOTER_kI, ShindexerConstants.SHOOTER_kD);
   }
 
-  public double getEncoder(){
-    return encoder1.getPosition();
+  public double getRPM(){
+    return tMotor1.getVelocity().getValueAsDouble()*60;
   }
 
-  // public double getRPM(){
-  //   return tMotor1.getVelocity().getValueAsDouble()*600/2048;
-  // }
+  // units of distance = meters
+  public void shootToSpeaker(double distance){
+    if (0.1*distance + .5> 1){
+      tMotor1.set(1);
+      tMotor2.set(1);
+    }else {
+      tMotor1.set(0.1*(distance) + .5);
+      tMotor2.set(0.1*(distance) + .5);
+    }
+  }
 
   public void shooter(double speed) {
-    // tMotor1.set(speed);
-    // tMotor2.set(speed);
-    motor1.set(speed);
-    motor2.set(speed);
+    tMotor1.set(speed);
+    tMotor2.set(speed);
   }
 
   public void stop() {
-    // tMotor1.stopMotor();
-    // tMotor2.stopMotor();
-    motor1.stopMotor();
-    motor2.stopMotor();
+    tMotor1.stopMotor();
+    tMotor2.stopMotor();
   }
-  public void resetEncoder(){
-    encoder1.setPosition(0);
+
+  public void setSpeed(double speed){
+    shooterSpeed = speed;
+  }
+
+  public void setPIDStatus(boolean status){
+    shooterPIDStatus = status;
   }
 
   @Override
   public void periodic() {
-    // SmartDashboard.putNumber("ShooterSpeed", getRPM());
-    SmartDashboard.putNumber("Shooter Encoder Value", getEncoder());
+    if(shooterPIDStatus){
+      double velocityError = shooterPID.calculate(getRPM(), ShindexerConstants.RPM_SPEED);
+      if(getRPM() < ShindexerConstants.RPM_SPEED){
+        shooter(shooterSpeed);
+      }
+      if(velocityError > ShindexerConstants.RPM_SPEED){
+        shooter(shooterSpeed);
+      }
+    }
+
+    SmartDashboard.putNumber("Shooter Speed", getRPM());
+    SmartDashboard.putNumber("Shooter Percentage", shooterSpeed);
   }
 }

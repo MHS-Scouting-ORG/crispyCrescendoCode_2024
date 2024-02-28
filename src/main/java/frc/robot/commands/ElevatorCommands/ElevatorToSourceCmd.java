@@ -21,13 +21,13 @@ public class ElevatorToSourceCmd extends Command {
   public void execute() {
     //Default Position?? || ??
     //FIXME Change the encoder setpoint for the Source position
-    elevSub.toSetpoint(0);
+    elevSub.setSetpoint(0);
   }
 
   @Override
   public void end(boolean interrupted) {
     elevSub.elevStop();
-  }
+  }  
 
   @Override
   public boolean isFinished() {

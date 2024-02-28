@@ -52,8 +52,14 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
+    //DRIVE 
     b_resetNavx.onTrue(new InstantCommand(() -> swerveSubsystem.resetNavx()));
-    b_intake.onTrue(new IntakeCmd(intakeSubsystem, () -> xbox.getLeftY(), () -> xbox.getLeftX())); 
+
+    //INTAKE 
+    b_intake.toggleOnTrue(new IntakeCmd(intakeSubsystem)); 
+    b_intake.toggleOnFalse(new InstantCommand(() -> intakeSubsystem.stopIntake()));
+
+    //OUTTAKE 
     b_outtake.toggleOnTrue(new OuttakeCmd(intakeSubsystem));
     b_outtake.toggleOnFalse(new InstantCommand(() -> intakeSubsystem.stopIntake()));
   }

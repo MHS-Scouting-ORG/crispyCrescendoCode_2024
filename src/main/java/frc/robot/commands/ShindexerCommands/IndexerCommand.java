@@ -1,6 +1,7 @@
 package frc.robot.commands.ShindexerCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.ShindexerConstants;
 import frc.robot.subsystems.IndexerSubsystem;
 
 public class IndexerCommand extends Command {
@@ -17,12 +18,11 @@ public class IndexerCommand extends Command {
 
   @Override
   public void execute() {
-    indexSub.index();
+    indexSub.index(ShindexerConstants.INDEXER_SPEED);
   }
 
   @Override
   public void end(boolean interrupted) {
-    indexSub.resetIndexerEnc();
     indexSub.stop();
   }
 
