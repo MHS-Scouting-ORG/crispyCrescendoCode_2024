@@ -7,16 +7,26 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.IntegrationConstants.OperatorConstants;
 import frc.robot.Constants.SwerveConstants.OIConstants;
+import frc.robot.commands.CrispyPositionCommands.AutomaticPickup;
+import frc.robot.commands.CrispyPositionCommands.FeedToIndexer;
+import frc.robot.commands.ElevatorCommands.ElevatorStoragePositionCmd;
+import frc.robot.commands.ElevatorCommands.ElevatorToBottomCmd;
+import frc.robot.commands.ElevatorCommands.ElevatorToSpeakerCmd;
+import frc.robot.commands.ElevatorCommands.ElevatorToTopCmd;
 import frc.robot.commands.IntakeCommands.DeliverCmd;
 import frc.robot.commands.IntakeCommands.IntakeCmd;
 import frc.robot.commands.IntakeCommands.OuttakeCmd;
+import frc.robot.commands.ShindexerCommands.IndexToShooterCommand;
 import frc.robot.commands.ShindexerCommands.IndexerCommand;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.UnderIntakeSubsystem;
@@ -29,6 +39,7 @@ public class RobotContainer {
   private UnderIntakeSubsystem intakeSubsystem = new UnderIntakeSubsystem(); 
   private SwerveSubsystem swerveSubsystem = new SwerveSubsystem(); 
   private IndexerSubsystem indexSubsystem = new IndexerSubsystem();
+  private ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
 
 
   //////////////////////////////
@@ -37,14 +48,21 @@ public class RobotContainer {
   private final XboxController xbox = new XboxController(OperatorConstants.kDriverControllerPort);
 
   //////////////////////////////
+  //         TRIGGERS         //
+  //////////////////////////////
+  private final Trigger opticalTrigger = new Trigger(intakeSubsystem::getOpticalSensor);
+
+  //////////////////////////////
   //      DRIVER BUTTONS      //
   //////////////////////////////
-  private final JoystickButton b_resetNavx = new JoystickButton(xbox, XboxController.Button.kB.value);
+  private final JoystickButton b_resetNavx = new JoystickButton(xbox, XboxController.Button.kA.value);
   
   private final JoystickButton b_intake = new JoystickButton(xbox, XboxController.Button.kRightBumper.value); 
   private final JoystickButton b_outtake = new JoystickButton(xbox, XboxController.Button.kLeftBumper.value); 
 
   private final JoystickButton b_indexerFeed = new JoystickButton(xbox, XboxController.Button.kY.value); 
+  private final JoystickButton b_elevToTop = new JoystickButton(xbox, XboxController.Button.kX.value); 
+  private final JoystickButton b_elevToBottom = new JoystickButton(xbox, XboxController.Button.kB.value);
 
   //////////////////////////////
   //     OPERATOR BUTTONS     //
@@ -74,18 +92,35 @@ public class RobotContainer {
 
   private void configureBindings() {
     //DRIVE 
-    b_resetNavx.onTrue(new InstantCommand(() -> swerveSubsystem.zeroHeading()));
+    b_resetNavx.onTrue(new InstantCommand(swerveSubsystem::zeroHeading));
+
+    //OPTICAL TRIGGER AUTOMATIC 
+    opticalTrigger.onTrue(
+      //new AutomaticPickup(intakeSubsystem, elevatorSubsystem, indexSubsystem)
+    new SequentialCommandGroup(
+      new ElevatorToTopCmd(elevatorSubsystem), //goes to mid position to pick up note from indexer 
+
+      new FeedToIndexer(indexSubsystem, intakeSubsystem), //feeds note from intake to indexer 
+
+      new ElevatorStoragePositionCmd(elevatorSubsystem) 
+
+    ));
+
 
     //INTAKE 
     b_intake.toggleOnTrue(new IntakeCmd(intakeSubsystem)); 
-    b_intake.toggleOnFalse(new InstantCommand(() -> intakeSubsystem.stopIntake()));
+    b_intake.toggleOnFalse(new InstantCommand(intakeSubsystem::stopIntake));
 
     //OUTTAKE 
     b_outtake.toggleOnTrue(new OuttakeCmd(intakeSubsystem));
-    b_outtake.toggleOnFalse(new InstantCommand(() -> intakeSubsystem.stopIntake()));
+    b_outtake.toggleOnFalse(new InstantCommand(intakeSubsystem::stopIntake));
 
     //SHINDEXER 
-    b_indexerFeed.onTrue(new ParallelCommandGroup(new DeliverCmd(intakeSubsystem), new IndexerCommand(indexSubsystem)));
+    b_indexerFeed.onTrue(new ParallelRaceGroup(new DeliverCmd(intakeSubsystem), new IndexerCommand(indexSubsystem)));
+
+    //ELEVATOR 
+    b_elevToTop.onTrue(new ElevatorToTopCmd(elevatorSubsystem)); 
+    b_elevToBottom.onTrue(new ElevatorToBottomCmd(elevatorSubsystem));
   }
 
   public void selectAuto(){
@@ -93,11 +128,6 @@ public class RobotContainer {
     SmartDashboard.putData(autonomousChooser);
   }
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     return autonomousChooser.getSelected();

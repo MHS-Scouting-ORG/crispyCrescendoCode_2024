@@ -4,40 +4,37 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShindexerConstants;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import frc.robot.Constants.ShindexerConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
 
   // declared motors
   private final TalonFX tMotor1;
   private final TalonFX tMotor2;
-  private final PIDController shooterPID;
-  // private final SimpleMotorFeedforward feedForward;
-  private boolean shooterPIDStatus = false;
-  private double shooterSpeed = 0; 
+  private final SimpleMotorFeedforward feedForward;
   
 
   public ShooterSubsystem() {
     // Instantiate motors
     tMotor1 = new TalonFX(ShindexerConstants.SHOOTER_PORT_A);
     tMotor2 = new TalonFX(ShindexerConstants.SHOOTER_PORT_B);
-    tMotor1.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimit(50));
-    tMotor2.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimit(50));
+    tMotor1.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimit(160));
+    tMotor2.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimit(160));
     tMotor1.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimitEnable(true));
     tMotor2.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimitEnable(true));
     tMotor1.setInverted(true);
     tMotor2.setInverted(true);
-    // feedForward = new SimpleMotorFeedforward(0, getRPM(), tMotor1.getAcceleration().getValueAsDouble());
-    shooterPID = new PIDController(ShindexerConstants.SHOOTER_kP, ShindexerConstants.SHOOTER_kI, ShindexerConstants.SHOOTER_kD);
+    feedForward = new SimpleMotorFeedforward(0, getRPS(), tMotor1.getAcceleration().getValueAsDouble());
   }
 
-  public double getRPM(){
-    return tMotor1.getVelocity().getValueAsDouble()*60;
+  public double getRPS(){
+    return tMotor1.getVelocity().getValueAsDouble();
   }
 
   // units of distance = meters
@@ -62,26 +59,13 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public void setSpeed(double speed){
-    shooterSpeed = speed;
-  }
-
-  public void setPIDStatus(boolean status){
-    shooterPIDStatus = status;
+    ShindexerConstants.SHOOTER_SPEED = speed;
   }
 
   @Override
   public void periodic() {
-    if(shooterPIDStatus){
-      double velocityError = shooterPID.calculate(getRPM(), ShindexerConstants.RPM_SPEED);
-      if(getRPM() < ShindexerConstants.RPM_SPEED){
-        shooter(shooterSpeed);
-      }
-      if(velocityError > ShindexerConstants.RPM_SPEED){
-        shooter(shooterSpeed);
-      }
-    }
 
-    SmartDashboard.putNumber("Shooter Speed", getRPM());
-    SmartDashboard.putNumber("Shooter Percentage", shooterSpeed);
+    SmartDashboard.putNumber("Shooter Speed", getRPS());
+    SmartDashboard.putNumber("Shooter Percentage", ShindexerConstants.SHOOTER_SPEED);
   }
 }

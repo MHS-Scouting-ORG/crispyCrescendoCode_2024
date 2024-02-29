@@ -22,25 +22,22 @@ public class IndexToShooterCommand extends Command {
   public void initialize() {
     //shootSub.resetEncoder();
     indexSub.resetIndexerEnc();
-    shootSub.setPIDStatus(true);
   }
 
 
   @Override
   public void execute() {
     // change statement to check if shooter rpm < specified speed
-    if(shootSub.getRPM() < ShindexerConstants.RPM_SPEED){
-      shootSub.shooter(ShindexerConstants.SHOOTER_SPEED);
-    }
-    else{
-      shootSub.shooter(ShindexerConstants.SHOOTER_SPEED);
+    if(shootSub.getRPS() < ShindexerConstants.RPM_SPEED){
       indexSub.index(ShindexerConstants.INDEXER_SPEED);
+      shootSub.shooter(ShindexerConstants.SHOOTER_SPEED);
+    } else {
+      shootSub.shooter(ShindexerConstants.SHOOTER_SPEED);
     }
   }
 
   @Override
   public void end(boolean interrupted) {
-    shootSub.setPIDStatus(false);
     indexSub.stop();
     shootSub.stop();
   }
