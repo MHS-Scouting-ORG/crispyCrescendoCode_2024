@@ -85,7 +85,7 @@ public class SwerveSubsystem extends SubsystemBase {
     m_rearLeft.print(); 
     m_rearRight.print(); 
     m_frontRight.print();
-    SmartDashboard.putNumber("Navx", navx.getAngle());
+    SmartDashboard.putNumber("Navx", ((getRotation2d().getDegrees() % 360) + 360) % 360);
 
   }
 
@@ -96,6 +96,10 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public Pose2d getPose() {
     return m_odometry.getPoseMeters();
+  }
+
+  public Rotation2d getRotation2d() {
+    return m_odometry.getPoseMeters().getRotation();
   }
 
   /**
@@ -217,6 +221,13 @@ public class SwerveSubsystem extends SubsystemBase {
     m_frontRight.setDesiredState(desiredStates[1]);
     m_rearLeft.setDesiredState(desiredStates[2]);
     m_rearRight.setDesiredState(desiredStates[3]);
+  }
+
+  public void stopModules() {
+    m_frontLeft.stopModule();
+    m_frontRight.stopModule();
+    m_rearLeft.stopModule();
+    m_rearRight.stopModule();
   }
 
   /** Resets the drive encoders to currently read a position of 0. */

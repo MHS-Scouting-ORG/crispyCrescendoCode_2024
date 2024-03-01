@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.IntegrationConstants.OperatorConstants;
+import frc.robot.Constants.ShindexerConstants;
 import frc.robot.Constants.SwerveConstants.OIConstants;
 import frc.robot.commands.CrispyPositionCommands.AutomaticPickup;
 import frc.robot.commands.CrispyPositionCommands.FeedToIndexer;
@@ -28,6 +29,7 @@ import frc.robot.commands.ShindexerCommands.IndexToShooterCommand;
 import frc.robot.commands.ShindexerCommands.IndexerCommand;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IndexerSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.UnderIntakeSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -40,12 +42,14 @@ public class RobotContainer {
   private SwerveSubsystem swerveSubsystem = new SwerveSubsystem(); 
   private IndexerSubsystem indexSubsystem = new IndexerSubsystem();
   private ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
+  private ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
 
 
   //////////////////////////////
   //        CONTROLLERS       //
   //////////////////////////////
   private final XboxController xbox = new XboxController(OperatorConstants.kDriverControllerPort);
+  private final Joystick joystick = new Joystick(0);
 
   //////////////////////////////
   //         TRIGGERS         //
@@ -56,17 +60,20 @@ public class RobotContainer {
   //      DRIVER BUTTONS      //
   //////////////////////////////
   private final JoystickButton b_resetNavx = new JoystickButton(xbox, XboxController.Button.kA.value);
+  private final JoystickButton b_rotateAmp = new JoystickButton(xbox, XboxController.Button.kX.value); 
   
-  private final JoystickButton b_intake = new JoystickButton(xbox, XboxController.Button.kRightBumper.value); 
-  private final JoystickButton b_outtake = new JoystickButton(xbox, XboxController.Button.kLeftBumper.value); 
+  private final JoystickButton b_intake = new JoystickButton(xbox, XboxController.Button.kLeftBumper.value); 
+  private final JoystickButton b_outtake = new JoystickButton(xbox, XboxController.Button.kRightBumper.value); 
 
-  private final JoystickButton b_indexerFeed = new JoystickButton(xbox, XboxController.Button.kY.value); 
-  private final JoystickButton b_elevToTop = new JoystickButton(xbox, XboxController.Button.kX.value); 
-  private final JoystickButton b_elevToBottom = new JoystickButton(xbox, XboxController.Button.kB.value);
+  private final JoystickButton b_indexerFeed = new JoystickButton(xbox, XboxController.Button.kY.value);
 
   //////////////////////////////
   //     OPERATOR BUTTONS     //
   //////////////////////////////
+  private final JoystickButton b_elevToTop = new JoystickButton(joystick, 3);
+  private final JoystickButton b_elevToBottom = new JoystickButton(joystick, 4);
+
+  private final JoystickButton b_ampShooting = new JoystickButton(joystick, 1);
 
   //////////////////////////////
   //        AUTO CHOICES      //
@@ -97,15 +104,27 @@ public class RobotContainer {
     //OPTICAL TRIGGER AUTOMATIC 
     opticalTrigger.onTrue(
       //new AutomaticPickup(intakeSubsystem, elevatorSubsystem, indexSubsystem)
-    new SequentialCommandGroup(
-      new ElevatorToTopCmd(elevatorSubsystem), //goes to mid position to pick up note from indexer 
+      new SequentialCommandGroup(
+        new ElevatorToTopCmd(elevatorSubsystem), //goes to mid position to pick up note from indexer 
 
-      new FeedToIndexer(indexSubsystem, intakeSubsystem), //feeds note from intake to indexer 
+        new FeedToIndexer(indexSubsystem, intakeSubsystem), //feeds note from intake to indexer 
 
-      new ElevatorStoragePositionCmd(elevatorSubsystem) 
+        new ElevatorStoragePositionCmd(elevatorSubsystem) 
 
     ));
 
+    b_ampShooting.onTrue(
+      new SequentialCommandGroup(
+        new InstantCommand(() -> shooterSubsystem.shooter(ShindexerConstants.SHOOTER_SPEED)),
+
+        new ElevatorToTopCmd(elevatorSubsystem), //goes to mid position to pick up note from indexer 
+
+        new FeedToIndexer(indexSubsystem, intakeSubsystem), //feeds note from intake to indexer 
+
+        //FIXME align command for pivot should be here
+
+        new IndexToShooterCommand(shooterSubsystem, indexSubsystem)
+    ));
 
     //INTAKE 
     b_intake.toggleOnTrue(new IntakeCmd(intakeSubsystem)); 

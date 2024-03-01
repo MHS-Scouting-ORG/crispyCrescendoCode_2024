@@ -9,32 +9,31 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShindexerConstants;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import frc.robot.Constants.ShindexerConstants;
+import edu.wpi.first.math.controller.PIDController;
 
 public class ShooterSubsystem extends SubsystemBase {
 
   // declared motors
   private final TalonFX tMotor1;
   private final TalonFX tMotor2;
-  private final SimpleMotorFeedforward feedForward;
-  
+  private final PIDController shooterPID;
+  private boolean shooterPIDStatus = false;
 
   public ShooterSubsystem() {
     // Instantiate motors
     tMotor1 = new TalonFX(ShindexerConstants.SHOOTER_PORT_A);
     tMotor2 = new TalonFX(ShindexerConstants.SHOOTER_PORT_B);
-    tMotor1.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimit(160));
-    tMotor2.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimit(160));
+    tMotor1.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimit(40));
+    tMotor2.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimit(40));
     tMotor1.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimitEnable(true));
     tMotor2.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimitEnable(true));
     tMotor1.setInverted(true);
     tMotor2.setInverted(true);
-    feedForward = new SimpleMotorFeedforward(0, getRPS(), tMotor1.getAcceleration().getValueAsDouble());
+    shooterPID = new PIDController(0.1, 0, 0);
   }
 
-  public double getRPS(){
-    return tMotor1.getVelocity().getValueAsDouble();
+  public double getRPM(){
+    return tMotor1.getVelocity().getValueAsDouble()*60;
   }
 
   // units of distance = meters
@@ -62,10 +61,21 @@ public class ShooterSubsystem extends SubsystemBase {
     ShindexerConstants.SHOOTER_SPEED = speed;
   }
 
+  public void setPIDStatus(boolean status){
+    shooterPIDStatus = status;
+  }
+
   @Override
   public void periodic() {
+    if(shooterPIDStatus){
+      double velocityError = shooterPID.calculate(getRPM(), ShindexerConstants.RPM_SPEED_LIMIT);
+      if(velocityError > ShindexerConstants.RPM_SPEED_LIMIT){
+        shooter(ShindexerConstants.MAX_SPEED);
+      }
+    }
 
-    SmartDashboard.putNumber("Shooter Speed", getRPS());
+    SmartDashboard.putNumber("Shooter Speed", getRPM());
+    SmartDashboard.putNumber("Shooter Voltage", tMotor1.getSupplyVoltage().getValueAsDouble());
     SmartDashboard.putNumber("Shooter Percentage", ShindexerConstants.SHOOTER_SPEED);
   }
 }

@@ -169,6 +169,11 @@ public class MAXSwerveModule {
     m_drivingEncoder.setPosition(0);
   }
 
+  public void stopModule() {
+    m_drivingSparkMax.stopMotor();
+    m_turningSparkMax.stopMotor();
+  }
+
   public void print() {
     SmartDashboard.putString("S[" + m_drivingSparkMax.getDeviceId() + "] DES STATE", m_desiredState.toString());
     SmartDashboard.putString("S[" + m_drivingSparkMax.getDeviceId() + "] ACT STATE", getState().toString());
