@@ -101,7 +101,7 @@ public class RobotContainer {
     //DRIVE 
     b_resetNavx.onTrue(new InstantCommand(swerveSubsystem::zeroHeading));
 
-    //OPTICAL TRIGGER AUTOMATIC 
+   /* //OPTICAL TRIGGER AUTOMATIC 
     opticalTrigger.onTrue(
       //new AutomaticPickup(intakeSubsystem, elevatorSubsystem, indexSubsystem)
       new SequentialCommandGroup(
@@ -139,7 +139,8 @@ public class RobotContainer {
 
     //ELEVATOR 
     b_elevToTop.onTrue(new ElevatorToTopCmd(elevatorSubsystem)); 
-    b_elevToBottom.onTrue(new ElevatorToBottomCmd(elevatorSubsystem));
+    b_elevToBottom.onTrue(new ElevatorToBottomCmd(elevatorSubsystem)); 
+    */
   }
 
   public void selectAuto(){
