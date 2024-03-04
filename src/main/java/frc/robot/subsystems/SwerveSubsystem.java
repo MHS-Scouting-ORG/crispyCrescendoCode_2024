@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -86,6 +87,7 @@ public class SwerveSubsystem extends SubsystemBase {
     m_rearRight.print(); 
     m_frontRight.print();
     SmartDashboard.putNumber("Navx", ((getRotation2d().getDegrees() % 360) + 360) % 360);
+    SmartDashboard.putString("POSE", getPose().toString());
 
   }
 
@@ -118,6 +120,11 @@ public class SwerveSubsystem extends SubsystemBase {
         },
         pose);
   }
+
+  public void setZeroOdometer(Pose2d pose) {
+    m_odometry.resetPosition(getRotation2d(), getModulePositions(), pose);
+  }
+
 
   /**
    * Method to drive the robot using joystick info.
@@ -221,6 +228,15 @@ public class SwerveSubsystem extends SubsystemBase {
     m_frontRight.setDesiredState(desiredStates[1]);
     m_rearLeft.setDesiredState(desiredStates[2]);
     m_rearRight.setDesiredState(desiredStates[3]);
+  }
+
+  public SwerveModulePosition[] getModulePositions() {
+    return new SwerveModulePosition[] {
+            m_frontLeft.getPosition(),
+            m_frontRight.getPosition(),
+            m_rearLeft.getPosition(),
+            m_rearRight.getPosition()
+        };
   }
 
   public void stopModules() {

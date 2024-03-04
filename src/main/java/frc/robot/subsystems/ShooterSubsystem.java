@@ -25,8 +25,10 @@ public class ShooterSubsystem extends SubsystemBase {
     tMotor2 = new TalonFX(ShindexerConstants.SHOOTER_PORT_B);
     tMotor1.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimit(40));
     tMotor2.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimit(40));
-    tMotor1.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimitEnable(true));
-    tMotor2.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimitEnable(true));
+    // tMotor1.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyTimeThreshold(1.275));
+    // tMotor2.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyTimeThreshold(1.275));
+    tMotor1.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimitEnable(false));
+    tMotor2.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimitEnable(false));
     tMotor1.setInverted(true);
     tMotor2.setInverted(true);
     shooterPID = new PIDController(0.1, 0, 0);
@@ -75,7 +77,9 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     SmartDashboard.putNumber("Shooter Speed", getRPM());
+    SmartDashboard.putNumber("Shooter Current limit", tMotor1.getSupplyCurrent().getValueAsDouble());
     SmartDashboard.putNumber("Shooter Voltage", tMotor1.getSupplyVoltage().getValueAsDouble());
     SmartDashboard.putNumber("Shooter Percentage", ShindexerConstants.SHOOTER_SPEED);
+    SmartDashboard.putNumber("Shooter RPM Limit" , ShindexerConstants.RPM_SPEED_LIMIT);
   }
 }

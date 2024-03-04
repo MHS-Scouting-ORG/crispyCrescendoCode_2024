@@ -164,20 +164,20 @@ public class PivotSubsystem extends SubsystemBase {
   
     double pidSpeed = 0;
 
-    if(pidOn){
-      pidSpeed = pid.calculate(encoder.getPosition(), setpoint);
-    }
-    else{
-      pidSpeed = manualSpeed;
-    }
+    // if(pidOn){
+    //   pidSpeed = pid.calculate(encoder.getPosition(), setpoint);
+    // }
+    // else{
+    //   pidSpeed = manualSpeed;
+    // }
 
-    if(topLimitSwitchPressed() && pidSpeed > 0){
-      pidSpeed = 0;
-    }
+    // if(topLimitSwitchPressed() && pidSpeed > 0){
+    //   pidSpeed = 0;
+    // }
 
-    if(bottomLimitSwitchPressed() && pidSpeed < 0){
-      pidSpeed = 0;
-    }
+    // if(bottomLimitSwitchPressed() && pidSpeed < 0){
+    //   pidSpeed = 0;
+    // }
     
     pivotMotor.set(pidSpeed);
     SmartDashboard.putBoolean("Pid On?", pidOn);

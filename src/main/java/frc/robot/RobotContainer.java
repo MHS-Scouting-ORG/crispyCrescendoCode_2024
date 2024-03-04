@@ -1,6 +1,8 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -16,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.IntegrationConstants.OperatorConstants;
 import frc.robot.Constants.ShindexerConstants;
 import frc.robot.Constants.SwerveConstants.OIConstants;
+import frc.robot.commands.AutonomousCommands.S_DriveToPositionCommand;
 import frc.robot.commands.CrispyPositionCommands.AutomaticPickup;
 import frc.robot.commands.CrispyPositionCommands.FeedToIndexer;
 import frc.robot.commands.ElevatorCommands.ElevatorStoragePositionCmd;
@@ -27,6 +30,7 @@ import frc.robot.commands.IntakeCommands.IntakeCmd;
 import frc.robot.commands.IntakeCommands.OuttakeCmd;
 import frc.robot.commands.ShindexerCommands.IndexToShooterCommand;
 import frc.robot.commands.ShindexerCommands.IndexerCommand;
+import frc.robot.commands.ShindexerCommands.ShooterCommand;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -65,7 +69,7 @@ public class RobotContainer {
   private final JoystickButton b_intake = new JoystickButton(xbox, XboxController.Button.kLeftBumper.value); 
   private final JoystickButton b_outtake = new JoystickButton(xbox, XboxController.Button.kRightBumper.value); 
 
-  private final JoystickButton b_indexerFeed = new JoystickButton(xbox, XboxController.Button.kY.value);
+  private final JoystickButton b_indexerFeed = new JoystickButton(xbox, XboxController.Button.kX.value);
 
   //////////////////////////////
   //     OPERATOR BUTTONS     //
@@ -73,7 +77,8 @@ public class RobotContainer {
   private final JoystickButton b_elevToTop = new JoystickButton(joystick, 3);
   private final JoystickButton b_elevToBottom = new JoystickButton(joystick, 4);
 
-  private final JoystickButton b_ampShooting = new JoystickButton(joystick, 1);
+  private final JoystickButton b_ampShooting = new JoystickButton(xbox, XboxController.Button.kB.value);
+  private final JoystickButton b_shootah = new JoystickButton(xbox, XboxController.Button.kY.value);
 
   //////////////////////////////
   //        AUTO CHOICES      //
@@ -91,7 +96,8 @@ public class RobotContainer {
             () -> swerveSubsystem.drive(
                 -MathUtil.applyDeadband(xbox.getLeftY(), OIConstants.kDriveDeadband),
                 -MathUtil.applyDeadband(xbox.getLeftX(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(xbox.getRightX(), OIConstants.kDriveDeadband),
+                -MathUtil.
+                applyDeadband(xbox.getRightX(), OIConstants.kDriveDeadband),
                 true, false),
             swerveSubsystem));
 
@@ -101,46 +107,48 @@ public class RobotContainer {
     //DRIVE 
     b_resetNavx.onTrue(new InstantCommand(swerveSubsystem::zeroHeading));
 
-   /* //OPTICAL TRIGGER AUTOMATIC 
-    opticalTrigger.onTrue(
-      //new AutomaticPickup(intakeSubsystem, elevatorSubsystem, indexSubsystem)
-      new SequentialCommandGroup(
-        new ElevatorToTopCmd(elevatorSubsystem), //goes to mid position to pick up note from indexer 
+    //OPTICAL TRIGGER AUTOMATIC 
+    // opticalTrigger.onTrue(
+    //   //new AutomaticPickup(intakeSubsystem, elevatorSubsystem, indexSubsystem)
+    //   new SequentialCommandGroup(
+    //     new ElevatorToTopCmd(elevatorSubsystem), //goes to mid position to pick up note from indexer 
 
-        new FeedToIndexer(indexSubsystem, intakeSubsystem), //feeds note from intake to indexer 
+    //     new FeedToIndexer(indexSubsystem, intakeSubsystem), //feeds note from intake to indexer 
 
-        new ElevatorStoragePositionCmd(elevatorSubsystem) 
+    //     new ElevatorStoragePositionCmd(elevatorSubsystem) 
 
-    ));
+    // ));
 
-    b_ampShooting.onTrue(
-      new SequentialCommandGroup(
-        new InstantCommand(() -> shooterSubsystem.shooter(ShindexerConstants.SHOOTER_SPEED)),
+    // b_ampShooting.onTrue(
+    //   new SequentialCommandGroup(
+    //     new InstantCommand(() -> shooterSubsystem.shooter(ShindexerConstants.SHOOTER_SPEED)),
 
-        new ElevatorToTopCmd(elevatorSubsystem), //goes to mid position to pick up note from indexer 
+    //     new ElevatorToTopCmd(elevatorSubsystem), //goes to mid position to pick up note from indexer 
 
-        new FeedToIndexer(indexSubsystem, intakeSubsystem), //feeds note from intake to indexer 
+    //     new FeedToIndexer(indexSubsystem, intakeSubsystem), //feeds note from intake to indexer 
 
-        //FIXME align command for pivot should be here
+    //     //FIXME align command for pivot should be here
 
-        new IndexToShooterCommand(shooterSubsystem, indexSubsystem)
-    ));
+    //     new IndexToShooterCommand(shooterSubsystem, indexSubsystem)
+    // ));
 
     //INTAKE 
-    b_intake.toggleOnTrue(new IntakeCmd(intakeSubsystem)); 
-    b_intake.toggleOnFalse(new InstantCommand(intakeSubsystem::stopIntake));
+    b_intake.whileTrue(new IntakeCmd(intakeSubsystem)); 
+    b_intake.whileFalse(new InstantCommand(intakeSubsystem::stopIntake));
 
     //OUTTAKE 
-    b_outtake.toggleOnTrue(new OuttakeCmd(intakeSubsystem));
-    b_outtake.toggleOnFalse(new InstantCommand(intakeSubsystem::stopIntake));
+    b_outtake.whileTrue(new OuttakeCmd(intakeSubsystem));
+    b_outtake.whileFalse(new InstantCommand(intakeSubsystem::stopIntake));
 
     //SHINDEXER 
     b_indexerFeed.onTrue(new ParallelRaceGroup(new DeliverCmd(intakeSubsystem), new IndexerCommand(indexSubsystem)));
+    b_shootah.whileTrue(new IndexToShooterCommand(shooterSubsystem, indexSubsystem)); 
+
 
     //ELEVATOR 
     b_elevToTop.onTrue(new ElevatorToTopCmd(elevatorSubsystem)); 
     b_elevToBottom.onTrue(new ElevatorToBottomCmd(elevatorSubsystem)); 
-    */
+    
   }
 
   public void selectAuto(){
@@ -150,6 +158,14 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return autonomousChooser.getSelected();
+    // return autonomousChooser.getSelected();
+
+    return new SequentialCommandGroup(
+      new InstantCommand(() -> swerveSubsystem.zeroHeading()),
+
+      new InstantCommand(() -> swerveSubsystem.setZeroOdometer(new Pose2d(0, 0, new Rotation2d(0)))),
+
+      new S_DriveToPositionCommand(swerveSubsystem, 2, 0, 90, true)
+    );
   }
 }
