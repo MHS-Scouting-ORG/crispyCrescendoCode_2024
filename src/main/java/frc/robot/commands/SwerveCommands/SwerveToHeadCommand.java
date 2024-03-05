@@ -10,22 +10,21 @@ import frc.robot.Constants.SwerveConstants.OIConstants;
 import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class SwerveToHeadingCommand extends Command {
+public class SwerveToHeadCommand extends Command {
 
   /* * * DECLARATION * * */
   SwerveSubsystem swerveSubsystem; 
   double desiredHeading; 
   PIDController rotationPID; 
 
-  DoubleSupplier xSupp, ySupp, zSupp; 
+  DoubleSupplier xSupp, ySupp;
 
-  public SwerveToHeadingCommand(SwerveSubsystem swerveSubsystem, DoubleSupplier xSupp, DoubleSupplier ySupp, DoubleSupplier zSupp, double desiredHeading) {
+  public SwerveToHeadCommand(SwerveSubsystem swerveSubsystem, DoubleSupplier xSupp, DoubleSupplier ySupp, double desiredHeading) {
     this.swerveSubsystem = swerveSubsystem; 
     this.desiredHeading = desiredHeading; 
 
     this.xSupp = xSupp; 
-    this.ySupp = ySupp; 
-    this.zSupp = zSupp; 
+    this.ySupp = ySupp;
 
     rotationPID = new PIDController(SwerveConstants.DriveConstants.kRotationP, SwerveConstants.DriveConstants.kRotationI, SwerveConstants.DriveConstants.kRotationD);
     rotationPID.setTolerance(SwerveConstants.DriveConstants.kRotationTolerance);
@@ -48,15 +47,12 @@ public class SwerveToHeadingCommand extends Command {
     // TURN SUPPLIERS INTO DOUBLES 
     double xSpeed = xSupp.getAsDouble();
     double ySpeed = ySupp.getAsDouble();
-    double zSpeed = zSupp.getAsDouble();
 
     xSpeed = deadzone(xSpeed); 
     ySpeed = deadzone(ySpeed); 
-    zSpeed = deadzone(zSpeed);
 
     xSpeed = modifyAxis(xSpeed); 
     ySpeed = modifyAxis(ySpeed); 
-    zSpeed = modifyAxis(zSpeed); 
 
         /* * * WAIALUA DESIRED ANGLE MODIFICATIONS * * */
     //UNTESTED BE CAREFUL
@@ -66,7 +62,6 @@ public class SwerveToHeadingCommand extends Command {
 
     // swerveSubsystem.setdesiredHeading(desiredHeading);
    
-    desiredHeading += zSpeed; 
     desiredHeading = (desiredHeading + 360) % 360; //makes the desired angle positive and b/w 0 - 360
     double angleToDesired = -wrap(swerveSubsystem.getRotation2d().getDegrees(), desiredHeading); 
     double rotationSpeed = rotationPID.calculate(desiredHeading, ((swerveSubsystem.getRotation2d().getDegrees() % 360) + 360) % 360);

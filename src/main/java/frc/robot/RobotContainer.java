@@ -165,7 +165,7 @@ public class RobotContainer {
 
       new InstantCommand(() -> swerveSubsystem.setZeroOdometer(new Pose2d(0, 0, new Rotation2d(0)))),
 
-      new S_DriveToPositionCommand(swerveSubsystem, 2, 0, 90, true)
+      new S_DriveToPositionCommand(swerveSubsystem, 0, 0, 90, true)
     );
   }
 }
