@@ -18,12 +18,11 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.IntegrationConstants.OperatorConstants;
 import frc.robot.Constants.ShindexerConstants;
 import frc.robot.Constants.SwerveConstants.OIConstants;
+import frc.robot.commands.AutonomousCommands.A_PositionB;
 import frc.robot.commands.AutonomousCommands.S_DriveToPositionCommand;
 import frc.robot.commands.CrispyPositionCommands.AutomaticPickup;
 import frc.robot.commands.CrispyPositionCommands.FeedToIndexer;
-import frc.robot.commands.ElevatorCommands.ElevatorStoragePositionCmd;
-import frc.robot.commands.ElevatorCommands.ElevatorToBottomCmd;
-import frc.robot.commands.ElevatorCommands.ElevatorToSpeakerCmd;
+import frc.robot.commands.ElevatorCommands.ElevatorRestingPositionCmd;
 import frc.robot.commands.ElevatorCommands.ElevatorToTopCmd;
 import frc.robot.commands.IntakeCommands.DeliverCmd;
 import frc.robot.commands.IntakeCommands.IntakeCmd;
@@ -147,7 +146,7 @@ public class RobotContainer {
 
     //ELEVATOR 
     b_elevToTop.onTrue(new ElevatorToTopCmd(elevatorSubsystem)); 
-    b_elevToBottom.onTrue(new ElevatorToBottomCmd(elevatorSubsystem)); 
+    b_elevToBottom.onTrue(new ElevatorRestingPositionCmd(elevatorSubsystem)); 
     
   }
 
@@ -160,12 +159,13 @@ public class RobotContainer {
     // An example command will be run in autonomous
     // return autonomousChooser.getSelected();
 
-    return new SequentialCommandGroup(
+    return new A_PositionB(swerveSubsystem, intakeSubsystem, indexSubsystem, shooterSubsystem, elevatorSubsystem, null);
+    /* new SequentialCommandGroup(
       new InstantCommand(() -> swerveSubsystem.zeroHeading()),
 
       new InstantCommand(() -> swerveSubsystem.setZeroOdometer(new Pose2d(0, 0, new Rotation2d(0)))),
 
       new S_DriveToPositionCommand(swerveSubsystem, 0, 0, 90, true)
-    );
+    );*/ 
   }
 }

@@ -3,11 +3,11 @@ package frc.robot.commands.ElevatorCommands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ElevatorSubsystem;
 
-public class ElevatorToBottomCmd extends Command {
+public class ElevatorRestingPositionCmd extends Command {
 
   private ElevatorSubsystem elevSub;
 
-  public ElevatorToBottomCmd(ElevatorSubsystem newElevSub) {
+  public ElevatorRestingPositionCmd(ElevatorSubsystem newElevSub) {
 
     elevSub = newElevSub;
 
@@ -19,8 +19,8 @@ public class ElevatorToBottomCmd extends Command {
 
   @Override
   public void execute() {
-    // FIXME Change encoder setpoint for bottom
-    elevSub.setSetpoint(0);
+    //Bottom/Resting is 0
+    elevSub.setSetpoint(-1);
   }
 
   @Override

@@ -1,6 +1,7 @@
 package frc.robot.commands.AutonomousCommands;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.SwerveConstants;
@@ -15,8 +16,8 @@ public class S_DriveToPositionCommand extends Command {
 
   public S_DriveToPositionCommand(SwerveSubsystem swerveSub, double desiredX, double desiredY, double desiredZ, double translationTollerance, boolean rotation) {
     this.swerveSub = swerveSub;
-    this.desiredX = desiredX;
-    this.desiredY = desiredY;
+    this.desiredX = Units.feetToMeters(desiredX);
+    this.desiredY = Units.feetToMeters(desiredY);
     this.desiredZ = desiredZ;
     this.translationTollerance = translationTollerance;
     this.rotation = rotation;
@@ -49,7 +50,6 @@ public class S_DriveToPositionCommand extends Command {
     double zSpeed = !rotation ? 0 : zPID.calculate((((swerveSub.getRotation2d().getDegrees() % 360) + 360) % 360), desiredZ);
     // zSpeed = 0.01/zSpeed; 
       swerveSub.drive(xSped, ySpeed, zSpeed, true, false);
-  
     
     SmartDashboard.putNumber("xSped", xSped);
     SmartDashboard.putNumber("ySped", ySpeed);

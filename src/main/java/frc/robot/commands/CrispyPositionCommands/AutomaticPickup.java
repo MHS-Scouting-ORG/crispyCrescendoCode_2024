@@ -3,8 +3,8 @@ package frc.robot.commands.CrispyPositionCommands;
 
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.ElevatorCommands.ElevatorStoragePositionCmd;
-import frc.robot.commands.ElevatorCommands.ElevatorToSpeakerCmd;
+import frc.robot.commands.ElevatorCommands.ElevatorRestingPositionCmd;
+import frc.robot.commands.ElevatorCommands.ElevatorToTransferCmd;
 import frc.robot.commands.IntakeCommands.DeliverCmd;
 import frc.robot.commands.ShindexerCommands.IndexerCommand;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -22,7 +22,7 @@ public class AutomaticPickup extends SequentialCommandGroup {
 
       new FeedToIndexer(indexerSubsystem, intakeSubsystem), //feeds note from intake to indexer 
 
-      new ElevatorStoragePositionCmd(elevatorSubsystem) 
+      new ElevatorRestingPositionCmd(elevatorSubsystem) 
       
     );
   }
