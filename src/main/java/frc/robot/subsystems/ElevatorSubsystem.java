@@ -39,7 +39,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     pid.setTolerance(ElevatorConstants.PID_TOLERANCE);
     previousError = 0;
 
-    
     setpoint = 0;
   }
 
@@ -158,12 +157,24 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     double output = pid.calculate(getEnc(), setpoint);
 
-    // if (  output > ElevatorConstants.SPEED_CAP) {
+    if (getBottomLimitSwitch() && output < 0){
+      elevStop();
+    }
+
+    else if (getTopLimitSwitch() && output > 0){
+      elevStop();
+    }
+
+    // else if (isAtSetpoint()){
+    //   elevStop();
+    // }
+
+    // else if (output > ElevatorConstants.SPEED_CAP) {
     //   elevMotor.set(ElevatorConstants.SPEED_CAP);
     // } 
     // else if (output < -ElevatorConstants.SPEED_CAP) {
     //   elevMotor.set(-ElevatorConstants.SPEED_CAP);
-    // } 
+    // }
     // else {
     //   elevMotor.set(output);
     // }

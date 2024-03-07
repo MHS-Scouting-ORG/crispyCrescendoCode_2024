@@ -23,10 +23,10 @@ public class ShooterSubsystem extends SubsystemBase {
     // Instantiate motors
     tMotor1 = new TalonFX(ShindexerConstants.SHOOTER_PORT_A);
     tMotor2 = new TalonFX(ShindexerConstants.SHOOTER_PORT_B);
-    tMotor1.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimit(40));
-    tMotor2.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimit(40));
-    // tMotor1.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyTimeThreshold(1.275));
-    // tMotor2.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyTimeThreshold(1.275));
+    tMotor1.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimit(300));
+    tMotor2.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimit(300));
+    //tMotor1.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyTimeThreshold(1.275));
+    //tMotor2.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyTimeThreshold(1.275));
     tMotor1.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimitEnable(false));
     tMotor2.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimitEnable(false));
     tMotor1.setInverted(true);
@@ -70,15 +70,21 @@ public class ShooterSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     if(shooterPIDStatus){
+      double speed = 0;
       double velocityError = shooterPID.calculate(getRPM(), ShindexerConstants.RPM_SPEED_LIMIT);
-      if(velocityError > ShindexerConstants.RPM_SPEED_LIMIT){
-        shooter(ShindexerConstants.MAX_SPEED);
+      if(velocityError > ShindexerConstants.RPM_SPEED_LIMIT + 500 && (ShindexerConstants.SHOOTER_SPEED + speed) < 1){
+        shooter(ShindexerConstants.SHOOTER_SPEED + speed);
+        if(velocityError > ShindexerConstants.RPM_SPEED_LIMIT + (500 * speed)){
+          speed++;
+        }
       }
+      shooter(ShindexerConstants.SHOOTER_SPEED + speed);
     }
 
     SmartDashboard.putNumber("Shooter Speed", getRPM());
-    SmartDashboard.putNumber("Shooter Current limit", tMotor1.getSupplyCurrent().getValueAsDouble());
-    SmartDashboard.putNumber("Shooter Voltage", tMotor1.getSupplyVoltage().getValueAsDouble());
+    SmartDashboard.putNumber("Shooter Torque", tMotor1.getTorqueCurrent().getValueAsDouble());
+    SmartDashboard.putNumber("Shooter Voltage", tMotor1.getMotorVoltage().getValueAsDouble());
+    SmartDashboard.putNumber("Shooter Current", tMotor1.getSupplyCurrent().getValueAsDouble());
     SmartDashboard.putNumber("Shooter Percentage", ShindexerConstants.SHOOTER_SPEED);
     SmartDashboard.putNumber("Shooter RPM Limit" , ShindexerConstants.RPM_SPEED_LIMIT);
   }
