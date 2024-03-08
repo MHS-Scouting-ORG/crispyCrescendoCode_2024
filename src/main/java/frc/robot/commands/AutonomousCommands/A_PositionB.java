@@ -11,9 +11,11 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.CrispyPositionCommands.FeedToIndexer;
 import frc.robot.commands.ElevatorCommands.ElevatorToTransferCmd;
 import frc.robot.commands.IntakeCommands.IntakeCmd;
 import frc.robot.commands.PivotCommands.PivotPidCommand;
+import frc.robot.commands.ShindexerCommands.IndexToShooterAutoCommand;
 import frc.robot.commands.ShindexerCommands.IndexToShooterCommand;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IndexerSubsystem;
@@ -32,18 +34,21 @@ public class A_PositionB extends SequentialCommandGroup {
 
       new InstantCommand(() -> swerveSub.setZeroOdometer(new Pose2d(0, 0, new Rotation2d(0)))),
       
-      //new IndexToShooterCommand(shooterSub, indexSub), // shoots preload into amp
+      new IndexToShooterAutoCommand(shooterSub, indexSub), // shoots preload into amp
       
       new ParallelCommandGroup(
         
         new S_DriveToPositionCommand(swerveSub, 5, 0, 0, false), // drive to note
 
-        new IntakeCmd(intakeSub)//, // intake note
+        new IntakeCmd(intakeSub), // intake note
 
-        //new SequentialCommandGroup(new ElevatorToTransferCmd(elevSub), new PivotPidCommand(pivotSub, 0)) // set to shooting position
-      )
+        //new SequentialCommandGroup(new ElevatorToTransferCmd(elevSub), 
+        new PivotPidCommand(pivotSub, 40)//) // set to shooting position
+      ),
 
-      //new IndexToShooterCommand(shooterSub, indexSub) // shoot second preload
+      new FeedToIndexer(indexSub, intakeSub),
+
+      new IndexToShooterAutoCommand(shooterSub, indexSub) // shoot second preload
     );
   }
 }

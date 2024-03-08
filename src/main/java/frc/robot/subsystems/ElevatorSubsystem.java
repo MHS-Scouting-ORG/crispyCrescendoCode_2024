@@ -7,7 +7,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.SubsystemBase; 
 import frc.robot.Constants.ElevatorConstants;
 
 public class ElevatorSubsystem extends SubsystemBase {
@@ -39,7 +39,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     pid.setTolerance(ElevatorConstants.PID_TOLERANCE);
     previousError = 0;
 
-    setpoint = 0;
+    // setpoint = 0;
   }
 
   ////////////////////////
@@ -165,19 +165,19 @@ public class ElevatorSubsystem extends SubsystemBase {
       elevStop();
     }
 
-    // else if (isAtSetpoint()){
-    //   elevStop();
-    // }
+    else if (isAtSetpoint()){
+      elevStop();
+    }
 
-    // else if (output > ElevatorConstants.SPEED_CAP) {
-    //   elevMotor.set(ElevatorConstants.SPEED_CAP);
-    // } 
-    // else if (output < -ElevatorConstants.SPEED_CAP) {
-    //   elevMotor.set(-ElevatorConstants.SPEED_CAP);
-    // }
-    // else {
-    //   elevMotor.set(output);
-    // }
+    else if (output > ElevatorConstants.SPEED_CAP) {
+      elevMotor.set(ElevatorConstants.SPEED_CAP);
+    } 
+    else if (output < -ElevatorConstants.SPEED_CAP) {
+      elevMotor.set(-ElevatorConstants.SPEED_CAP);
+    }
+    else {
+      elevMotor.set(output);
+    }
 
     // SmartDashboard
     SmartDashboard.putNumber("[E] Enc", getEnc());

@@ -31,6 +31,7 @@ import frc.robot.commands.IntakeCommands.DeliverCmd;
 import frc.robot.commands.IntakeCommands.IntakeCmd;
 import frc.robot.commands.IntakeCommands.OuttakeCmd;
 import frc.robot.commands.PivotCommands.ManualPivotCommand;
+import frc.robot.commands.PivotCommands.PivotPidCommand;
 import frc.robot.commands.ShindexerCommands.IndexToShooterCommand;
 import frc.robot.commands.ShindexerCommands.IndexerCommand;
 import frc.robot.commands.ShindexerCommands.IntakeShooterCommand;
@@ -163,18 +164,21 @@ public class RobotContainer {
     // b_indexerFeed.onTrue(new ParallelRaceGroup(new DeliverCmd(intakeSubsystem), new IndexerCommand(indexSubsystem)));
     // b_shootah.whileTrue(new IndexToShooterCommand(shooterSubsystem, indexSubsystem)); 
 
+
+
     //TESTING 
-    // testingElevBottom.whileTrue(new ElevatorRestingPositionCmd(elevatorSubsystem)); 
-    // testingElevMid.whileTrue(new ElevatorToTransferCmd(elevatorSubsystem)); 
-    // testingElevTop.whileTrue(new ElevatorToTopCmd(elevatorSubsystem)); 
+    testingElevTop.onTrue(new SequentialCommandGroup(
+      new ElevatorToTransferCmd(elevatorSubsystem), 
 
-    // testingPivotDown.whileTrue(new ManualPivotCommand(pivotSubsystem, () -> xbox.getRightY() * 0.5)); 
-    // testingPivotDown.whileFalse(new InstantCommand(pivotSubsystem::stopMotor)); 
-    // testingPivotUp.whileTrue(new ManualPivotCommand(pivotSubsystem, () -> 0.075)); 
-    // testingPivotUp.whileFalse(new InstantCommand(pivotSubsystem::stopMotor));
+      new IntakeCmd(intakeSubsystem)
+    )); 
+    //testingElevMid
 
-    testingElevTop.whileTrue(new IntakeShooterCommand(shooterSubsystem, indexSubsystem)); 
-    testingElevMid.whileTrue(new IndexToShooterCommand(shooterSubsystem, indexSubsystem)); 
+    testingElevMid.onTrue(new ElevatorToTransferCmd(elevatorSubsystem)); 
+    testingElevBottom.onTrue(new ElevatorRestingPositionCmd(elevatorSubsystem));
+
+    testingPivotDown.onTrue(new PivotPidCommand(pivotSubsystem, 40));
+    testingPivotUp.onTrue(new IntakeShooterCommand(shooterSubsystem, indexSubsystem));
 
     //ELEVATOR 
     // b_elevToTop.onTrue(new ElevatorToTopCmd(elevatorSubsystem)); 
@@ -188,11 +192,11 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return null; 
+    //return null; 
     // An example command will be run in autonomous
     // return autonomousChooser.getSelected();
 
-    // return new A_PositionB(swerveSubsystem, intakeSubsystem, indexSubsystem, shooterSubsystem, elevatorSubsystem, null);
+    return new A_PositionB(swerveSubsystem, intakeSubsystem, indexSubsystem, shooterSubsystem, elevatorSubsystem, pivotSubsystem);
     /* new SequentialCommandGroup(
       new InstantCommand(() -> swerveSubsystem.zeroHeading()),
 
