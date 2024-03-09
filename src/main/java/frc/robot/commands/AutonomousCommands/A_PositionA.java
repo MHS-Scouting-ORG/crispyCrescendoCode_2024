@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.CrispyPositionCommands.FeedToIndexer;
 import frc.robot.commands.ElevatorCommands.ElevatorToTransferCmd;
 import frc.robot.commands.IntakeCommands.IntakeCmd;
 import frc.robot.commands.PivotCommands.PivotPidCommand;
@@ -21,22 +22,25 @@ public class A_PositionA extends SequentialCommandGroup {
 
   public A_PositionA(SwerveSubsystem swerveSub, UnderIntakeSubsystem intakeSub, IndexerSubsystem indexSub, ShooterSubsystem shooterSub, ElevatorSubsystem elevSub, PivotSubsystem pivotSub) {
     int red = 1;
-    if(DriverStation.getAlliance().get() == Alliance.Red){
+    if (DriverStation.getAlliance().get() == Alliance.Red) {
       red = -1;
     }
     addCommands(
-      new IndexToShooterCommand(shooterSub, indexSub), // shoot preload
+        new IndexToShooterCommand(shooterSub, indexSub), // shoot preload
 
-      // Runs intake and drives to note. At the same time, sets elevator and pivot
+        // Runs intake and drives to note. At the same time, sets elevator and pivot
         new ParallelCommandGroup(
-          new IntakeCmd(intakeSub),
+            new IntakeCmd(intakeSub),
 
-          new S_DriveToPositionCommand(swerveSub, 0, red*0, 0, true), //FIXME rotation to be determined 
+            new S_DriveToPositionCommand(swerveSub, 0, red * 0, 0, true), // FIXME rotation to be determined
 
-          new SequentialCommandGroup(new ElevatorToTransferCmd(elevSub), new PivotPidCommand(pivotSub, 0))  
-        ),
+            new PivotPidCommand(pivotSub, 0)),
 
-      new IndexToShooterCommand(shooterSub, indexSub) // shoot second note
+        new S_DriveToPositionCommand(swerveSub, 0, red * 0, 0, true),
+
+        new FeedToIndexer(indexSub, intakeSub),
+
+        new IndexToShooterCommand(shooterSub, indexSub) // shoot second note
     );
   }
 }

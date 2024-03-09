@@ -7,7 +7,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase; 
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
 
 public class ElevatorSubsystem extends SubsystemBase {
@@ -39,7 +39,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     pid.setTolerance(ElevatorConstants.PID_TOLERANCE);
     previousError = 0;
 
-    // setpoint = 0;
+    setpoint = getEnc();
   }
 
   ////////////////////////
@@ -87,6 +87,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   // Checks if limit switches are pressed to prevent movement in that direction
+  //MUST BE RAN ON A DEFAULT COMMAND
   public void ManualHang(double speed) {
     if (getTopLimitSwitch() && speed > 0) {
       elevStop();
@@ -144,7 +145,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public boolean isAtSetpoint() {
-    return pid.atSetpoint();
+    return Math.abs(setpoint - getEnc()) < ElevatorConstants.PID_TOLERANCE;
   }
 
   @Override

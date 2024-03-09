@@ -1,6 +1,7 @@
 
 package frc.robot.commands.CrispyPositionCommands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //NO BIEN 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.IntakeConstants;
@@ -23,11 +24,13 @@ public class FeedToIndexer extends Command {
 
   @Override
   public void execute() {
-    underIntakeSub.intake(IntakeConstants.INTAKE_MAXSPEED);
+    SmartDashboard.putString("CURRENT CMD", getName());
+    underIntakeSub.intake(0.12);
     indexSub.index(ShindexerConstants.INDEXER_SPEED);
   }
 
   public void end(boolean interrupted) {
+    SmartDashboard.putString("CURRENT CMD", "NONE");
     underIntakeSub.stopIntake();
     indexSub.stop();
   }

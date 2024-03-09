@@ -21,7 +21,10 @@ import frc.robot.Constants.ShindexerConstants;
 import frc.robot.Constants.SwerveConstants.OIConstants;
 import frc.robot.commands.AutonomousCommands.A_PositionB;
 import frc.robot.commands.AutonomousCommands.S_DriveToPositionCommand;
+import frc.robot.commands.CrispyPositionCommands.AmpPosition;
 import frc.robot.commands.CrispyPositionCommands.AutomaticPickup;
+import frc.robot.commands.CrispyPositionCommands.DownPosition;
+import frc.robot.commands.CrispyPositionCommands.FeedPosition;
 import frc.robot.commands.CrispyPositionCommands.FeedToIndexer;
 import frc.robot.commands.ElevatorCommands.ElevatorRestingPositionCmd;
 import frc.robot.commands.ElevatorCommands.ElevatorToTopCmd;
@@ -32,9 +35,12 @@ import frc.robot.commands.IntakeCommands.IntakeCmd;
 import frc.robot.commands.IntakeCommands.OuttakeCmd;
 import frc.robot.commands.PivotCommands.ManualPivotCommand;
 import frc.robot.commands.PivotCommands.PivotPidCommand;
+import frc.robot.commands.PivotCommands.RunToTopLim;
+import frc.robot.commands.ShindexerCommands.IndexToShooterAutoCommand;
 import frc.robot.commands.ShindexerCommands.IndexToShooterCommand;
 import frc.robot.commands.ShindexerCommands.IndexerCommand;
 import frc.robot.commands.ShindexerCommands.IntakeShooterCommand;
+import frc.robot.commands.ShindexerCommands.ShootAmpCommand;
 import frc.robot.commands.ShindexerCommands.ShooterCommand;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IndexerSubsystem;
@@ -55,6 +61,8 @@ public class RobotContainer {
   private ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
   private PivotSubsystem pivotSubsystem = new PivotSubsystem();
 
+  private final Command setElevInit = new InstantCommand(() -> elevatorSubsystem.setSetpoint(elevatorSubsystem.getEnc()));
+
 
   //////////////////////////////
   //        CONTROLLERS       //
@@ -71,7 +79,7 @@ public class RobotContainer {
   //////////////////////////////
   //      DRIVER BUTTONS      //
   //////////////////////////////
-  private final JoystickButton b_resetNavx = new JoystickButton(xbox, XboxController.Button.kA.value);
+  private final JoystickButton b_resetNavx = new JoystickButton(xbox, 7);
   private final JoystickButton b_rotateAmp = new JoystickButton(xbox, XboxController.Button.kX.value); 
   
   private final JoystickButton b_intake = new JoystickButton(xbox, XboxController.Button.kLeftBumper.value); 
@@ -91,12 +99,21 @@ public class RobotContainer {
   //////////////////////////////
   //     TESTING BUTTONS      //
   //////////////////////////////
-  private final JoystickButton testingElevBottom = new JoystickButton(xbox, XboxController.Button.kA.value); 
-  private final JoystickButton testingElevMid = new JoystickButton(xbox, XboxController.Button.kX.value);
-  private final JoystickButton testingElevTop = new JoystickButton(xbox, XboxController.Button.kY.value);
+  private final JoystickButton Dy = new JoystickButton(xbox, XboxController.Button.kY.value); 
+  private final JoystickButton Dx = new JoystickButton(xbox, XboxController.Button.kX.value);
+  private final JoystickButton Da = new JoystickButton(xbox, XboxController.Button.kA.value);
+  private final JoystickButton Db = new JoystickButton(xbox, XboxController.Button.kB.value);
 
-  private final JoystickButton testingPivotDown = new JoystickButton(xbox, XboxController.Button.kLeftBumper.value);
-  private final JoystickButton testingPivotUp = new JoystickButton(xbox, XboxController.Button.kRightBumper.value);
+  private final JoystickButton DLeftBumper = new JoystickButton(xbox, XboxController.Button.kLeftBumper.value);
+  private final JoystickButton DRightBumper = new JoystickButton(xbox, XboxController.Button.kRightBumper.value);
+
+  private final JoystickButton Oy = new JoystickButton(xbox, XboxController.Button.kY.value); 
+  private final JoystickButton Ox = new JoystickButton(xbox, XboxController.Button.kX.value);
+  private final JoystickButton Oa = new JoystickButton(xbox, XboxController.Button.kA.value);
+  private final JoystickButton Ob = new JoystickButton(xbox, XboxController.Button.kB.value);
+
+  private final JoystickButton OLeftBumper = new JoystickButton(xbox, XboxController.Button.kLeftBumper.value);
+  private final JoystickButton ORightBumper = new JoystickButton(xbox, XboxController.Button.kRightBumper.value);
 
   //////////////////////////////
   //        AUTO CHOICES      //
@@ -114,8 +131,7 @@ public class RobotContainer {
             () -> swerveSubsystem.drive(
                 -MathUtil.applyDeadband(xbox.getLeftY(), OIConstants.kDriveDeadband),
                 -MathUtil.applyDeadband(xbox.getLeftX(), OIConstants.kDriveDeadband),
-                -MathUtil.
-                applyDeadband(xbox.getRightX(), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(xbox.getRightX(), OIConstants.kDriveDeadband),
                 true, false),
             swerveSubsystem));
 
@@ -164,26 +180,36 @@ public class RobotContainer {
     // b_indexerFeed.onTrue(new ParallelRaceGroup(new DeliverCmd(intakeSubsystem), new IndexerCommand(indexSubsystem)));
     // b_shootah.whileTrue(new IndexToShooterCommand(shooterSubsystem, indexSubsystem)); 
 
-
-
-    //TESTING 
-    testingElevTop.onTrue(new SequentialCommandGroup(
-      new ElevatorToTransferCmd(elevatorSubsystem), 
-
-      new IntakeCmd(intakeSubsystem)
-    )); 
-    //testingElevMid
-
-    testingElevMid.onTrue(new ElevatorToTransferCmd(elevatorSubsystem)); 
-    testingElevBottom.onTrue(new ElevatorRestingPositionCmd(elevatorSubsystem));
-
-    testingPivotDown.onTrue(new PivotPidCommand(pivotSubsystem, 40));
-    testingPivotUp.onTrue(new IntakeShooterCommand(shooterSubsystem, indexSubsystem));
-
     //ELEVATOR 
     // b_elevToTop.onTrue(new ElevatorToTopCmd(elevatorSubsystem)); 
     // b_elevToBottom.onTrue(new ElevatorRestingPositionCmd(elevatorSubsystem)); 
-    
+
+    //TEST DRIVING 
+    /* 
+    DLeftBumper.whileTrue(new IntakeCmd(intakeSubsystem)); 
+    DLeftBumper.whileFalse(new InstantCommand(intakeSubsystem::stopIntake)); 
+
+    Da.whileTrue(new OuttakeCmd(intakeSubsystem)); 
+    Da.whileFalse(new InstantCommand(intakeSubsystem::stopIntake)); 
+
+    Dx.onTrue(new FeedPosition(elevatorSubsystem, pivotSubsystem, indexSubsystem, intakeSubsystem)); 
+
+    DRightBumper.onTrue(new SequentialCommandGroup(
+      new IndexToShooterAutoCommand(shooterSubsystem, indexSubsystem), 
+
+      new DownPosition(elevatorSubsystem, pivotSubsystem)
+    )); */
+
+    //AMP TEST 
+    // Dy.onTrue(new ElevatorToTopCmd(elevatorSubsystem));
+    DLeftBumper.whileTrue(new IntakeCmd(intakeSubsystem)); 
+    DLeftBumper.whileFalse(new InstantCommand(intakeSubsystem::stopIntake)); 
+     
+    Dx.onTrue(new ElevatorToTransferCmd(elevatorSubsystem));
+    Da.onTrue(new DownPosition(elevatorSubsystem, pivotSubsystem));
+    Db.onTrue(new ShootAmpCommand(shooterSubsystem, indexSubsystem));
+    Dy.whileTrue(new IntakeShooterCommand(shooterSubsystem, indexSubsystem)); 
+
   }
 
   public void selectAuto(){
@@ -203,6 +229,10 @@ public class RobotContainer {
       new InstantCommand(() -> swerveSubsystem.setZeroOdometer(new Pose2d(0, 0, new Rotation2d(0)))),
 
       new S_DriveToPositionCommand(swerveSubsystem, 0, 0, 90, true)
-    );*/ 
+    );*/
+  }
+
+  public Command setElevInit() {
+    return setElevInit;
   }
 }

@@ -38,12 +38,11 @@ public class S_DriveToPositionCommand extends Command {
      
   @Override
   public void initialize() {
-    SmartDashboard.putString("IS DONE", "NO");
   }
 
   @Override
   public void execute() {
-    SmartDashboard.putString("CURRENT COMMAND", getName());
+    SmartDashboard.putString("CURRENT CMD", getName());
 
     double xSped = xPID.calculate(swerveSub.getPose().getX(), desiredX);
     double ySpeed = yPID.calculate(swerveSub.getPose().getY(), desiredY);
@@ -51,9 +50,9 @@ public class S_DriveToPositionCommand extends Command {
     // zSpeed = 0.01/zSpeed; 
       swerveSub.drive(xSped, ySpeed, zSpeed, true, false);
     
-    SmartDashboard.putNumber("xSped", xSped);
-    SmartDashboard.putNumber("ySped", ySpeed);
-    SmartDashboard.putNumber("zSped", zSpeed);
+    SmartDashboard.putNumber("xSetpt", Units.metersToFeet(desiredX));
+    SmartDashboard.putNumber("ySetpt", Units.metersToFeet(desiredY));
+    SmartDashboard.putNumber("zSetpt", Units.feetToMeters(desiredZ));
 
     SmartDashboard.putBoolean("x at setpt", xPID.atSetpoint());
     SmartDashboard.putBoolean("y at setpt", yPID.atSetpoint());
@@ -62,7 +61,7 @@ public class S_DriveToPositionCommand extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    SmartDashboard.putString("IS DONE", "YES");
+    SmartDashboard.putString("CURRENT CMD", "NONE");
     swerveSub.stopModules();
   }
 

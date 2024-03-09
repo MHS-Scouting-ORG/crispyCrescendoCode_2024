@@ -4,8 +4,6 @@
 
 package frc.robot.commands.ElevatorCommands;
 
-import javax.swing.text.StyleContext.SmallAttributeSet;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -23,23 +21,23 @@ public class ElevatorToTransferCmd extends Command {
 
   @Override
   public void initialize() {
-    SmartDashboard.putBoolean("elev mid running?", true);
-    elevSub.setSetpoint(110);  
+    SmartDashboard.putBoolean("TransferPosition?", true);
   }
 
   @Override
   public void execute() {
     // Transfer/Shooting is 110
+    elevSub.setSetpoint(110);
   }
 
   @Override
   public void end(boolean interrupted) {
-    SmartDashboard.putBoolean("elev mid running?", false); 
     elevSub.elevStop();
+    SmartDashboard.putBoolean("TransferPosition?", false);
   }
 
   @Override
   public boolean isFinished() {
-    return elevSub.isAtSetpoint() || elevSub.getTopLimitSwitch();
+    return elevSub.isAtSetpoint();
   }
 }

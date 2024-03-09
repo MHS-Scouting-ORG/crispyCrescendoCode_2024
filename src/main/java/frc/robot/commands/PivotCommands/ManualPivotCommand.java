@@ -8,6 +8,7 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.PivotConstants;
+import frc.robot.Constants.PivotConstants;
 import frc.robot.subsystems.PivotSubsystem;
 
 public class ManualPivotCommand extends Command {
@@ -24,6 +25,7 @@ public class ManualPivotCommand extends Command {
 
   @Override
   public void initialize(){
+    pivotSub.init();
     pivotSub.disablePid();
   }
 
