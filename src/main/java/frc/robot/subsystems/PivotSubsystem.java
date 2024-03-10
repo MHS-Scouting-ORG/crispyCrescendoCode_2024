@@ -12,6 +12,8 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
+//import com.revrobotics.SparkPIDController;
+
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -56,14 +58,14 @@ public class PivotSubsystem extends SubsystemBase {
     encoder.setZeroOffset(270);
     encoder.setPositionConversionFactor(360);
     
-    pid = new PIDController(0.01, 0, 0);
+    pid = new PIDController(0.02, 0, 0);
     setpoint = 0;
     setpointTolerance = 1.5;
 
     manualSpeed = 0;
-    maxPidSpeed = 0.2;
+    maxPidSpeed = 0.7;
 
-    pid.enableContinuousInput(0, 260); 
+    pid.enableContinuousInput(0, 360); 
     pid.setTolerance(1.5);
 
   }
@@ -115,6 +117,7 @@ public class PivotSubsystem extends SubsystemBase {
 
   public boolean atSetpoint(){ 
     double error1 = setpoint - returnEncoder();
+    SmartDashboard.putNumber("error", error1);
     return Math.abs(error1) < setpointTolerance;
   }
 
@@ -185,7 +188,7 @@ public class PivotSubsystem extends SubsystemBase {
       pidSpeed = maxPidSpeed;
     }
     else if(pidSpeed < -maxPidSpeed){
-      pidSpeed = maxPidSpeed;
+      pidSpeed = -maxPidSpeed;
     }
 
     pivotMotor.set(pidSpeed);
@@ -197,11 +200,11 @@ public class PivotSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("Bottom limit switch pressed?", bottomLimitSwitchPressed());
     SmartDashboard.putNumber("calculated angle", finalAngle);
     SmartDashboard.putNumber("distance from limelight", horizontalDist);
-    SmartDashboard.putBoolean("at setpoint?", pid.atSetpoint());
+    SmartDashboard.putBoolean("at setpoint?", atSetpoint());
     SmartDashboard.putNumber("pid setpoint", setpoint);
+    SmartDashboard.putNumber("pid tolerance", setpointTolerance);
 
     SmartDashboard.putNumber("TY", LimelightHelpers.getTY("limelight"));
-    SmartDashboard.putNumber("degree of shooter", encoder.getPosition());
     SmartDashboard.putNumber("stats calc angle", returnCalcAngle());
 
   }

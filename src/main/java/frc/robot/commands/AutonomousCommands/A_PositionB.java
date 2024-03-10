@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.CrispyPositionCommands.FeedToIndexer;
 import frc.robot.commands.ElevatorCommands.ElevatorToTransferCmd;
+import frc.robot.commands.IntakeCommands.DeliverCmd;
 import frc.robot.commands.IntakeCommands.IntakeCmd;
 import frc.robot.commands.PivotCommands.PivotPidCommand;
 import frc.robot.commands.ShindexerCommands.IndexToShooterAutoCommand;
@@ -28,6 +29,7 @@ import frc.robot.subsystems.UnderIntakeSubsystem;
 
 public class A_PositionB extends SequentialCommandGroup {
 
+  //80 ELEV RIGHT TO MID OF SUBWOOFER 
   public A_PositionB(SwerveSubsystem swerveSub, UnderIntakeSubsystem intakeSub, IndexerSubsystem indexSub, ShooterSubsystem shooterSub, ElevatorSubsystem elevSub, PivotSubsystem pivotSub) {
     int red = 1;
     if (DriverStation.getAlliance().get() == Alliance.Red) {
@@ -48,14 +50,14 @@ public class A_PositionB extends SequentialCommandGroup {
             new IntakeCmd(intakeSub), // intake note
 
             // new SequentialCommandGroup(new ElevatorToTransferCmd(elevSub),
-            new PivotPidCommand(pivotSub, 45)// ) // set to shooting position
+            new PivotPidCommand(pivotSub, 33)// ) // set to shooting position
         ),
 
-        new FeedToIndexer(indexSub, intakeSub),
+        new ParallelRaceGroup(
+          new DeliverCmd(intakeSub),
 
-        new PivotPidCommand(pivotSub, 33),
-
-        new IndexToShooterAutoCommand(shooterSub, indexSub) // shoot second preload
+          new IndexToShooterAutoCommand(shooterSub, indexSub)
+        )
     );
   }
 }

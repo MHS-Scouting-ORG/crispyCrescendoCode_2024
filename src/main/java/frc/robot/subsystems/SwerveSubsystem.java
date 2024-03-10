@@ -15,6 +15,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.SwerveConstants.DriveConstants;
@@ -45,6 +46,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
   // The gyro sensor
   private final AHRS navx = new AHRS();
+  private double navxOffset = 0; 
 
   // Slew rate filter variables for controlling lateral acceleration
   private double m_currentRotation = 0.0;
@@ -58,7 +60,7 @@ public class SwerveSubsystem extends SubsystemBase {
   // Odometry class for tracking robot pose
   SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
       DriveConstants.kDriveKinematics,
-      Rotation2d.fromDegrees(navx.getAngle()),
+      Rotation2d.fromDegrees(getNavxWithOffset()),
       new SwerveModulePosition[] {
           m_frontLeft.getPosition(),
           m_frontRight.getPosition(),
@@ -68,13 +70,14 @@ public class SwerveSubsystem extends SubsystemBase {
 
   /** Creates a new DriveSubsystem. */
   public SwerveSubsystem() {
+    navxOffset = 0; 
   }
 
   @Override
   public void periodic() {
     // Update the odometry in the periodic block
     m_odometry.update(
-        Rotation2d.fromDegrees(navx.getAngle()),
+        Rotation2d.fromDegrees(getNavxWithOffset()),
         new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
             m_frontRight.getPosition(),
@@ -86,7 +89,8 @@ public class SwerveSubsystem extends SubsystemBase {
     m_rearLeft.print(); 
     m_rearRight.print(); 
     m_frontRight.print();
-    SmartDashboard.putNumber("Navx", ((getRotation2d().getDegrees() % 360) + 360) % 360);
+    SmartDashboard.putNumber("Navx", navx.getAngle());
+    SmartDashboard.putNumber("Navx w offset", getNavxWithOffset());
     SmartDashboard.putString("POSE", getPose().toString());
 
   }
@@ -111,7 +115,7 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public void resetOdometry(Pose2d pose) {
     m_odometry.resetPosition(
-        Rotation2d.fromDegrees(navx.getAngle()),
+        Rotation2d.fromDegrees(getNavxWithOffset()),
         new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
             m_frontRight.getPosition(),
@@ -123,6 +127,14 @@ public class SwerveSubsystem extends SubsystemBase {
 
   public void setZeroOdometer(Pose2d pose) {
     m_odometry.resetPosition(getRotation2d(), getModulePositions(), pose);
+  }
+
+  public void setNavxOffset(double offset) {
+    navxOffset = offset; 
+  }
+
+  public double getNavxWithOffset() {
+    return navx.getAngle() - navxOffset; 
   }
 
 
@@ -196,7 +208,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative
-            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered, navx.getRotation2d())
+            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered, new Rotation2d(Units.degreesToRadians(getNavxWithOffset())))
             : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
     SwerveDriveKinematics.desaturateWheelSpeeds(
         swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
@@ -256,6 +268,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
   /** Zeroes the heading of the robot. */
   public void zeroHeading() {
+    navxOffset = 0; 
     navx.reset();
   }
 

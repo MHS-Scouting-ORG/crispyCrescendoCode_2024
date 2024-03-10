@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -19,6 +20,7 @@ import frc.robot.Constants.IntegrationConstants.OperatorConstants;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.Constants.ShindexerConstants;
 import frc.robot.Constants.SwerveConstants.OIConstants;
+import frc.robot.commands.AutonomousCommands.A_PositionA;
 import frc.robot.commands.AutonomousCommands.A_PositionB;
 import frc.robot.commands.AutonomousCommands.S_DriveToPositionCommand;
 import frc.robot.commands.CrispyPositionCommands.AmpPosition;
@@ -27,6 +29,7 @@ import frc.robot.commands.CrispyPositionCommands.DownPosition;
 import frc.robot.commands.CrispyPositionCommands.FeedPosition;
 import frc.robot.commands.CrispyPositionCommands.FeedToIndexer;
 import frc.robot.commands.ElevatorCommands.ElevatorRestingPositionCmd;
+import frc.robot.commands.ElevatorCommands.ElevatorToSetpointCommand;
 import frc.robot.commands.ElevatorCommands.ElevatorToTopCmd;
 import frc.robot.commands.ElevatorCommands.ElevatorToTransferCmd;
 import frc.robot.commands.ElevatorCommands.ManualElevatorCmd;
@@ -204,11 +207,14 @@ public class RobotContainer {
     // Dy.onTrue(new ElevatorToTopCmd(elevatorSubsystem));
     DLeftBumper.whileTrue(new IntakeCmd(intakeSubsystem)); 
     DLeftBumper.whileFalse(new InstantCommand(intakeSubsystem::stopIntake)); 
+
+    DRightBumper.whileTrue(new IndexToShooterCommand(shooterSubsystem, indexSubsystem));
+    DRightBumper.whileFalse(new InstantCommand(shooterSubsystem::stop)); 
      
-    Dx.onTrue(new ElevatorToTransferCmd(elevatorSubsystem));
+    Dx.onTrue(new FeedToIndexer(indexSubsystem, intakeSubsystem));
     Da.onTrue(new DownPosition(elevatorSubsystem, pivotSubsystem));
-    Db.onTrue(new ShootAmpCommand(shooterSubsystem, indexSubsystem));
-    Dy.whileTrue(new IntakeShooterCommand(shooterSubsystem, indexSubsystem)); 
+    Db.onTrue(new ElevatorToSetpointCommand(elevatorSubsystem, 80)); //STARTING ELEV FOR AUTO
+    Dy.onTrue(new PivotPidCommand(pivotSubsystem, 32)); 
 
   }
 
@@ -222,14 +228,14 @@ public class RobotContainer {
     // An example command will be run in autonomous
     // return autonomousChooser.getSelected();
 
-    return new A_PositionB(swerveSubsystem, intakeSubsystem, indexSubsystem, shooterSubsystem, elevatorSubsystem, pivotSubsystem);
-    /* new SequentialCommandGroup(
+    return new A_PositionA(swerveSubsystem, intakeSubsystem, indexSubsystem, shooterSubsystem, elevatorSubsystem, pivotSubsystem);
+    /*  return new SequentialCommandGroup(
       new InstantCommand(() -> swerveSubsystem.zeroHeading()),
 
       new InstantCommand(() -> swerveSubsystem.setZeroOdometer(new Pose2d(0, 0, new Rotation2d(0)))),
 
-      new S_DriveToPositionCommand(swerveSubsystem, 0, 0, 90, true)
-    );*/
+      new S_DriveToPositionCommand(swerveSubsystem, Units.feetToMeters(5), 0, -90, true)
+    ); */
   }
 
   public Command setElevInit() {

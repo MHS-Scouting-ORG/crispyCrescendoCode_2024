@@ -23,8 +23,8 @@ public class S_DriveToPositionCommand extends Command {
     this.rotation = rotation;
     xPID = new PIDController(SwerveConstants.AutoConstants.KP_AUTO_TRANSLATION, SwerveConstants.AutoConstants.KI_AUTO_TRANSLATION, SwerveConstants.AutoConstants.KD_AUTO_TRANSLATION);
     yPID = new PIDController(SwerveConstants.AutoConstants.KP_AUTO_TRANSLATION, SwerveConstants.AutoConstants.KI_AUTO_TRANSLATION, SwerveConstants.AutoConstants.KD_AUTO_TRANSLATION);
-    zPID = new PIDController(SwerveConstants.AutoConstants.KP_AUTO_ROTATION, SwerveConstants.AutoConstants.KP_AUTO_ROTATION, SwerveConstants.AutoConstants.KD_AUTO_ROTATION);
-    zPID.enableContinuousInput(0, 360);
+    zPID = new PIDController(SwerveConstants.AutoConstants.KP_AUTO_ROTATION, SwerveConstants.AutoConstants.KI_AUTO_ROTATION, SwerveConstants.AutoConstants.KD_AUTO_ROTATION);
+    zPID.enableContinuousInput(-180, 180);
     xPID.setTolerance(translationTollerance);
     yPID.setTolerance(translationTollerance);
     zPID.setTolerance(SwerveConstants.AutoConstants.ROTATION_TOLLERANCE);
@@ -46,13 +46,20 @@ public class S_DriveToPositionCommand extends Command {
 
     double xSped = xPID.calculate(swerveSub.getPose().getX(), desiredX);
     double ySpeed = yPID.calculate(swerveSub.getPose().getY(), desiredY);
-    double zSpeed = !rotation ? 0 : zPID.calculate((((swerveSub.getRotation2d().getDegrees() % 360) + 360) % 360), desiredZ);
+    double zSpeed = !rotation ? 0 : -zPID.calculate(swerveSub.getPose().getRotation().getDegrees(), desiredZ);
+    //double zSpeed = !rotation ? 0 : -zPID.calculate((((swerveSub.getRotation2d().getDegrees() % 360) + 360) % 360), desiredZ);
     // zSpeed = 0.01/zSpeed; 
-      swerveSub.drive(xSped, ySpeed, zSpeed, true, false);
+
+    SmartDashboard.putNumber("xSpeed", xSped);
+    SmartDashboard.putNumber("ySpeed", ySpeed);
+    SmartDashboard.putNumber("zSpeed", zSpeed);
+
+
+    swerveSub.drive(xSped, ySpeed, zSpeed, true, false);
     
     SmartDashboard.putNumber("xSetpt", Units.metersToFeet(desiredX));
     SmartDashboard.putNumber("ySetpt", Units.metersToFeet(desiredY));
-    SmartDashboard.putNumber("zSetpt", Units.feetToMeters(desiredZ));
+    SmartDashboard.putNumber("zSetpt", desiredZ);
 
     SmartDashboard.putBoolean("x at setpt", xPID.atSetpoint());
     SmartDashboard.putBoolean("y at setpt", yPID.atSetpoint());
