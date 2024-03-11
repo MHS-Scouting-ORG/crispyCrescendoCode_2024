@@ -20,6 +20,7 @@ import frc.robot.Constants.IntegrationConstants.OperatorConstants;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.Constants.ShindexerConstants;
 import frc.robot.Constants.SwerveConstants.OIConstants;
+import frc.robot.commands.LimelightTurnAlignCmd;
 import frc.robot.commands.AutonomousCommands.A_PositionA;
 import frc.robot.commands.AutonomousCommands.A_PositionB;
 import frc.robot.commands.AutonomousCommands.S_DriveToPositionCommand;
@@ -209,13 +210,14 @@ public class RobotContainer {
 
     DRightBumper.whileTrue(new IndexToShooterAutoCommand(shooterSubsystem, indexSubsystem));
     DRightBumper.whileFalse(new InstantCommand(shooterSubsystem::stop)); 
+    DRightBumper.whileTrue(new LimelightTurnAlignCmd(swerveSubsystem, xbox::getLeftY, xbox::getLeftX, 0));
     DRightBumper.onFalse(new DownPosition(elevatorSubsystem, pivotSubsystem));
      
     Dx.onTrue(new FeedPosition(elevatorSubsystem, pivotSubsystem, indexSubsystem, intakeSubsystem));
     Da.whileTrue(new OuttakeCmd(intakeSubsystem)); 
     Da.whileFalse(new InstantCommand(intakeSubsystem::stopIntake));
-    // Dy.onTrue(); 
-
+    Dy.onTrue(new PivotPidCommand(pivotSubsystem, pivotSubsystem.statsCalcAngle));
+    
     //OPERATOR 
     ORightBumper.onTrue(new ElevatorToTopCmd(elevatorSubsystem)); 
     OLeftBumper.onTrue(new DownPosition(elevatorSubsystem, pivotSubsystem)); 

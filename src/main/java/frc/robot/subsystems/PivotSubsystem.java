@@ -46,7 +46,7 @@ public class PivotSubsystem extends SubsystemBase {
   private double horizontalDist;
   private double statsAngleCalc; 
 
-  private double statsCalcAngle;
+  public double statsCalcAngle;
 
   public PivotSubsystem(){
     pivotMotor = new CANSparkMax(PivotConstants.PIVOT_MOTOR_PORT, MotorType.kBrushless);
@@ -164,10 +164,10 @@ public class PivotSubsystem extends SubsystemBase {
   public void periodic() {
     horizontalDist = Units.inchesToMeters(43) / (Math.tan(Units.degreesToRadians(LimelightHelpers.getTY("limelight") + 15)));
     statsCalcAngle = 84.3 + (-9.18 * horizontalDist) + (0.369 * Math.pow(horizontalDist, 2));
+    statsCalcAngle /=2;
 
     finalAngle = Units.radiansToDegrees(Math.atan((Units.inchesToMeters(43) + Units.inchesToMeters(21))/horizontalDist));
-    statsAngleCalc = 86 + (-9.5 * horizontalDist) + (0.386 * Math.pow(horizontalDist, 2)); 
-    statsAngleCalc /= 2;
+
   
     double pidSpeed = 0;
 
@@ -198,7 +198,7 @@ public class PivotSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("Top limit switch pressed?", topLimitSwitchPressed());
     SmartDashboard.putNumber("Encoder values", returnEncoder());
     SmartDashboard.putBoolean("Bottom limit switch pressed?", bottomLimitSwitchPressed());
-    SmartDashboard.putNumber("calculated angle", finalAngle);
+    SmartDashboard.putNumber("calculated angle", statsCalcAngle);
     SmartDashboard.putNumber("distance from limelight", horizontalDist);
     SmartDashboard.putBoolean("at setpoint?", atSetpoint());
     SmartDashboard.putNumber("pid setpoint", setpoint);
@@ -206,6 +206,8 @@ public class PivotSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumber("TY", LimelightHelpers.getTY("limelight"));
     SmartDashboard.putNumber("stats calc angle", returnCalcAngle());
+    
+    SmartDashboard.putNumber("TX", LimelightHelpers.getTX("limelight"));
 
   }
 }
