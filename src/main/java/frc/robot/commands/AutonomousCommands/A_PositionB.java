@@ -13,7 +13,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.CrispyPositionCommands.FeedPosition;
 import frc.robot.commands.CrispyPositionCommands.FeedToIndexer;
+import frc.robot.commands.ElevatorCommands.ElevatorToTopCmd;
 import frc.robot.commands.ElevatorCommands.ElevatorToTransferCmd;
 import frc.robot.commands.IntakeCommands.DeliverCmd;
 import frc.robot.commands.IntakeCommands.IntakeCmd;
@@ -40,6 +42,8 @@ public class A_PositionB extends SequentialCommandGroup {
         new InstantCommand(() -> swerveSub.zeroHeading()),
 
         new InstantCommand(() -> swerveSub.setZeroOdometer(new Pose2d(0, 0, new Rotation2d(0)))),
+
+        new ElevatorToTransferCmd(elevSub),
 
         new IndexToShooterAutoCommand(shooterSub, indexSub), // shoots preload into amp
 

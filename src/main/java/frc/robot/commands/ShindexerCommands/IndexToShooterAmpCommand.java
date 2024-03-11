@@ -6,13 +6,13 @@ import frc.robot.Constants.ShindexerConstants;
 import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
-public class ShootAmpCommand extends Command {
+public class IndexToShooterAmpCommand extends Command {
 
   private ShooterSubsystem shootSub;
   private IndexerSubsystem indexSub;
   private Timer timer;
 
-  public ShootAmpCommand(ShooterSubsystem sSub, IndexerSubsystem iSub) {
+  public IndexToShooterAmpCommand(ShooterSubsystem sSub, IndexerSubsystem iSub) {
     shootSub = sSub;
     indexSub = iSub;
     timer = new Timer();
@@ -33,8 +33,13 @@ public class ShootAmpCommand extends Command {
   @Override
   public void execute() {
     // change statement to check if shooter rpm < specified speed
-    indexSub.index(0.9); 
-    shootSub.shooter(0.2);
+    if(shootSub.getRPM() > ShindexerConstants.RPM_AMP_SPEED_LIMIT){
+      indexSub.index(0.9);
+      shootSub.shooter(0.2);
+      
+    } else {
+      shootSub.shooter(0.2);
+    }
   }
 
   @Override
@@ -46,7 +51,7 @@ public class ShootAmpCommand extends Command {
   @Override
   public boolean isFinished() {
     //return shootSub.getRPM() > ShindexerConstants.RPM_SPEED_LIMIT + 200;
-    return timer.get() >= 4;
+    return timer.get() >= 2;
     //return false;
   }
 

@@ -28,7 +28,7 @@ public class SwerveToHeadCommand extends Command {
 
     rotationPID = new PIDController(SwerveConstants.DriveConstants.kRotationP, SwerveConstants.DriveConstants.kRotationI, SwerveConstants.DriveConstants.kRotationD);
     rotationPID.setTolerance(SwerveConstants.DriveConstants.kRotationTolerance);
-    rotationPID.enableContinuousInput(0, 360);
+    rotationPID.enableContinuousInput(-180, 180);
 
     addRequirements(swerveSubsystem);
   }

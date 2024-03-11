@@ -72,7 +72,7 @@ public class RobotContainer {
   //////////////////////////////
   private final XboxController xbox = new XboxController(OperatorConstants.kDriverControllerPort);
   private final Joystick joystick = new Joystick(3);
-  private final XboxController xboxTesting = new XboxController(1);
+  private final XboxController xboxOp = new XboxController(1);
 
   //////////////////////////////
   //         TRIGGERS         //
@@ -110,13 +110,13 @@ public class RobotContainer {
   private final JoystickButton DLeftBumper = new JoystickButton(xbox, XboxController.Button.kLeftBumper.value);
   private final JoystickButton DRightBumper = new JoystickButton(xbox, XboxController.Button.kRightBumper.value);
 
-  private final JoystickButton Oy = new JoystickButton(xbox, XboxController.Button.kY.value); 
-  private final JoystickButton Ox = new JoystickButton(xbox, XboxController.Button.kX.value);
-  private final JoystickButton Oa = new JoystickButton(xbox, XboxController.Button.kA.value);
-  private final JoystickButton Ob = new JoystickButton(xbox, XboxController.Button.kB.value);
+  private final JoystickButton Oy = new JoystickButton(xboxOp, XboxController.Button.kY.value); 
+  private final JoystickButton Ox = new JoystickButton(xboxOp, XboxController.Button.kX.value);
+  private final JoystickButton Oa = new JoystickButton(xboxOp, XboxController.Button.kA.value);
+  private final JoystickButton Ob = new JoystickButton(xboxOp, XboxController.Button.kB.value);
 
-  private final JoystickButton OLeftBumper = new JoystickButton(xbox, XboxController.Button.kLeftBumper.value);
-  private final JoystickButton ORightBumper = new JoystickButton(xbox, XboxController.Button.kRightBumper.value);
+  private final JoystickButton OLeftBumper = new JoystickButton(xboxOp, XboxController.Button.kLeftBumper.value);
+  private final JoystickButton ORightBumper = new JoystickButton(xboxOp, XboxController.Button.kRightBumper.value);
 
   //////////////////////////////
   //        AUTO CHOICES      //
@@ -138,7 +138,7 @@ public class RobotContainer {
                 true, false),
             swerveSubsystem));
 
-        pivotSubsystem.setDefaultCommand(new ManualPivotCommand(pivotSubsystem, () -> xboxTesting.getRightY() * 0.5));
+        // pivotSubsystem.setDefaultCommand(new ManualPivotCommand(pivotSubsystem, () -> xboxOp.getRightY() * 0.5));
 
   }
 
@@ -203,18 +203,25 @@ public class RobotContainer {
       new DownPosition(elevatorSubsystem, pivotSubsystem)
     )); */
 
-    //AMP TEST 
-    // Dy.onTrue(new ElevatorToTopCmd(elevatorSubsystem));
+    //DRIVER 
     DLeftBumper.whileTrue(new IntakeCmd(intakeSubsystem)); 
     DLeftBumper.whileFalse(new InstantCommand(intakeSubsystem::stopIntake)); 
 
-    DRightBumper.whileTrue(new IndexToShooterCommand(shooterSubsystem, indexSubsystem));
+    DRightBumper.whileTrue(new IndexToShooterAutoCommand(shooterSubsystem, indexSubsystem));
     DRightBumper.whileFalse(new InstantCommand(shooterSubsystem::stop)); 
+    DRightBumper.onFalse(new DownPosition(elevatorSubsystem, pivotSubsystem));
      
-    Dx.onTrue(new FeedToIndexer(indexSubsystem, intakeSubsystem));
-    Da.onTrue(new DownPosition(elevatorSubsystem, pivotSubsystem));
-    Db.onTrue(new ElevatorToSetpointCommand(elevatorSubsystem, 80)); //STARTING ELEV FOR AUTO
-    Dy.onTrue(new PivotPidCommand(pivotSubsystem, 32)); 
+    Dx.onTrue(new FeedPosition(elevatorSubsystem, pivotSubsystem, indexSubsystem, intakeSubsystem));
+    Da.whileTrue(new OuttakeCmd(intakeSubsystem)); 
+    Da.whileFalse(new InstantCommand(intakeSubsystem::stopIntake));
+    // Dy.onTrue(); 
+
+    //OPERATOR 
+    ORightBumper.onTrue(new ElevatorToTopCmd(elevatorSubsystem)); 
+    OLeftBumper.onTrue(new DownPosition(elevatorSubsystem, pivotSubsystem)); 
+
+    Ob.onTrue(new AmpPosition(elevatorSubsystem, pivotSubsystem, indexSubsystem, intakeSubsystem, shooterSubsystem)); 
+    Oy.onTrue(new PivotPidCommand(pivotSubsystem, 60)); 
 
   }
 
@@ -228,7 +235,7 @@ public class RobotContainer {
     // An example command will be run in autonomous
     // return autonomousChooser.getSelected();
 
-    return new A_PositionA(swerveSubsystem, intakeSubsystem, indexSubsystem, shooterSubsystem, elevatorSubsystem, pivotSubsystem);
+    return new A_PositionB(swerveSubsystem, intakeSubsystem, indexSubsystem, shooterSubsystem, elevatorSubsystem, pivotSubsystem);
     /*  return new SequentialCommandGroup(
       new InstantCommand(() -> swerveSubsystem.zeroHeading()),
 

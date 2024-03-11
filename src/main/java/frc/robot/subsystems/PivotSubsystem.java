@@ -58,12 +58,12 @@ public class PivotSubsystem extends SubsystemBase {
     encoder.setZeroOffset(270);
     encoder.setPositionConversionFactor(360);
     
-    pid = new PIDController(0.02, 0, 0);
+    pid = new PIDController(0.03, 0, 0);
     setpoint = 0;
     setpointTolerance = 1.5;
 
     manualSpeed = 0;
-    maxPidSpeed = 0.7;
+    maxPidSpeed = 0.9;
 
     pid.enableContinuousInput(0, 360); 
     pid.setTolerance(1.5);
