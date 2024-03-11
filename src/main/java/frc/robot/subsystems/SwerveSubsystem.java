@@ -18,6 +18,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants.LimelightHelpers;
 import frc.robot.Constants.SwerveConstants.DriveConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SwerveUtils;
@@ -57,6 +58,10 @@ public class SwerveSubsystem extends SubsystemBase {
   private SlewRateLimiter m_rotLimiter = new SlewRateLimiter(DriveConstants.kRotationalSlewRate);
   private double m_prevTime = WPIUtilJNI.now() * 1e-6;
 
+  //Blue and red alliance tags
+  private int blueAllianceTags[] = new int[4];
+  private int redAllianceTags[] = new int[4];
+
   // Odometry class for tracking robot pose
   SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
       DriveConstants.kDriveKinematics,
@@ -71,7 +76,30 @@ public class SwerveSubsystem extends SubsystemBase {
   /** Creates a new DriveSubsystem. */
   public SwerveSubsystem() {
     navxOffset = 0; 
+    
+    blueAllianceTags = new int[]{1,2,6,7};
+    redAllianceTags = new int[]{4,5,9,10};
   }
+
+  
+  public boolean blueAllianceCheck(){
+    for(int i = 0; i < blueAllianceTags.length; i++){
+      if(LimelightHelpers.getFiducialID("limelight") == blueAllianceTags[i]){
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public boolean redAllianceCheck(){
+    for(int i = 0; i < redAllianceTags.length; i++){
+      if(LimelightHelpers.getFiducialID("limelight") == redAllianceTags[i]){
+        return true;
+      }
+    }
+    return false;
+  }
+
 
   @Override
   public void periodic() {
