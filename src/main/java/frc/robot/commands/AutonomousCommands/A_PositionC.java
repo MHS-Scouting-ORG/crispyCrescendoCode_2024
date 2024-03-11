@@ -1,11 +1,15 @@
 package frc.robot.commands.AutonomousCommands;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.CrispyPositionCommands.FeedPosition;
 import frc.robot.commands.CrispyPositionCommands.FeedToIndexer;
 import frc.robot.commands.ElevatorCommands.ElevatorToTransferCmd;
 import frc.robot.commands.IntakeCommands.IntakeCmd;
@@ -26,21 +30,28 @@ public class A_PositionC extends SequentialCommandGroup {
       red = -1;
     }
     addCommands(
-        new IndexToShooterCommand(shooterSub, indexSub), // shoot preload
+      new InstantCommand(() -> swerveSub.resetOdometry(new Pose2d(0, 0, new Rotation2d()))),
 
-        // Runs intake and drives to note. At the same time, sets elevator and pivot
+      new InstantCommand(() -> swerveSub.zeroHeading()), 
+
+        new S_DriveToPositionCommand(swerveSub, 17.5, 0, 0, false),
+
+        new IndexToShooterCommand(shooterSub, indexSub),
+
+
         new ParallelCommandGroup(
-            new IntakeCmd(intakeSub),
+          new IntakeCmd(intakeSub),
 
-            new S_DriveToPositionCommand(swerveSub, 0, red * 0, 0, true), // FIXME rotation to be determined
+          new S_DriveToPositionCommand(swerveSub, 25, red * 8, 0, false), // FIXME rotation to be determined
 
-            new PivotPidCommand(pivotSub, 0)),
+          new SequentialCommandGroup(      
+            new ElevatorToTransferCmd(elevSub), 
 
-        new S_DriveToPositionCommand(swerveSub, 0, red * 0, 0, true),
-
-        new FeedToIndexer(indexSub, intakeSub),
-
-        new IndexToShooterCommand(shooterSub, indexSub) // shoot second note
+            new PivotPidCommand(pivotSub, 45)
+          )
+        ),
+          
+        new FeedToIndexer(indexSub, intakeSub)
     );
   }
 }
