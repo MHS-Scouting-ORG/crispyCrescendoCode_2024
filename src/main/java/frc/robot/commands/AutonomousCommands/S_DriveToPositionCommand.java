@@ -44,8 +44,8 @@ public class S_DriveToPositionCommand extends Command {
   public void execute() {
     SmartDashboard.putString("CURRENT CMD", getName());
 
-    double xSped = xPID.calculate(swerveSub.getPose().getX(), desiredX)/2;
-    double ySpeed = yPID.calculate(swerveSub.getPose().getY(), desiredY)/2;
+    double xSped = xPID.calculate(swerveSub.getPose().getX(), desiredX);
+    double ySpeed = yPID.calculate(swerveSub.getPose().getY(), desiredY);
     double zSpeed = !rotation ? 0 : -zPID.calculate(swerveSub.getPose().getRotation().getDegrees(), desiredZ);
     //double zSpeed = !rotation ? 0 : -zPID.calculate((((swerveSub.getRotation2d().getDegrees() % 360) + 360) % 360), desiredZ);
     // zSpeed = 0.01/zSpeed; 

@@ -70,7 +70,7 @@ public class LimelightTurnAlignCmd extends Command {
     double rotationSpeed = anglePID.calculate(LimelightHelpers.getTX("limelight"), -4.18);
    
     if(LimelightHelpers.getTV("limelight")){
-     if ((ally.get() == Alliance.Blue && swerveSubs.blueAllianceCheck()) || (ally.get() == Alliance.Red && swerveSubs.redAllianceCheck())){
+     if (DriverStation.getAlliance().isPresent() && ((ally.get() == Alliance.Blue && swerveSubs.blueAllianceCheck()) || (ally.get() == Alliance.Red && swerveSubs.redAllianceCheck()))){
         swerveSubs.drive(-MathUtil.applyDeadband(xSpeed, OIConstants.kDriveDeadband), -MathUtil.applyDeadband(ySpeed, OIConstants.kDriveDeadband), rotationSpeed, true, false); 
       }
     }

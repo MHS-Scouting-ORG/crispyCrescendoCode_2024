@@ -240,13 +240,13 @@ public class RobotContainer {
     // return autonomousChooser.getSelected();
 
     return new A_PositionA(swerveSubsystem, intakeSubsystem, indexSubsystem, shooterSubsystem, elevatorSubsystem, pivotSubsystem);
-    /*  return new SequentialCommandGroup(
-      new InstantCommand(() -> swerveSubsystem.zeroHeading()),
+    // return new SequentialCommandGroup(
+    //   new InstantCommand(() -> swerveSubsystem.zeroHeading()),
 
-      new InstantCommand(() -> swerveSubsystem.setZeroOdometer(new Pose2d(0, 0, new Rotation2d(0)))),
+    //   new InstantCommand(() -> swerveSubsystem.setZeroOdometer(new Pose2d(0, 0, new Rotation2d(0)))),
 
-      new S_DriveToPositionCommand(swerveSubsystem, Units.feetToMeters(5), 0, -90, true)
-    ); */
+    //   new S_DriveToPositionCommand(swerveSubsystem, 2, -2, 0, false)
+    // ); 
   }
 
   public Command setElevInit() {

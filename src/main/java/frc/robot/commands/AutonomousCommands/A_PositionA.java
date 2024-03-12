@@ -38,7 +38,7 @@ public class A_PositionA extends SequentialCommandGroup {
 
       new IndexToShooterAutoCommand(shooterSub, indexSub), // shoots preload into amp 
 
-      new S_DriveToPositionCommand(swerveSub, 3, red * -1, 0, false),
+      new S_DriveToPositionCommand(swerveSub, 3, red * -7, 0, false),
 
       //new S_DriveToPositionCommand(swerveSub, 1, red * 0 , 60, true),
 
