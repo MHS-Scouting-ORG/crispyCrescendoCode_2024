@@ -34,24 +34,17 @@ public class A_PositionA extends SequentialCommandGroup {
 
       new InstantCommand(() -> swerveSub.zeroHeading()), 
 
-      new InstantCommand(() -> swerveSub.setNavxOffset(-60)),
+      // new ElevatorToTransferCmd(elevSub),
 
-        new IndexToShooterAutoCommand(shooterSub, indexSub), // shoot preload
+      new IndexToShooterAutoCommand(shooterSub, indexSub), // shoots preload into amp 
 
-        // Runs intake and drives to note. At the same time, sets elevator and pivot
-        new ParallelCommandGroup(
-            new IntakeCmd(intakeSub),
+      new S_DriveToPositionCommand(swerveSub, 3, red * -1, 0, false),
 
-            new S_DriveToPositionCommand(swerveSub, 6.5, red * 2, 0, false),//, // FIXME rotation to be determined
+      //new S_DriveToPositionCommand(swerveSub, 1, red * 0 , 60, true),
 
-           new PivotPidCommand(pivotSub, 32)
-           ), 
-        
-      new S_DriveToPositionCommand(swerveSub, 6.5, red * 2, 92, true), 
+      new InstantCommand(() -> swerveSub.resetOdometry(new Pose2d(0, 0, new Rotation2d()))),
 
-       new FeedToIndexer(indexSub, intakeSub),
-
-       new IndexToShooterAutoCommand(shooterSub, indexSub) // shoot second note
+      new InstantCommand(() -> swerveSub.zeroHeading())
     );
   }
 }

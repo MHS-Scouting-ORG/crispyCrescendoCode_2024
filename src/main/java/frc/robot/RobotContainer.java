@@ -216,14 +216,16 @@ public class RobotContainer {
     Dx.onTrue(new FeedPosition(elevatorSubsystem, pivotSubsystem, indexSubsystem, intakeSubsystem));
     Da.whileTrue(new OuttakeCmd(intakeSubsystem)); 
     Da.whileFalse(new InstantCommand(intakeSubsystem::stopIntake));
-    Dy.onTrue(new PivotPidCommand(pivotSubsystem, pivotSubsystem.statsCalcAngle));
+    // Dy.whileTrue(new IndexerCommand(indexSubsystem)); 
+    // Dy.whileFalse(new InstantCommand(indexSubsystem::stop)); 
     
     //OPERATOR 
     ORightBumper.onTrue(new ElevatorToTopCmd(elevatorSubsystem)); 
     OLeftBumper.onTrue(new DownPosition(elevatorSubsystem, pivotSubsystem)); 
 
     Ob.onTrue(new AmpPosition(elevatorSubsystem, pivotSubsystem, indexSubsystem, intakeSubsystem, shooterSubsystem)); 
-    Oy.onTrue(new PivotPidCommand(pivotSubsystem, 60)); 
+    Oy.onTrue(new RunToTopLim(pivotSubsystem)); 
+    Ox.onTrue(new FeedPosition(elevatorSubsystem, pivotSubsystem, indexSubsystem, intakeSubsystem));
 
   }
 
@@ -237,7 +239,7 @@ public class RobotContainer {
     // An example command will be run in autonomous
     // return autonomousChooser.getSelected();
 
-    return new A_PositionB(swerveSubsystem, intakeSubsystem, indexSubsystem, shooterSubsystem, elevatorSubsystem, pivotSubsystem);
+    return new A_PositionA(swerveSubsystem, intakeSubsystem, indexSubsystem, shooterSubsystem, elevatorSubsystem, pivotSubsystem);
     /*  return new SequentialCommandGroup(
       new InstantCommand(() -> swerveSubsystem.zeroHeading()),
 

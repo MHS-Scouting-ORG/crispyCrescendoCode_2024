@@ -47,10 +47,10 @@ public final class SwerveConstants {
         new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
 
     // Angular offsets of the modules relative to the chassis in radians
-    public static final double kFrontLeftChassisAngularOffset = (2.48); //5
-    public static final double kFrontRightChassisAngularOffset = (3.76); //8
-    public static final double kBackLeftChassisAngularOffset = (3.63); //6
-    public static final double kBackRightChassisAngularOffset = (3.37); //7
+    public static final double kFrontLeftChassisAngularOffset = (2.45); //5
+    public static final double kFrontRightChassisAngularOffset = (3.72); //8
+    public static final double kBackLeftChassisAngularOffset = (3.51); //6
+    public static final double kBackRightChassisAngularOffset = (3.36); //7
 
     // SPARK MAX CAN IDs
     public static final int kFrontLeftDrivingCanId = 1;
@@ -140,9 +140,9 @@ public final class SwerveConstants {
     public static final double kPThetaController = 1;
 
     //AUTO PID 
-    public static final double KP_AUTO_TRANSLATION = 0.9;
+    public static final double KP_AUTO_TRANSLATION = 0.5;
     public static final double KI_AUTO_TRANSLATION = 0.0;
-    public static final double KD_AUTO_TRANSLATION = 0.1;
+    public static final double KD_AUTO_TRANSLATION = 0.05;
     public static final double TRANSLATION_TOLLERANCE = 0.03; // tolerance in meters
 
     public static final double KP_AUTO_ROTATION = 0.008;

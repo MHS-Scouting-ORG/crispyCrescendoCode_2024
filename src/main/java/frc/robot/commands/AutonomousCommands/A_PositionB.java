@@ -63,7 +63,7 @@ public class A_PositionB extends SequentialCommandGroup {
           new IndexToShooterAutoCommand(shooterSub, indexSub)
         ),
 
-        new S_DriveToPositionCommand(swerveSub, 17.5, red * 5, 0, false) // drive to note
+        new S_DriveToPositionCommand(swerveSub, 13, red * 3, 0, false) // drive to note
     );
   }
 }
