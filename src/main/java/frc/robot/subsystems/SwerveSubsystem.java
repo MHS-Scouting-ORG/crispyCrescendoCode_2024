@@ -118,7 +118,6 @@ public class SwerveSubsystem extends SubsystemBase {
     m_rearRight.print(); 
     m_frontRight.print();
     SmartDashboard.putNumber("Navx", navx.getAngle());
-    SmartDashboard.putNumber("Navx w offset", getNavxWithOffset());
     SmartDashboard.putString("POSE", getPose().toString());
 
   }
@@ -159,10 +158,6 @@ public class SwerveSubsystem extends SubsystemBase {
 
   public void setNavxOffset(double offset) {
     navxOffset = offset; 
-  }
-
-  public double getNavxWithOffset() {
-    return navx.getAngle() - navxOffset; 
   }
 
 
@@ -297,7 +292,7 @@ public class SwerveSubsystem extends SubsystemBase {
   /** Zeroes the heading of the robot. */
   public void zeroHeading() {
     navxOffset = 0; 
-    navx.reset();
+    navx.zeroYaw();
   }
 
   /**

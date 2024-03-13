@@ -9,11 +9,11 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.CrispyPositionCommands.FeedPosition;
 import frc.robot.commands.CrispyPositionCommands.FeedToIndexer;
 import frc.robot.commands.ElevatorCommands.ElevatorToTransferCmd;
 import frc.robot.commands.IntakeCommands.IntakeCmd;
 import frc.robot.commands.PivotCommands.PivotPidCommand;
+import frc.robot.commands.ShindexerCommands.IndexToShooterAutoCommand;
 import frc.robot.commands.ShindexerCommands.IndexToShooterCommand;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IndexerSubsystem;
@@ -34,24 +34,22 @@ public class A_PositionC extends SequentialCommandGroup {
 
       new InstantCommand(() -> swerveSub.zeroHeading()), 
 
-        new S_DriveToPositionCommand(swerveSub, 17.5, 0, 0, false),
+      // new ElevatorToTransferCmd(elevSub),
 
-        new IndexToShooterCommand(shooterSub, indexSub),
+      new IndexToShooterAutoCommand(shooterSub, indexSub), // shoots preload into amp 
 
+      new InstantCommand(() -> swerveSub.resetOdometry(new Pose2d(0, 0, new Rotation2d()))),
 
-        new ParallelCommandGroup(
-          new IntakeCmd(intakeSub),
+      new InstantCommand(() -> swerveSub.zeroHeading()), 
 
-          new S_DriveToPositionCommand(swerveSub, 25, red * 8, 0, false), // FIXME rotation to be determined
+      new S_DriveToPositionCommand(swerveSub, 16, red * 7, 0, false),
+      
 
-          new SequentialCommandGroup(      
-            new ElevatorToTransferCmd(elevSub), 
+      //new S_DriveToPositionCommand(swerveSub, 1, red * 0 , 60, true),
 
-            new PivotPidCommand(pivotSub, 45)
-          )
-        ),
-          
-        new FeedToIndexer(indexSub, intakeSub)
+      new InstantCommand(() -> swerveSub.resetOdometry(new Pose2d(0, 0, new Rotation2d()))),
+
+      new InstantCommand(() -> swerveSub.zeroHeading())
     );
   }
 }

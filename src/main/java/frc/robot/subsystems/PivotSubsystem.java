@@ -1,17 +1,9 @@
-// hardstop at the start position
-// subwoofer position, amp position, feed position?
-
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LimelightHelpers;
 import frc.robot.Constants.PivotConstants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.networktables.DoubleArraySubscriber;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
-
 //import com.revrobotics.SparkPIDController;
 
 import com.revrobotics.AbsoluteEncoder;
@@ -22,7 +14,6 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.math.controller.PIDController;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 
-import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
 
 public class PivotSubsystem extends SubsystemBase {
@@ -38,15 +29,12 @@ public class PivotSubsystem extends SubsystemBase {
 
   private double manualSpeed;
   private double maxPidSpeed;
-  
-  //private double distance;
 
-  private double finalAngle;
+  //private double finalAngle;
 
-  private double horizontalDist;
-  private double statsAngleCalc; 
+  public double horizontalDist;
 
-  public double statsCalcAngle;
+  private double statsCalcAngle;
 
   public PivotSubsystem(){
     pivotMotor = new CANSparkMax(PivotConstants.PIVOT_MOTOR_PORT, MotorType.kBrushless);
@@ -54,22 +42,24 @@ public class PivotSubsystem extends SubsystemBase {
     limitSwitch = new DigitalInput(PivotConstants.PIVOT_TOP_LIMIT);
     bottomLimitSwitch = new DigitalInput(PivotConstants.PIVOT_BOTTOM_LIMIT);
     encoder = pivotMotor.getAbsoluteEncoder(Type.kDutyCycle);
-  
+    
     encoder.setZeroOffset(270 - 63);
     encoder.setPositionConversionFactor(360);
     
-    pid = new PIDController(0.03, 0, 0);
+    pid = new PIDController(PivotConstants.PIVOT_KP, PivotConstants.PIVOT_KI, PivotConstants.PIVOT_KD);
     setpoint = 0;
     setpointTolerance = 1.5;
 
     manualSpeed = 0;
-    maxPidSpeed = 0.9;
+    maxPidSpeed = PivotConstants.MAX_SPEED;
+    statsCalcAngle = 0;
+    horizontalDist = 0;
 
     pid.enableContinuousInput(0, 360); 
     pid.setTolerance(1.5);
-
   }
 
+ // sets pivotMotor to brake mode
   public void init(){
     pivotMotor.setIdleMode(IdleMode.kBrake);
   }
@@ -78,46 +68,47 @@ public class PivotSubsystem extends SubsystemBase {
   // ENCODER METHODS  //
   //////////////////////
 
+  // returns current encoder
   public double returnEncoder(){
     return encoder.getPosition();
-  }
-
-  public void resetEnc(){
-    encoder.setZeroOffset(encoder.getPosition());
   }
 
   ///////////////////
   //  PID METHODS //
   //////////////////
 
+  // enable pid for pid commands
   public void enablePid(){
     pidOn = true;
     changeSetpoint(returnEncoder()); 
   }
-
+  // disables pid for pid commands
   public void disablePid(){
     pidOn = false;
   }
 
+    // changes setPoint for the pid 
   public void changeSetpoint(double newSetpoint){
-    setpoint = 360.0 - newSetpoint;
+    setpoint = 360 - newSetpoint;
   }
 
   /////////////////////
   //  CHECK METHODS  //
   ////////////////////
 
+  // checks if topLimitSwitch is pressed
   public boolean topLimitSwitchPressed(){
     return !limitSwitch.get();
   }
 
+  // checks if bottomLimitSwitch is pressed
   public boolean bottomLimitSwitchPressed(){
     return !bottomLimitSwitch.get();
   }
 
+   // checks if pivot reached the setPoint 
   public boolean atSetpoint(){ 
     double error1 = setpoint - returnEncoder();
-    SmartDashboard.putNumber("error", error1);
     return Math.abs(error1) < setpointTolerance;
   }
 
@@ -125,10 +116,12 @@ public class PivotSubsystem extends SubsystemBase {
   //  MOVEMENT METHODS   //
   ////////////////////////
 
+  // stops the pivotMotor
   public void stopMotor(){
     pivotMotor.set(0);
   }
 
+  // deadzone for joyStick
   public double deadzone(double speed){
     if(Math.abs(speed) < 0.1){
       return 0;
@@ -138,6 +131,7 @@ public class PivotSubsystem extends SubsystemBase {
     }
   }
 
+  //setting the speed manually to the joyStick
   public void setManualSpeed(double speed){
     manualSpeed = deadzone(speed);
   }
@@ -146,30 +140,25 @@ public class PivotSubsystem extends SubsystemBase {
   //  LIMELIGHT METHODS  //
   ////////////////////////
 
-  // returns the encoder count of the angle shooter should go to
-  public double angleSubwooferShot(){
-    return finalAngle;
-  }
-
-  public double getDistanceFromTarget(){
-    double distance = LimelightHelpers.getCameraPose3d_TargetSpace("limelight").getTranslation().getNorm();
-    return distance;
-  }
+  // public double angleSubwooferShot(){
+  //   return finalAngle;
+  // }
 
   public double returnCalcAngle (){
-    SmartDashboard.putNumber("[P] method statsCalcAngle", statsCalcAngle); 
+    statsCalcAngle = 84.3 + (-9.18 * horizontalDist) + (0.369 * Math.pow(horizontalDist, 2));
+    statsCalcAngle /= 2;
     return statsCalcAngle;
+  }
+
+  public double returnHorizontalDist(){
+    horizontalDist = Units.inchesToMeters(43) / (Math.tan(Units.degreesToRadians(LimelightHelpers.getTY("limelight") + 15)));
+    return horizontalDist;
   }
  
   @Override
   public void periodic() {
-    horizontalDist = Units.inchesToMeters(43) / (Math.tan(Units.degreesToRadians(LimelightHelpers.getTY("limelight") + 15)));
-    statsCalcAngle = 84.3 + (-9.18 * horizontalDist) + (0.369 * Math.pow(horizontalDist, 2));
-    statsCalcAngle /= 2;
+    //finalAngle = Units.radiansToDegrees(Math.atan((Units.inchesToMeters(43) + Units.inchesToMeters(21))/horizontalDist));
 
-    finalAngle = Units.radiansToDegrees(Math.atan((Units.inchesToMeters(43) + Units.inchesToMeters(21))/horizontalDist));
-
-  
     double pidSpeed = 0;
 
     if(pidOn){
@@ -194,21 +183,16 @@ public class PivotSubsystem extends SubsystemBase {
 
     pivotMotor.set(pidSpeed);
 
-    SmartDashboard.putBoolean("Pid On?", pidOn);
-    SmartDashboard.putNumber("Speed", pidSpeed);
-    SmartDashboard.putBoolean("Top limit switch pressed?", topLimitSwitchPressed());
-    SmartDashboard.putNumber("Encoder values", returnEncoder());
-    SmartDashboard.putBoolean("Bottom limit switch pressed?", bottomLimitSwitchPressed());
-    SmartDashboard.putNumber("calculated angle", returnCalcAngle());
-    SmartDashboard.putNumber("distance from limelight", horizontalDist);
-    SmartDashboard.putBoolean("at setpoint?", atSetpoint());
-    SmartDashboard.putNumber("pid setpoint", setpoint);
-    SmartDashboard.putNumber("pid tolerance", setpointTolerance);
+    SmartDashboard.putBoolean("[P] Pid On?", pidOn);
+    SmartDashboard.putNumber("[P] Speed", pidSpeed);
+    SmartDashboard.putBoolean("[P] Top limit switch pressed?", topLimitSwitchPressed());
+    SmartDashboard.putNumber("[P] Degree of shooter", 360 - returnEncoder());
+    SmartDashboard.putBoolean("[P] Bottom limit switch pressed?", bottomLimitSwitchPressed());
+    SmartDashboard.putNumber("[P] distance from limelight", returnHorizontalDist());
+    SmartDashboard.putBoolean("[P] at setpoint?", atSetpoint());
+    SmartDashboard.putNumber("[P] pid setpoint", 360 - setpoint);
 
-    SmartDashboard.putNumber("TY", LimelightHelpers.getTY("limelight"));
-    SmartDashboard.putNumber("stats calc angle", returnCalcAngle());
-    
+    SmartDashboard.putNumber("[P] stats calc angle", returnCalcAngle());
     SmartDashboard.putNumber("TX", LimelightHelpers.getTX("limelight"));
-
   }
 }

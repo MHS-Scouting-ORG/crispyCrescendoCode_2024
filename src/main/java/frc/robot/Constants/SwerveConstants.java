@@ -140,10 +140,10 @@ public final class SwerveConstants {
     public static final double kPThetaController = 1;
 
     //AUTO PID 
-    public static final double KP_AUTO_TRANSLATION = 0.5;
+    public static final double KP_AUTO_TRANSLATION = 0.4;
     public static final double KI_AUTO_TRANSLATION = 0.0;
-    public static final double KD_AUTO_TRANSLATION = 0.05;
-    public static final double TRANSLATION_TOLLERANCE = 0.05; // tolerance in meters
+    public static final double KD_AUTO_TRANSLATION = 0.0;
+    public static final double TRANSLATION_TOLLERANCE = 0.1; // tolerance in meters
 
     public static final double KP_AUTO_ROTATION = 0.008;
     public static final double KI_AUTO_ROTATION = 0.003;

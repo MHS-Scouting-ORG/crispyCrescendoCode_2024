@@ -29,6 +29,7 @@ import frc.robot.commands.CrispyPositionCommands.AutomaticPickup;
 import frc.robot.commands.CrispyPositionCommands.DownPosition;
 import frc.robot.commands.CrispyPositionCommands.FeedPosition;
 import frc.robot.commands.CrispyPositionCommands.FeedToIndexer;
+import frc.robot.commands.CrispyPositionCommands.ShootingPosition;
 import frc.robot.commands.ElevatorCommands.ElevatorRestingPositionCmd;
 import frc.robot.commands.ElevatorCommands.ElevatorToSetpointCommand;
 import frc.robot.commands.ElevatorCommands.ElevatorToTopCmd;
@@ -38,6 +39,7 @@ import frc.robot.commands.IntakeCommands.DeliverCmd;
 import frc.robot.commands.IntakeCommands.IntakeCmd;
 import frc.robot.commands.IntakeCommands.OuttakeCmd;
 import frc.robot.commands.PivotCommands.ManualPivotCommand;
+import frc.robot.commands.PivotCommands.PivotPidAlignCommand;
 import frc.robot.commands.PivotCommands.PivotPidCommand;
 import frc.robot.commands.PivotCommands.RunToTopLim;
 import frc.robot.commands.ShindexerCommands.IndexToShooterAutoCommand;
@@ -53,6 +55,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.UnderIntakeSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.AutonomousCommands.A_PositionC;
 
 public class RobotContainer {
   //////////////////////////////
@@ -118,6 +121,7 @@ public class RobotContainer {
 
   private final JoystickButton OLeftBumper = new JoystickButton(xboxOp, XboxController.Button.kLeftBumper.value);
   private final JoystickButton ORightBumper = new JoystickButton(xboxOp, XboxController.Button.kRightBumper.value);
+  private final JoystickButton O_IntakeShooter = new JoystickButton(xboxOp, 8); 
 
   //////////////////////////////
   //        AUTO CHOICES      //
@@ -210,12 +214,16 @@ public class RobotContainer {
 
     DRightBumper.whileTrue(new IndexToShooterAutoCommand(shooterSubsystem, indexSubsystem));
     DRightBumper.whileFalse(new InstantCommand(shooterSubsystem::stop)); 
+
     DRightBumper.whileTrue(new LimelightTurnAlignCmd(swerveSubsystem, xbox::getLeftY, xbox::getLeftX, 0));
+    DRightBumper.whileTrue(new ShootingPosition(elevatorSubsystem, pivotSubsystem));
     DRightBumper.onFalse(new DownPosition(elevatorSubsystem, pivotSubsystem));
      
     Dx.onTrue(new FeedPosition(elevatorSubsystem, pivotSubsystem, indexSubsystem, intakeSubsystem));
     Da.whileTrue(new OuttakeCmd(intakeSubsystem)); 
     Da.whileFalse(new InstantCommand(intakeSubsystem::stopIntake));
+    Db.onTrue(new IndexToShooterAutoCommand(shooterSubsystem, indexSubsystem)); 
+    Db.onFalse(new DownPosition(elevatorSubsystem, pivotSubsystem));
     // Dy.whileTrue(new IndexerCommand(indexSubsystem)); 
     // Dy.whileFalse(new InstantCommand(indexSubsystem::stop)); 
     
@@ -226,6 +234,7 @@ public class RobotContainer {
     Ob.onTrue(new AmpPosition(elevatorSubsystem, pivotSubsystem, indexSubsystem, intakeSubsystem, shooterSubsystem)); 
     Oy.onTrue(new RunToTopLim(pivotSubsystem)); 
     Ox.onTrue(new FeedPosition(elevatorSubsystem, pivotSubsystem, indexSubsystem, intakeSubsystem));
+    // Oa.onTrue(new PivotPidCommand(pivotSubsystem, 40));
 
   }
 
@@ -239,7 +248,7 @@ public class RobotContainer {
     // An example command will be run in autonomous
     // return autonomousChooser.getSelected();
 
-    return new A_PositionA(swerveSubsystem, intakeSubsystem, indexSubsystem, shooterSubsystem, elevatorSubsystem, pivotSubsystem);
+    return new A_PositionC(swerveSubsystem, intakeSubsystem, indexSubsystem, shooterSubsystem, elevatorSubsystem, pivotSubsystem);
     // return new SequentialCommandGroup(
     //   new InstantCommand(() -> swerveSubsystem.zeroHeading()),
 

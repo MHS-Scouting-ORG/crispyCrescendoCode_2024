@@ -38,8 +38,12 @@ public class A_PositionA extends SequentialCommandGroup {
 
       new IndexToShooterAutoCommand(shooterSub, indexSub), // shoots preload into amp 
 
-      new S_DriveToPositionCommand(swerveSub, 3, red * -7, 0, false),
+      new ParallelCommandGroup(
+        new IntakeCmd(intakeSub), 
 
+        new S_DriveToPositionCommand(swerveSub, 4, red * -7, 0, false)
+      ),
+      
       //new S_DriveToPositionCommand(swerveSub, 1, red * 0 , 60, true),
 
       new InstantCommand(() -> swerveSub.resetOdometry(new Pose2d(0, 0, new Rotation2d()))),
