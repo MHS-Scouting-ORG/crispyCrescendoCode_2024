@@ -21,6 +21,7 @@ import frc.robot.Constants.PivotConstants;
 import frc.robot.Constants.ShindexerConstants;
 import frc.robot.Constants.SwerveConstants.OIConstants;
 import frc.robot.commands.LimelightTurnAlignCmd;
+import frc.robot.commands.AutonomousCommands.A_JustShoot;
 import frc.robot.commands.AutonomousCommands.A_PositionA;
 import frc.robot.commands.AutonomousCommands.A_PositionB;
 import frc.robot.commands.AutonomousCommands.S_DriveToPositionCommand;
@@ -127,9 +128,14 @@ public class RobotContainer {
   //        AUTO CHOICES      //
   //////////////////////////////
   public SendableChooser<Command> autonomousChooser = new SendableChooser<>();
+  public Command PositionA = new A_PositionA(swerveSubsystem, intakeSubsystem, indexSubsystem, shooterSubsystem, elevatorSubsystem, pivotSubsystem); 
+  public Command PositionB = new A_PositionB(swerveSubsystem, intakeSubsystem, indexSubsystem, shooterSubsystem, elevatorSubsystem, pivotSubsystem); 
+  public Command PositionC = new A_PositionC(swerveSubsystem, intakeSubsystem, indexSubsystem, shooterSubsystem, elevatorSubsystem, pivotSubsystem);
+  public Command JustShoot = new A_JustShoot(swerveSubsystem, shooterSubsystem, indexSubsystem);
 
   public RobotContainer() {
     // Configure the trigger bindings
+    selectAuto();
     configureBindings();
 
         swerveSubsystem.setDefaultCommand(
@@ -234,21 +240,26 @@ public class RobotContainer {
     Ob.onTrue(new AmpPosition(elevatorSubsystem, pivotSubsystem, indexSubsystem, intakeSubsystem, shooterSubsystem)); 
     Oy.onTrue(new RunToTopLim(pivotSubsystem)); 
     Ox.onTrue(new FeedPosition(elevatorSubsystem, pivotSubsystem, indexSubsystem, intakeSubsystem));
-    // Oa.onTrue(new PivotPidCommand(pivotSubsystem, 40));
+    Oa.whileTrue(new IntakeShooterCommand(shooterSubsystem, indexSubsystem)); 
+    Oa.whileFalse(new InstantCommand(shooterSubsystem::stop)); 
 
   }
 
   public void selectAuto(){
     autonomousChooser.setDefaultOption("Nothing", new NothingCmd());
+    autonomousChooser.addOption("Position A", PositionA);
+    autonomousChooser.addOption("Position B", PositionB);
+    autonomousChooser.addOption("Position C", PositionC);
+    autonomousChooser.addOption("Just Shoot", JustShoot);
+
     SmartDashboard.putData(autonomousChooser);
   }
 
   public Command getAutonomousCommand() {
-    //return null; 
     // An example command will be run in autonomous
-    // return autonomousChooser.getSelected();
+    return autonomousChooser.getSelected();
 
-    return new A_PositionC(swerveSubsystem, intakeSubsystem, indexSubsystem, shooterSubsystem, elevatorSubsystem, pivotSubsystem);
+    // return new A_PositionB(swerveSubsystem, intakeSubsystem, indexSubsystem, shooterSubsystem, elevatorSubsystem, pivotSubsystem);
     // return new SequentialCommandGroup(
     //   new InstantCommand(() -> swerveSubsystem.zeroHeading()),
 

@@ -6,7 +6,7 @@ public class ElevatorConstants {
     public static final int BOTTOM_LS_PORT = 0;
 
     //FIXME Up speed after testing
-    public static final double SPEED_CAP = 0.95;//0.875;
+    public static final double SPEED_CAP = 1;//0.875;
 
     public static final double ELEV_KP = 0.032;
     public static final double ELEV_KI = 0.001;
