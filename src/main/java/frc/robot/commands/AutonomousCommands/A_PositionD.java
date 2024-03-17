@@ -17,6 +17,7 @@ import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.UnderIntakeSubsystem;
+import frc.robot.commands.ShindexerCommands.IndexToShooterSlowerCommand;
 
 public class A_PositionD extends SequentialCommandGroup {
 
@@ -26,7 +27,7 @@ public class A_PositionD extends SequentialCommandGroup {
             red = -1;
         }
         addCommands(
-            new IndexToShooterCommand(shooterSub, indexSub), // shoot preload
+            new IndexToShooterSlowerCommand(shooterSub, indexSub), // shoot preload
 
              // Runs intake and drives to note. At the same time, sets elevator and pivot
             new ParallelCommandGroup(
@@ -40,7 +41,7 @@ public class A_PositionD extends SequentialCommandGroup {
 
                 new FeedToIndexer(indexSub, intakeSub),
 
-                new IndexToShooterCommand(shooterSub, indexSub) // shoot second note
+                new IndexToShooterSlowerCommand(shooterSub, indexSub) // shoot second note
         );
     }
 }

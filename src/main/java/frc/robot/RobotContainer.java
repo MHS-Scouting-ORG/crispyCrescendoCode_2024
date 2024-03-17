@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.IntegrationConstants.OperatorConstants;
+import frc.robot.Constants.LimelightHelpers;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.Constants.ShindexerConstants;
 import frc.robot.Constants.SwerveConstants.OIConstants;
@@ -123,7 +124,10 @@ public class RobotContainer {
 
   private final JoystickButton OLeftBumper = new JoystickButton(xboxOp, XboxController.Button.kLeftBumper.value);
   private final JoystickButton ORightBumper = new JoystickButton(xboxOp, XboxController.Button.kRightBumper.value);
-  private final JoystickButton O_IntakeShooter = new JoystickButton(xboxOp, 8); 
+  private final JoystickButton O7Button = new JoystickButton(xboxOp, 7); 
+  private final JoystickButton O8Button = new JoystickButton(xboxOp, 8);
+
+  private final Trigger blinkLimelight = new Trigger(intakeSubsystem::getOpticalSensor);
 
   //////////////////////////////
   //        AUTO CHOICES      //
@@ -243,6 +247,26 @@ public class RobotContainer {
     Ox.onTrue(new FeedPosition(elevatorSubsystem, pivotSubsystem, indexSubsystem, intakeSubsystem));
     Oa.whileTrue(new IntakeShooterCommand(shooterSubsystem, indexSubsystem)); 
     Oa.whileFalse(new InstantCommand(shooterSubsystem::stop)); 
+
+    // O7Button.onTrue(new SequentialCommandGroup( //feed pos without feed 
+    //   new ElevatorToTransferCmd(elevatorSubsystem), 
+
+    //   new PivotPidCommand(pivotSubsystem, 45)
+    // ));
+
+    // O8Button.whileTrue(new ParallelCommandGroup(  //shindexer + outtake
+    //   new IntakeShooterCommand(shooterSubsystem, indexSubsystem), 
+
+    //   new OuttakeCmd(intakeSubsystem)
+    // ));
+    // O8Button.whileFalse(new InstantCommand(shooterSubsystem::stop)); 
+    // O8Button.whileFalse(new InstantCommand(indexSubsystem::stop));
+    // O8Button.whileFalse(new InstantCommand(intakeSubsystem::stopIntake));
+
+    //TRIGGER 
+    blinkLimelight.whileTrue(new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceBlink("limelight")));
+    blinkLimelight.whileFalse(new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOff("limelight")));
+    
 
   }
 

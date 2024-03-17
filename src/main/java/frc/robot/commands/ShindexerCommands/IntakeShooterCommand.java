@@ -27,12 +27,12 @@ public class IntakeShooterCommand extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    if(index_Sub.getOpticalSwitch()){
-      while(!index_Sub.getOpticalSwitch()){
-        shoot_Sub.shooter(-0.4);
-        index_Sub.index(-0.5);
-      }
-    }
+    // if(index_Sub.getOpticalSwitch()){
+    //   while(!index_Sub.getOpticalSwitch()){
+    //     shoot_Sub.shooter(-0.4);
+    //     index_Sub.index(-0.5);
+    //   }
+    // }
     
     shoot_Sub.stop();
     index_Sub.stop();

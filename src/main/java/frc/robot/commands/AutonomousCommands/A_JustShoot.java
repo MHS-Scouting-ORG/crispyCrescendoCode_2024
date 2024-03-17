@@ -12,6 +12,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.IndexerSubsystem;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import frc.robot.commands.ShindexerCommands.IndexToShooterSlowerCommand;
 
 public class A_JustShoot extends SequentialCommandGroup {
 
@@ -23,7 +24,7 @@ public class A_JustShoot extends SequentialCommandGroup {
 
       // new ElevatorToTransferCmd(elevSub),
 
-      new IndexToShooterAutoCommand(shooterSubsystem, indexSubsystem) // shoots preload into amp 
+      new IndexToShooterSlowerCommand(shooterSubsystem, indexSubsystem) // shoots preload into amp 
     );
   }
 }

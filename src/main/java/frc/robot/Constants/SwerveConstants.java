@@ -48,7 +48,7 @@ public final class SwerveConstants {
 
     // Angular offsets of the modules relative to the chassis in radians
     public static final double kFrontLeftChassisAngularOffset = (2.45); //5
-    public static final double kFrontRightChassisAngularOffset = (3.72); //8
+    public static final double kFrontRightChassisAngularOffset = (3.51); //8
     public static final double kBackLeftChassisAngularOffset = (3.51); //6
     public static final double kBackRightChassisAngularOffset = (3.36); //7
 
@@ -120,7 +120,7 @@ public final class SwerveConstants {
     public static final IdleMode kDrivingMotorIdleMode = IdleMode.kBrake;
     public static final IdleMode kTurningMotorIdleMode = IdleMode.kBrake;
 
-    public static final int kDrivingMotorCurrentLimit = 40; // amps
+    public static final int kDrivingMotorCurrentLimit = 45; // amps
     public static final int kTurningMotorCurrentLimit = 15; // amps
   }
 

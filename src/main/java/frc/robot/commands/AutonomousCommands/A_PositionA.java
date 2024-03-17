@@ -21,6 +21,7 @@ import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.UnderIntakeSubsystem;
+import frc.robot.commands.ShindexerCommands.IndexToShooterSlowerCommand;
 
 public class A_PositionA extends SequentialCommandGroup {
 
@@ -36,7 +37,7 @@ public class A_PositionA extends SequentialCommandGroup {
 
       // new ElevatorToTransferCmd(elevSub),
 
-      new IndexToShooterAutoCommand(shooterSub, indexSub), // shoots preload into amp 
+      new IndexToShooterSlowerCommand(shooterSub, indexSub), // shoots preload into amp 
 
       new ParallelCommandGroup(
         new IntakeCmd(intakeSub), 
