@@ -1,6 +1,7 @@
 package frc.robot.commands.PivotCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.LimelightHelpers;
 import frc.robot.subsystems.PivotSubsystem;
 
 public class PivotPidAlignCommand extends Command {
@@ -19,6 +20,9 @@ public class PivotPidAlignCommand extends Command {
 
   @Override
   public void execute(){
+    if (!LimelightHelpers.getTV("limelight")) {
+      pivotSubs.changeSetpoint(60);
+    } else {
     if(pivotSubs.returnHorizontalDist() < 1.7){
       pivotSubs.changeSetpoint(45);
     }
@@ -28,6 +32,7 @@ public class PivotPidAlignCommand extends Command {
     else{
       pivotSubs.changeSetpoint((int)(pivotSubs.returnCalcAngle()));
     }
+  }
   }
 
   @Override
