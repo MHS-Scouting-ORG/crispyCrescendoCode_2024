@@ -6,6 +6,12 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.util.GeometryUtil;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -17,8 +23,10 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.WPIUtilJNI;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.LimelightHelpers;
+import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.SwerveConstants.DriveConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SwerveUtils;
@@ -45,9 +53,17 @@ public class SwerveSubsystem extends SubsystemBase {
       DriveConstants.kRearRightTurningCanId,
       DriveConstants.kBackRightChassisAngularOffset);
 
+  private MAXSwerveModule[] modules = new MAXSwerveModule[] {
+    m_frontLeft, 
+    m_frontRight, 
+    m_rearLeft, 
+    m_rearRight
+  };
+  
+
   // The gyro sensor
   private final AHRS navx = new AHRS();
-  private double navxOffset = 0; 
+  private String m_autoName = ""; 
 
   // Slew rate filter variables for controlling lateral acceleration
   private double m_currentRotation = 0.0;
@@ -65,7 +81,7 @@ public class SwerveSubsystem extends SubsystemBase {
   // Odometry class for tracking robot pose
   SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
       DriveConstants.kDriveKinematics,
-      Rotation2d.fromDegrees(navx.getAngle()),
+      (Rotation2d.fromDegrees(gyroWithOffset())/*navx.getAngle()).unaryMinus()*/),
       new SwerveModulePosition[] {
           m_frontLeft.getPosition(),
           m_frontRight.getPosition(),
@@ -75,10 +91,44 @@ public class SwerveSubsystem extends SubsystemBase {
 
   /** Creates a new DriveSubsystem. */
   public SwerveSubsystem() {
-    navxOffset = 0; 
     
     blueAllianceTags = new int[]{1,2,6,7};
     redAllianceTags = new int[]{4,5,9,10};
+
+    //AUTO BUILDER FROM TORBOTS
+    AutoBuilder.configureHolonomic(
+      this::getPose, // Robot pose supplier
+
+      this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
+
+      this::getSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+
+      this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+
+      new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+        new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+        new PIDConstants(0.5, 0.0, 0.003), // Rotation PID constants
+        4.5, // Max module speed, in m/s
+        (Math.hypot(SwerveConstants.DriveConstants.kWheelBase, SwerveConstants.DriveConstants.kTrackWidth)) / 2, // Drive base radius in meters. Distance from robot center to furthest module.
+        new ReplanningConfig() // Default path replanning config. See the API for the options here
+      ),
+
+
+      () -> {
+        // Boolean supplier that controls when the path will be mirrored for the red
+        // alliance
+        // This will flip the path being followed to the red side of the field.
+        // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+        var alliance = DriverStation.getAlliance();
+        if (alliance.isPresent()) {
+          return alliance.get() == DriverStation.Alliance.Red;
+        }
+        return false;
+      },
+
+      this
+    );
   }
 
   
@@ -100,12 +150,46 @@ public class SwerveSubsystem extends SubsystemBase {
     return false;
   }
 
+  public double getAutoStartingAngle(String autoName) {
+    m_autoName = autoName;
+     if (!DriverStation.getAlliance().isEmpty()) {
+      if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+        SmartDashboard.putNumber("Red angle", PathPlannerAuto.getStaringPoseFromAutoFile(m_autoName).getRotation().unaryMinus().getDegrees());
+        return 180 + GeometryUtil.flipFieldPose(PathPlannerAuto.getStaringPoseFromAutoFile(m_autoName)).getRotation().getDegrees();
+      } else {
+        SmartDashboard.putNumber("Blue angle", 180 + PathPlannerAuto.getStaringPoseFromAutoFile(m_autoName).getRotation().unaryMinus().getDegrees());
+        return PathPlannerAuto.getStaringPoseFromAutoFile(m_autoName).getRotation().getDegrees();
+  
+      }
+    } else {
+      return 0;
+    }
+  }
+
+  public double gyroWithOffset() {
+
+    if (!DriverStation.getAlliance().isEmpty()) {
+      double offset;
+      if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+        offset = GeometryUtil.flipFieldPose(PathPlannerAuto.getStaringPoseFromAutoFile(m_autoName)).getRotation().getDegrees();
+        // if(offset == 180){
+        //   offset = 0;
+        // }
+      } else {
+        offset = PathPlannerAuto.getStaringPoseFromAutoFile(m_autoName).getRotation().getDegrees();
+      }
+      return (-navx.getAngle() + 0);
+    } else {
+      return 0;
+    }
+    
+  }
 
   @Override
   public void periodic() {
     // Update the odometry in the periodic block
     m_odometry.update(
-        Rotation2d.fromDegrees(navx.getAngle()),
+        (Rotation2d.fromDegrees(gyroWithOffset())/*navx.getAngle()).unaryMinus()*/),
         new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
             m_frontRight.getPosition(),
@@ -132,7 +216,7 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public Rotation2d getRotation2d() {
-    return m_odometry.getPoseMeters().getRotation();
+    return m_odometry.getPoseMeters().getRotation().unaryMinus();
   }
 
   /**
@@ -142,7 +226,7 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public void resetOdometry(Pose2d pose) {
     m_odometry.resetPosition(
-        Rotation2d.fromDegrees(navx.getAngle()),
+        (Rotation2d.fromDegrees(gyroWithOffset())/*navx.getAngle()).unaryMinus()*/),
         new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
             m_frontRight.getPosition(),
@@ -156,8 +240,15 @@ public class SwerveSubsystem extends SubsystemBase {
     m_odometry.resetPosition(getRotation2d(), getModulePositions(), pose);
   }
 
-  public void setNavxOffset(double offset) {
-    navxOffset = offset; 
+  public ChassisSpeeds getSpeeds() {
+    return SwerveConstants.DriveConstants.kDriveKinematics.toChassisSpeeds(getModuleStates());
+  }
+
+  public void driveRobotRelative(ChassisSpeeds robotRelativeSpeeds) {
+    ChassisSpeeds targetSpeeds = ChassisSpeeds.discretize(robotRelativeSpeeds, 0.02);
+
+    SwerveModuleState[] targetStates = SwerveConstants.DriveConstants.kDriveKinematics.toSwerveModuleStates(targetSpeeds);
+    setModuleStates(targetStates);
   }
 
 
@@ -274,6 +365,14 @@ public class SwerveSubsystem extends SubsystemBase {
         };
   }
 
+  public SwerveModuleState[] getModuleStates(){
+    SwerveModuleState[] states = new SwerveModuleState[modules.length]; 
+    for (int i = 0; i < modules.length; i++) {
+      states[i] = modules[i].getState();
+    }
+    return states;
+  }
+
   public void stopModules() {
     m_frontLeft.stopModule();
     m_frontRight.stopModule();
@@ -291,7 +390,6 @@ public class SwerveSubsystem extends SubsystemBase {
 
   /** Zeroes the heading of the robot. */
   public void zeroHeading() {
-    navxOffset = 0; 
     navx.zeroYaw();
   }
 

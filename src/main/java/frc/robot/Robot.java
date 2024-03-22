@@ -19,6 +19,7 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
   private Command setSetpointZero;
+  private Command resetOdom; 
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -30,6 +31,8 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     setSetpointZero = m_robotContainer.setElevInit();
+    // resetOdom = m_robotContainer.resetOdom();
+
   }
 
   /**
@@ -61,6 +64,9 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    resetOdom = m_robotContainer.resetOdom();
+    // resetOdom.schedule();
+    // resetOdom.cancel();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -68,7 +74,8 @@ public class Robot extends TimedRobot {
     }
   }
 
-  /** This function is called periodically during autonomous. */
+  /** This function is
+   *  called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {}
 

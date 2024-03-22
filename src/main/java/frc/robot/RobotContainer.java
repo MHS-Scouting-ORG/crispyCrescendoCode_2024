@@ -1,5 +1,7 @@
 package frc.robot;
 
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -133,6 +135,8 @@ public class RobotContainer {
   //        AUTO CHOICES      //
   //////////////////////////////
   public SendableChooser<Command> autonomousChooser = new SendableChooser<>();
+  public SendableChooser<String> autoNameChooser = new SendableChooser<>();
+
   public Command PositionA = new A_PositionA(swerveSubsystem, intakeSubsystem, indexSubsystem, shooterSubsystem, elevatorSubsystem, pivotSubsystem); 
   public Command PositionB = new A_PositionB(swerveSubsystem, intakeSubsystem, indexSubsystem, shooterSubsystem, elevatorSubsystem, pivotSubsystem); 
   public Command PositionC = new A_PositionC(swerveSubsystem, intakeSubsystem, indexSubsystem, shooterSubsystem, elevatorSubsystem, pivotSubsystem);
@@ -161,63 +165,6 @@ public class RobotContainer {
   private void configureBindings() {
     //DRIVE 
     b_resetNavx.onTrue(new InstantCommand(swerveSubsystem::zeroHeading));
-
-    //OPTICAL TRIGGER AUTOMATIC 
-    // opticalTrigger.onTrue(
-    //   //new AutomaticPickup(intakeSubsystem, elevatorSubsystem, indexSubsystem)
-    //   new SequentialCommandGroup(
-    //     new ElevatorToTopCmd(elevatorSubsystem), //goes to mid position to pick up note from indexer 
-
-    //     new FeedToIndexer(indexSubsystem, intakeSubsystem), //feeds note from intake to indexer 
-
-    //     new ElevatorStoragePositionCmd(elevatorSubsystem) 
-
-    // ));
-
-    // b_ampShooting.onTrue(
-    //   new SequentialCommandGroup(
-    //     new InstantCommand(() -> shooterSubsystem.shooter(ShindexerConstants.SHOOTER_SPEED)),
-
-    //     new ElevatorToTopCmd(elevatorSubsystem), //goes to mid position to pick up note from indexer 
-
-    //     new FeedToIndexer(indexSubsystem, intakeSubsystem), //feeds note from intake to indexer 
-
-    //     //FIXME align command for pivot should be here
-
-    //     new IndexToShooterCommand(shooterSubsystem, indexSubsystem)
-    // ));
-
-    //INTAKE 
-    // b_intake.whileTrue(new IntakeCmd(intakeSubsystem)); 
-    // b_intake.whileFalse(new InstantCommand(intakeSubsystem::stopIntake));
-
-    //OUTTAKE 
-    // b_outtake.whileTrue(new OuttakeCmd(intakeSubsystem));
-    // b_outtake.whileFalse(new InstantCommand(intakeSubsystem::stopIntake));
-
-    //SHINDEXER 
-    // b_indexerFeed.onTrue(new ParallelRaceGroup(new DeliverCmd(intakeSubsystem), new IndexerCommand(indexSubsystem)));
-    // b_shootah.whileTrue(new IndexToShooterCommand(shooterSubsystem, indexSubsystem)); 
-
-    //ELEVATOR 
-    // b_elevToTop.onTrue(new ElevatorToTopCmd(elevatorSubsystem)); 
-    // b_elevToBottom.onTrue(new ElevatorRestingPositionCmd(elevatorSubsystem)); 
-
-    //TEST DRIVING 
-    /* 
-    DLeftBumper.whileTrue(new IntakeCmd(intakeSubsystem)); 
-    DLeftBumper.whileFalse(new InstantCommand(intakeSubsystem::stopIntake)); 
-
-    Da.whileTrue(new OuttakeCmd(intakeSubsystem)); 
-    Da.whileFalse(new InstantCommand(intakeSubsystem::stopIntake)); 
-
-    Dx.onTrue(new FeedPosition(elevatorSubsystem, pivotSubsystem, indexSubsystem, intakeSubsystem)); 
-
-    DRightBumper.onTrue(new SequentialCommandGroup(
-      new IndexToShooterAutoCommand(shooterSubsystem, indexSubsystem), 
-
-      new DownPosition(elevatorSubsystem, pivotSubsystem)
-    )); */
 
     //DRIVER 
     DLeftBumper.whileTrue(new IntakeCmd(intakeSubsystem)); 
@@ -277,12 +224,19 @@ public class RobotContainer {
     autonomousChooser.addOption("Position C", PositionC);
     autonomousChooser.addOption("Just Shoot", JustShoot);
 
+    //PP TESTING 
+    autoNameChooser.addOption("Test Path", "Testing");
+
     SmartDashboard.putData(autonomousChooser);
+    SmartDashboard.putData(autoNameChooser);
   }
 
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return autonomousChooser.getSelected();
+    // return autonomousChooser.getSelected();
+
+    // String autoName = autoNameChooser.getSelected(); 
+    return new PathPlannerAuto("C Pos Shoot");
 
     // return new A_PositionB(swerveSubsystem, intakeSubsystem, indexSubsystem, shooterSubsystem, elevatorSubsystem, pivotSubsystem);
     // return new SequentialCommandGroup(
@@ -296,5 +250,11 @@ public class RobotContainer {
 
   public Command setElevInit() {
     return setElevInit;
+  }
+
+  public Command resetOdom() {
+    return new InstantCommand(() -> swerveSubsystem.resetOdometry(
+      new Pose2d(0.77, 4.51, Rotation2d.fromDegrees(-60))
+    ));
   }
 }
