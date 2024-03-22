@@ -81,7 +81,7 @@ public class SwerveSubsystem extends SubsystemBase {
   // Odometry class for tracking robot pose
   SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
       DriveConstants.kDriveKinematics,
-      (Rotation2d.fromDegrees(gyroWithOffset())/*navx.getAngle()).unaryMinus()*/),
+      (Rotation2d.fromDegrees(navx.getAngle()).unaryMinus()),
       new SwerveModulePosition[] {
           m_frontLeft.getPosition(),
           m_frontRight.getPosition(),
@@ -108,7 +108,7 @@ public class SwerveSubsystem extends SubsystemBase {
       new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
         new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
         new PIDConstants(0.5, 0.0, 0.003), // Rotation PID constants
-        4.5, // Max module speed, in m/s
+        5.5, // Max module speed, in m/s
         (Math.hypot(SwerveConstants.DriveConstants.kWheelBase, SwerveConstants.DriveConstants.kTrackWidth)) / 2, // Drive base radius in meters. Distance from robot center to furthest module.
         new ReplanningConfig() // Default path replanning config. See the API for the options here
       ),
@@ -150,46 +150,50 @@ public class SwerveSubsystem extends SubsystemBase {
     return false;
   }
 
-  public double getAutoStartingAngle(String autoName) {
-    m_autoName = autoName;
-     if (!DriverStation.getAlliance().isEmpty()) {
-      if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-        SmartDashboard.putNumber("Red angle", PathPlannerAuto.getStaringPoseFromAutoFile(m_autoName).getRotation().unaryMinus().getDegrees());
-        return 180 + GeometryUtil.flipFieldPose(PathPlannerAuto.getStaringPoseFromAutoFile(m_autoName)).getRotation().getDegrees();
-      } else {
-        SmartDashboard.putNumber("Blue angle", 180 + PathPlannerAuto.getStaringPoseFromAutoFile(m_autoName).getRotation().unaryMinus().getDegrees());
-        return PathPlannerAuto.getStaringPoseFromAutoFile(m_autoName).getRotation().getDegrees();
+  // public double getAutoStartingAngle(String autoName) {
+  //   m_autoName = autoName;
+  //    if (!DriverStation.getAlliance().isEmpty()) {
+  //     if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+  //       SmartDashboard.putNumber("Red angle", PathPlannerAuto.getStaringPoseFromAutoFile(m_autoName).getRotation().unaryMinus().getDegrees());
+  //       return 180 + GeometryUtil.flipFieldPose(PathPlannerAuto.getStaringPoseFromAutoFile(m_autoName)).getRotation().getDegrees();
+  //     } else {
+  //       SmartDashboard.putNumber("Blue angle", 180 + PathPlannerAuto.getStaringPoseFromAutoFile(m_autoName).getRotation().unaryMinus().getDegrees());
+  //       return PathPlannerAuto.getStaringPoseFromAutoFile(m_autoName).getRotation().getDegrees();
   
-      }
-    } else {
-      return 0;
-    }
-  }
+  //     }
+  //   } else {
+  //     return 0;
+  //   }
+  // }
 
-  public double gyroWithOffset() {
+  // public double gyroWithOffset() { //TORBOTS TEST CODE 
 
-    if (!DriverStation.getAlliance().isEmpty()) {
-      double offset;
-      if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-        offset = GeometryUtil.flipFieldPose(PathPlannerAuto.getStaringPoseFromAutoFile(m_autoName)).getRotation().getDegrees();
-        // if(offset == 180){
-        //   offset = 0;
-        // }
-      } else {
-        offset = PathPlannerAuto.getStaringPoseFromAutoFile(m_autoName).getRotation().getDegrees();
-      }
-      return (-navx.getAngle() + 0);
-    } else {
-      return 0;
-    }
+  //   if (!DriverStation.getAlliance().isEmpty()) {
+  //     double offset;
+  //     if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+  //       offset = GeometryUtil.flipFieldPose(PathPlannerAuto.getStaringPoseFromAutoFile(m_autoName)).getRotation().getDegrees();
+  //       // if(offset == 180){
+  //       //   offset = 0;
+  //       // }
+  //     } else {
+  //       offset = PathPlannerAuto.getStaringPoseFromAutoFile(m_autoName).getRotation().getDegrees();
+  //     }
+  //     return (-navx.getAngle() + 0);
+  //   } else {
+  //     return 0;
+  //   }
     
+  // }
+
+  public void setAngle(double angle) {
+    navx.setAngleAdjustment(angle);
   }
 
   @Override
   public void periodic() {
     // Update the odometry in the periodic block
     m_odometry.update(
-        (Rotation2d.fromDegrees(gyroWithOffset())/*navx.getAngle()).unaryMinus()*/),
+        (Rotation2d.fromDegrees(navx.getAngle()).unaryMinus()),
         new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
             m_frontRight.getPosition(),
@@ -201,8 +205,10 @@ public class SwerveSubsystem extends SubsystemBase {
     m_rearLeft.print(); 
     m_rearRight.print(); 
     m_frontRight.print();
+
     SmartDashboard.putNumber("Navx", navx.getAngle());
     SmartDashboard.putString("POSE", getPose().toString());
+    // SmartDashboard.putNumber("auto starting ang", getAutoStartingAngle(m_autoName));
 
   }
 
@@ -226,7 +232,7 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public void resetOdometry(Pose2d pose) {
     m_odometry.resetPosition(
-        (Rotation2d.fromDegrees(gyroWithOffset())/*navx.getAngle()).unaryMinus()*/),
+        (Rotation2d.fromDegrees(navx.getAngle()).unaryMinus()),
         new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
             m_frontRight.getPosition(),

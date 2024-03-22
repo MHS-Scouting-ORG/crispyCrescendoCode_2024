@@ -1,10 +1,12 @@
 package frc.robot;
 
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -145,6 +147,7 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     selectAuto();
+    registerAutoCommands();
     configureBindings();
 
         swerveSubsystem.setDefaultCommand(
@@ -231,6 +234,11 @@ public class RobotContainer {
     SmartDashboard.putData(autoNameChooser);
   }
 
+  private void registerAutoCommands() {
+    NamedCommands.registerCommand("IntakeCommand", new IntakeCmd(intakeSubsystem)); 
+    NamedCommands.registerCommand("StopIntake", new InstantCommand(intakeSubsystem::stopIntake));
+  }
+
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     // return autonomousChooser.getSelected();
@@ -252,9 +260,8 @@ public class RobotContainer {
     return setElevInit;
   }
 
-  public Command resetOdom() {
-    return new InstantCommand(() -> swerveSubsystem.resetOdometry(
-      new Pose2d(0.77, 4.51, Rotation2d.fromDegrees(-60))
-    ));
+  public void autoInit() {
+    swerveSubsystem.setAngle(-60/*swerveSubsystem.getAutoStartingAngle(getAutonomousCommand().getName())*/);
+    swerveSubsystem.resetOdometry(new Pose2d(new Translation2d(0.77, 4.51), Rotation2d.fromDegrees(-60))/*PathPlannerAuto.getStaringPoseFromAutoFile(getAutonomousCommand().getName())*/);
   }
 }
