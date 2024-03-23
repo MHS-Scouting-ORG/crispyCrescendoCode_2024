@@ -14,12 +14,12 @@
         {
           "type": "path",
           "data": {
-            "pathName": "C Shoots"
+            "pathName": "CB Far Shoot"
           }
         }
       ]
     }
   },
-  "folder": null,
+  "folder": "C Autos",
   "choreoAuto": false
 }

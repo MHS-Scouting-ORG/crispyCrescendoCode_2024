@@ -136,7 +136,8 @@ public class RobotContainer {
   //////////////////////////////
   //        AUTO CHOICES      //
   //////////////////////////////
-  public SendableChooser<Command> autonomousChooser = new SendableChooser<>();
+  public SendableChooser<String> autoAllianceChooser = new SendableChooser<>();
+  public SendableChooser<String> autoPositionChooser = new SendableChooser<>();
   public SendableChooser<String> autoNameChooser = new SendableChooser<>();
 
   public Command PositionA = new A_PositionA(swerveSubsystem, intakeSubsystem, indexSubsystem, shooterSubsystem, elevatorSubsystem, pivotSubsystem); 
@@ -221,22 +222,33 @@ public class RobotContainer {
   }
 
   public void selectAuto(){
-    autonomousChooser.setDefaultOption("Nothing", new NothingCmd());
-    autonomousChooser.addOption("Position A", PositionA);
-    autonomousChooser.addOption("Position B", PositionB);
-    autonomousChooser.addOption("Position C", PositionC);
-    autonomousChooser.addOption("Just Shoot", JustShoot);
+    // autonomousChooser.setDefaultOption("Nothing", new NothingCmd());
+    // autonomousChooser.addOption("Position A", PositionA);
+    // autonomousChooser.addOption("Position B", PositionB);
+    // autonomousChooser.addOption("Position C", PositionC);
+    // autonomousChooser.addOption("Just Shoot", JustShoot);
 
     //PP TESTING 
-    autoNameChooser.addOption("Test Path", "Testing");
+    autoAllianceChooser.addOption("Blue", "B");
+    autoAllianceChooser.addOption("Red", "R");
 
-    SmartDashboard.putData(autonomousChooser);
+    autoPositionChooser.addOption("A (amp)", "A");
+    autoPositionChooser.addOption("B", "B"); 
+    autoPositionChooser.addOption("C (source)", "C");
+
+    autoNameChooser.addOption("Test Path", "Testing");
+    autoNameChooser.addOption("Shoot (3 note)", " Shoot");
+    autoNameChooser.addOption("Troll (disrupt)", " Troll");
+
+    SmartDashboard.putData(autoAllianceChooser);
+    SmartDashboard.putData(autoPositionChooser); 
     SmartDashboard.putData(autoNameChooser);
   }
 
   private void registerAutoCommands() {
     NamedCommands.registerCommand("IntakeCommand", new IntakeCmd(intakeSubsystem)); 
     NamedCommands.registerCommand("StopIntake", new InstantCommand(intakeSubsystem::stopIntake));
+    NamedCommands.registerCommand("DeliverCommand", new DeliverCmd(intakeSubsystem));
   }
 
   public Command getAutonomousCommand() {
@@ -244,7 +256,7 @@ public class RobotContainer {
     // return autonomousChooser.getSelected();
 
     // String autoName = autoNameChooser.getSelected(); 
-    return new PathPlannerAuto("C Pos Shoot");
+    return new PathPlannerAuto("CR Pass");
 
     // return new A_PositionB(swerveSubsystem, intakeSubsystem, indexSubsystem, shooterSubsystem, elevatorSubsystem, pivotSubsystem);
     // return new SequentialCommandGroup(
