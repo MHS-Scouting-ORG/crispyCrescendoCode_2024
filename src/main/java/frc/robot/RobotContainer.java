@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -249,6 +250,12 @@ public class RobotContainer {
     NamedCommands.registerCommand("IntakeCommand", new IntakeCmd(intakeSubsystem)); 
     NamedCommands.registerCommand("StopIntake", new InstantCommand(intakeSubsystem::stopIntake));
     NamedCommands.registerCommand("DeliverCommand", new DeliverCmd(intakeSubsystem));
+    NamedCommands.registerCommand("FakeShooting", new SequentialCommandGroup(
+      new InstantCommand(() -> intakeSubsystem.intake(0.6)), 
+      new WaitCommand(1), 
+      new InstantCommand(intakeSubsystem::stopIntake)
+    ));
+    NamedCommands.registerCommand("Wait", new WaitCommand(5));
   }
 
   public Command getAutonomousCommand() {
@@ -256,7 +263,9 @@ public class RobotContainer {
     // return autonomousChooser.getSelected();
 
     // String autoName = autoNameChooser.getSelected(); 
-    return new PathPlannerAuto("CR Pass");
+    return new PathPlannerAuto("A 4 note");
+
+    // return new S_DriveToPositionCommand(swerveSubsystem, 0, 2, 0, false);
 
     // return new A_PositionB(swerveSubsystem, intakeSubsystem, indexSubsystem, shooterSubsystem, elevatorSubsystem, pivotSubsystem);
     // return new SequentialCommandGroup(
@@ -264,7 +273,7 @@ public class RobotContainer {
 
     //   new InstantCommand(() -> swerveSubsystem.setZeroOdometer(new Pose2d(0, 0, new Rotation2d(0)))),
 
-    //   new S_DriveToPositionCommand(swerveSubsystem, 2, -2, 0, false)
+    //   new S_DriveToPositionCommand(swerveSubsystem, 0, 2, 0, false)
     // ); 
   }
 

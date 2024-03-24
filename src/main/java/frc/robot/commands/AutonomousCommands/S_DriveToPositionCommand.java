@@ -16,8 +16,8 @@ public class S_DriveToPositionCommand extends Command {
 
   public S_DriveToPositionCommand(SwerveSubsystem swerveSub, double desiredX, double desiredY, double desiredZ, double translationTollerance, boolean rotation) {
     this.swerveSub = swerveSub;
-    this.desiredX = Units.feetToMeters(desiredX);
-    this.desiredY = Units.feetToMeters(desiredY);
+    this.desiredX = (desiredX);
+    this.desiredY = (desiredY);
     this.desiredZ = desiredZ;
     this.translationTollerance = translationTollerance;
     this.rotation = rotation;

@@ -1,0 +1,37 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.73,
+      "y": 6.58
+    },
+    "rotation": 60.0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "A front"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FakeShooting"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "A mid "
+          }
+        }
+      ]
+    }
+  },
+  "folder": "A Autos",
+  "choreoAuto": false
+}
