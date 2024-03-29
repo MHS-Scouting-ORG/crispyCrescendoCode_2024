@@ -197,7 +197,7 @@ public class PivotSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("[P] Top limit switch pressed?", topLimitSwitchPressed());
     SmartDashboard.putNumber("[P] Degree of shooter", 360 - returnEncoder());
     SmartDashboard.putBoolean("[P] Bottom limit switch pressed?", bottomLimitSwitchPressed());
-    SmartDashboard.putNumber("[P] distance from limelight", horizontalDist);
+    SmartDashboard.putNumber("[P] distance from limelight", returnHorizontalDist());
     SmartDashboard.putBoolean("[P] at setpoint?", atSetpoint());
     SmartDashboard.putNumber("[P] pid setpoint", 360 - setpoint);
     SmartDashboard.putBoolean("[P] Bottom limit switch 2 pressed?", bottomLimitSwitch2Pressed());

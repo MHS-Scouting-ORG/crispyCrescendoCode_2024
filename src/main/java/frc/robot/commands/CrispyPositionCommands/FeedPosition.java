@@ -15,9 +15,7 @@ public class FeedPosition extends SequentialCommandGroup {
   public FeedPosition(ElevatorSubsystem elevatorSubsystem, PivotSubsystem pivotSubsystem, IndexerSubsystem indexerSubsystem, UnderIntakeSubsystem intakeSubsystem) {
 
     addCommands(
-      new ElevatorToTransferCmd(elevatorSubsystem), 
-
-      new PivotPidCommand(pivotSubsystem, 45), 
+      new PivotPidCommand(pivotSubsystem, 30), 
 
       new FeedToIndexer(indexerSubsystem, intakeSubsystem)
     );

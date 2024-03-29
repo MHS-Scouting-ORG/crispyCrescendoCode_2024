@@ -25,7 +25,7 @@ public class FeedToIndexer extends Command {
   @Override
   public void execute() {
     SmartDashboard.putString("CURRENT CMD", getName());
-    underIntakeSub.intake(0.2);
+    underIntakeSub.intake(0.6);
     indexSub.index(ShindexerConstants.INDEXER_SPEED);
   }
 

@@ -35,7 +35,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public double getRPM(){
-    return tMotor1.getVelocity().getValueAsDouble()*60;
+    return tMotor2.getVelocity().getValueAsDouble()*60;
   }
 
   // units of distance = meters
@@ -51,7 +51,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public void shooter(double speed) {
     tMotor1.set(speed);
-    tMotor2.set(speed);
+    tMotor2.set(speed + .05);
   }
 
   public void stop() {
@@ -81,7 +81,9 @@ public class ShooterSubsystem extends SubsystemBase {
       shooter(ShindexerConstants.SHOOTER_SPEED + speed);
     }
 
-    SmartDashboard.putNumber("Shooter Speed", getRPM());
+    SmartDashboard.putNumber("TOP RPM", getRPM());
+    SmartDashboard.putNumber("BOTTOM RPM", tMotor2.getVelocity().getValueAsDouble()*60);
+    SmartDashboard.putNumber("Shooter Desired RPM", 4000 * ShindexerConstants.SHOOTER_SPEED);
     SmartDashboard.putNumber("Shooter Torque", tMotor1.getTorqueCurrent().getValueAsDouble());
     SmartDashboard.putNumber("Shooter Voltage", tMotor1.getMotorVoltage().getValueAsDouble());
     SmartDashboard.putNumber("Shooter Current", tMotor1.getSupplyCurrent().getValueAsDouble());

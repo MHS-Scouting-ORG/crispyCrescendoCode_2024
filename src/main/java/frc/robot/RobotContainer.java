@@ -163,6 +163,8 @@ public class RobotContainer {
                 true, false),
             swerveSubsystem));
 
+        pivotSubsystem.setDefaultCommand(new ManualPivotCommand(pivotSubsystem, xboxOp::getLeftY));
+
         // pivotSubsystem.setDefaultCommand(new ManualPivotCommand(pivotSubsystem, () -> xboxOp.getRightY() * 0.5));
 
   }
@@ -172,53 +174,62 @@ public class RobotContainer {
     b_resetNavx.onTrue(new InstantCommand(swerveSubsystem::zeroHeading));
 
     //DRIVER 
+    // DLeftBumper.whileTrue(new IntakeCmd(intakeSubsystem)); 
+    // DLeftBumper.whileFalse(new InstantCommand(intakeSubsystem::stopIntake)); 
+
+    // DRightBumper.whileTrue(new IndexToShooterAutoCommand(shooterSubsystem, indexSubsystem));
+    // DRightBumper.whileFalse(new InstantCommand(shooterSubsystem::stop)); 
+
+    // DRightBumper.whileTrue(new LimelightTurnAlignCmd(swerveSubsystem, xbox::getLeftY, xbox::getLeftX, 0));
+    // DRightBumper.whileTrue(new ShootingPosition(elevatorSubsystem, pivotSubsystem));
+    // DRightBumper.onFalse(new DownPosition(elevatorSubsystem, pivotSubsystem));
+     
+    // Dx.onTrue(new FeedPosition(elevatorSubsystem, pivotSubsystem, indexSubsystem, intakeSubsystem));
+    // Da.whileTrue(new OuttakeCmd(intakeSubsystem)); 
+    // Da.whileFalse(new InstantCommand(intakeSubsystem::stopIntake));
+    // Db.onTrue(new IndexToShooterAutoCommand(shooterSubsystem, indexSubsystem)); 
+    // Db.onFalse(new DownPosition(elevatorSubsystem, pivotSubsystem));
+    // // Dy.whileTrue(new IndexerCommand(indexSubsystem)); 
+    // // Dy.whileFalse(new InstantCommand(indexSubsystem::stop)); 
+    
+    // //OPERATOR 
+    // ORightBumper.onTrue(new ElevatorToTopCmd(elevatorSubsystem)); 
+    // OLeftBumper.onTrue(new DownPosition(elevatorSubsystem, pivotSubsystem)); 
+
+    // Ob.onTrue(new AmpPosition(elevatorSubsystem, pivotSubsystem, indexSubsystem, intakeSubsystem, shooterSubsystem)); 
+    // Oy.onTrue(new RunToTopLim(pivotSubsystem)); 
+    // Ox.onTrue(new FeedPosition(elevatorSubsystem, pivotSubsystem, indexSubsystem, intakeSubsystem));
+    // Oa.whileTrue(new IntakeShooterCommand(shooterSubsystem, indexSubsystem)); 
+    // Oa.whileFalse(new InstantCommand(shooterSubsystem::stop)); 
+
+    //TRIGGER 
+    // blinkLimelight.whileTrue(new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceBlink("limelight")));
+    blinkLimelight.whileFalse(new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOff("limelight")));
+
+
+    //TESTING 
     DLeftBumper.whileTrue(new IntakeCmd(intakeSubsystem)); 
     DLeftBumper.whileFalse(new InstantCommand(intakeSubsystem::stopIntake)); 
 
-    DRightBumper.whileTrue(new IndexToShooterAutoCommand(shooterSubsystem, indexSubsystem));
+    DRightBumper.whileTrue(new IndexToShooterCommand(shooterSubsystem, indexSubsystem)); 
     DRightBumper.whileFalse(new InstantCommand(shooterSubsystem::stop)); 
+    DRightBumper.whileFalse(new InstantCommand(indexSubsystem::stop)); 
 
-    DRightBumper.whileTrue(new LimelightTurnAlignCmd(swerveSubsystem, xbox::getLeftY, xbox::getLeftX, 0));
-    DRightBumper.whileTrue(new ShootingPosition(elevatorSubsystem, pivotSubsystem));
-    DRightBumper.onFalse(new DownPosition(elevatorSubsystem, pivotSubsystem));
-     
-    Dx.onTrue(new FeedPosition(elevatorSubsystem, pivotSubsystem, indexSubsystem, intakeSubsystem));
+    //INTAKE SHAZ 
+    //PARA ELL WITH INTAKECMD AND SET PIVOT TO 35 
+    //OPTICAL TRIGGER ACTIVATES FEED AND PIVOT BACK 
+
+    //HAVE TO GO 55 FOR SUBWOOFER SPOT 
+
+    Dy.onTrue(new ElevatorToTopCmd(elevatorSubsystem)); 
+    Dx.onTrue(new ElevatorRestingPositionCmd(elevatorSubsystem)); 
+    Db.onTrue(new FeedPosition(elevatorSubsystem, pivotSubsystem, indexSubsystem, intakeSubsystem)); 
     Da.whileTrue(new OuttakeCmd(intakeSubsystem)); 
-    Da.whileFalse(new InstantCommand(intakeSubsystem::stopIntake));
-    Db.onTrue(new IndexToShooterAutoCommand(shooterSubsystem, indexSubsystem)); 
-    Db.onFalse(new DownPosition(elevatorSubsystem, pivotSubsystem));
-    // Dy.whileTrue(new IndexerCommand(indexSubsystem)); 
-    // Dy.whileFalse(new InstantCommand(indexSubsystem::stop)); 
+    Da.whileFalse(new InstantCommand(intakeSubsystem::stopIntake)); 
     
-    //OPERATOR 
-    ORightBumper.onTrue(new ElevatorToTopCmd(elevatorSubsystem)); 
-    OLeftBumper.onTrue(new DownPosition(elevatorSubsystem, pivotSubsystem)); 
+    OLeftBumper.whileTrue(new FeedToIndexer(indexSubsystem, intakeSubsystem)); 
 
-    Ob.onTrue(new AmpPosition(elevatorSubsystem, pivotSubsystem, indexSubsystem, intakeSubsystem, shooterSubsystem)); 
-    Oy.onTrue(new RunToTopLim(pivotSubsystem)); 
-    Ox.onTrue(new FeedPosition(elevatorSubsystem, pivotSubsystem, indexSubsystem, intakeSubsystem));
-    Oa.whileTrue(new IntakeShooterCommand(shooterSubsystem, indexSubsystem)); 
-    Oa.whileFalse(new InstantCommand(shooterSubsystem::stop)); 
-
-    // O7Button.onTrue(new SequentialCommandGroup( //feed pos without feed 
-    //   new ElevatorToTransferCmd(elevatorSubsystem), 
-
-    //   new PivotPidCommand(pivotSubsystem, 45)
-    // ));
-
-    // O8Button.whileTrue(new ParallelCommandGroup(  //shindexer + outtake
-    //   new IntakeShooterCommand(shooterSubsystem, indexSubsystem), 
-
-    //   new OuttakeCmd(intakeSubsystem)
-    // ));
-    // O8Button.whileFalse(new InstantCommand(shooterSubsystem::stop)); 
-    // O8Button.whileFalse(new InstantCommand(indexSubsystem::stop));
-    // O8Button.whileFalse(new InstantCommand(intakeSubsystem::stopIntake));
-
-    //TRIGGER 
-    blinkLimelight.whileTrue(new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceBlink("limelight")));
-    blinkLimelight.whileFalse(new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOff("limelight")));
-    
+    Ox.onTrue(new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOff("limelight")));
 
   }
 
