@@ -288,12 +288,6 @@ public class RobotContainer {
   private void registerAutoCommands() {
     NamedCommands.registerCommand("IntakeCommand", new IntakeCmd(intakeSubsystem)); 
     NamedCommands.registerCommand("StopIntake", new InstantCommand(intakeSubsystem::stopIntake));
-    NamedCommands.registerCommand("DeliverCommand", new DeliverCmd(intakeSubsystem));
-    NamedCommands.registerCommand("FakeShooting", new SequentialCommandGroup(
-      new InstantCommand(() -> intakeSubsystem.intake(0.6)), 
-      new WaitCommand(1), 
-      new InstantCommand(intakeSubsystem::stopIntake)
-    ));
     NamedCommands.registerCommand("Wait", new WaitCommand(5));
 
     NamedCommands.registerCommand("ShootAuto", new ParallelCommandGroup(
