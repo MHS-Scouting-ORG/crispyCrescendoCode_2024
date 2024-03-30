@@ -1,0 +1,50 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.25,
+      "y": 5.5
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootAuto"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "B StraightStart"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AlignShootAuto"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "B SS-ThroughStage"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "folder": "B Autos",
+  "choreoAuto": false
+}

@@ -9,6 +9,6 @@ public final class ShindexerConstants {
     public static double INDEXER_SPEED = 0.6;
     public static final double MAX_SPEED = .9;
     public static final double RPM_SPEED_LIMIT = 4000 * SHOOTER_SPEED;
-    public static final double RPM_AMP_SPEED_LIMIT = 2000 * 0.2; 
-    public static final double RPM_AUTO_SPEED_LIMIT = 2000 * 0.5;
+    public static final double RPM_AMP_SPEED_LIMIT = 4000 * 0.15; 
+    public static final double RPM_AUTO_SPEED_LIMIT = 4000 * 0.5;
 }

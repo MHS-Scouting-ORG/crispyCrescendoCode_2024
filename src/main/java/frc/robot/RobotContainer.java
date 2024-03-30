@@ -1,5 +1,6 @@
 package frc.robot;
 
+import com.fasterxml.jackson.databind.util.Named;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
@@ -31,6 +32,7 @@ import frc.robot.commands.AutonomousCommands.A_JustShoot;
 import frc.robot.commands.AutonomousCommands.A_PositionA;
 import frc.robot.commands.AutonomousCommands.A_PositionB;
 import frc.robot.commands.AutonomousCommands.S_DriveToPositionCommand;
+import frc.robot.commands.CrispyPositionCommands.AlignPivotShoot;
 import frc.robot.commands.CrispyPositionCommands.AmpPosition;
 import frc.robot.commands.CrispyPositionCommands.AutomaticPickup;
 import frc.robot.commands.CrispyPositionCommands.DownPosition;
@@ -90,6 +92,7 @@ public class RobotContainer {
   //         TRIGGERS         //
   //////////////////////////////
   private final Trigger opticalTrigger = new Trigger(intakeSubsystem::getOpticalSensor);
+  private final Trigger indexTrigger = new Trigger(indexSubsystem::getOpticalSwitch);
 
   //////////////////////////////
   //      DRIVER BUTTONS      //
@@ -132,7 +135,7 @@ public class RobotContainer {
   private final JoystickButton O7Button = new JoystickButton(xboxOp, 7); 
   private final JoystickButton O8Button = new JoystickButton(xboxOp, 8);
 
-  private final Trigger blinkLimelight = new Trigger(intakeSubsystem::getOpticalSensor);
+  private final Trigger noteSensed = new Trigger(intakeSubsystem::getOpticalSensor);
 
   //////////////////////////////
   //        AUTO CHOICES      //
@@ -163,7 +166,9 @@ public class RobotContainer {
                 true, false),
             swerveSubsystem));
 
-        pivotSubsystem.setDefaultCommand(new ManualPivotCommand(pivotSubsystem, xboxOp::getLeftY));
+        // pivotSubsystem.setDefaultCommand(new ManualPivotCommand(pivotSubsystem, xboxOp::getLeftY));
+        pivotSubsystem.setDefaultCommand(new RunToTopLim(pivotSubsystem)); //INDEX POS 
+        elevatorSubsystem.setDefaultCommand(new ElevatorRestingPositionCmd(elevatorSubsystem));
 
         // pivotSubsystem.setDefaultCommand(new ManualPivotCommand(pivotSubsystem, () -> xboxOp.getRightY() * 0.5));
 
@@ -203,33 +208,56 @@ public class RobotContainer {
     // Oa.whileFalse(new InstantCommand(shooterSubsystem::stop)); 
 
     //TRIGGER 
-    // blinkLimelight.whileTrue(new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceBlink("limelight")));
-    blinkLimelight.whileFalse(new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOff("limelight")));
+    noteSensed.whileTrue(new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceBlink("limelight")));
+    noteSensed.whileFalse(new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOff("limelight")));
 
+    indexTrigger.whileTrue(new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOn("limelight")));
+    indexTrigger.whileFalse(new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOff("limelight")));
 
     //TESTING 
-    DLeftBumper.whileTrue(new IntakeCmd(intakeSubsystem)); 
+    DLeftBumper.whileTrue(
+      new SequentialCommandGroup(
+        new ParallelCommandGroup(
+          new IntakeCmd(intakeSubsystem), 
+          new PivotPidCommand(pivotSubsystem, 30)
+        ), 
+      new FeedPosition(elevatorSubsystem, pivotSubsystem, indexSubsystem, intakeSubsystem))
+    ); 
     DLeftBumper.whileFalse(new InstantCommand(intakeSubsystem::stopIntake)); 
 
-    DRightBumper.whileTrue(new IndexToShooterCommand(shooterSubsystem, indexSubsystem)); 
+    DRightBumper.whileTrue(new SequentialCommandGroup(
+      new PivotPidCommand(pivotSubsystem, 32), 
+      new IndexToShooterCommand(shooterSubsystem, indexSubsystem)
+    )); 
+    DRightBumper.whileTrue(new LimelightTurnAlignCmd(swerveSubsystem, xbox::getLeftY, xbox::getLeftX, 0));
+
     DRightBumper.whileFalse(new InstantCommand(shooterSubsystem::stop)); 
     DRightBumper.whileFalse(new InstantCommand(indexSubsystem::stop)); 
-
-    //INTAKE SHAZ 
-    //PARA ELL WITH INTAKECMD AND SET PIVOT TO 35 
-    //OPTICAL TRIGGER ACTIVATES FEED AND PIVOT BACK 
-
     //HAVE TO GO 55 FOR SUBWOOFER SPOT 
 
-    Dy.onTrue(new ElevatorToTopCmd(elevatorSubsystem)); 
-    Dx.onTrue(new ElevatorRestingPositionCmd(elevatorSubsystem)); 
-    Db.onTrue(new FeedPosition(elevatorSubsystem, pivotSubsystem, indexSubsystem, intakeSubsystem)); 
+    // Dy.onTrue(new ElevatorToTopCmd(elevatorSubsystem)); 
+    Dx.onTrue(new AlignPivotShoot(pivotSubsystem, shooterSubsystem, indexSubsystem)); 
+    Dx.whileTrue(new LimelightTurnAlignCmd(swerveSubsystem, xbox::getLeftY, xbox::getLeftX, 0));
+    // Db.whileTrue(new LimelightTurnAlignCmd(swerveSubsystem, xbox::getLeftY, xbox::getLeftX, 0)); 
+    Db.onTrue(new SequentialCommandGroup(
+      new AmpPosition(elevatorSubsystem, pivotSubsystem, indexSubsystem, intakeSubsystem, shooterSubsystem), 
+      new DownPosition(elevatorSubsystem, pivotSubsystem)
+    )); 
     Da.whileTrue(new OuttakeCmd(intakeSubsystem)); 
     Da.whileFalse(new InstantCommand(intakeSubsystem::stopIntake)); 
     
+
     OLeftBumper.whileTrue(new FeedToIndexer(indexSubsystem, intakeSubsystem)); 
 
-    Ox.onTrue(new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOff("limelight")));
+    Ox.onTrue(new DownPosition(elevatorSubsystem, pivotSubsystem));
+    // Oy.onTrue(new PivotPidCommand(pivotSubsystem, 30));
+
+    noteSensed.onTrue(new SequentialCommandGroup(
+      new FeedPosition(elevatorSubsystem, pivotSubsystem, indexSubsystem, intakeSubsystem)
+      // new RunToTopLim(pivotSubsystem)
+    )); 
+
+
 
   }
 
@@ -267,6 +295,17 @@ public class RobotContainer {
       new InstantCommand(intakeSubsystem::stopIntake)
     ));
     NamedCommands.registerCommand("Wait", new WaitCommand(5));
+
+    NamedCommands.registerCommand("ShootAuto", new ParallelCommandGroup(
+      new PivotPidCommand(pivotSubsystem, 55), 
+      new IndexToShooterAutoCommand(shooterSubsystem, indexSubsystem)
+    ));
+    NamedCommands.registerCommand("AlignShootAuto", new ParallelRaceGroup(
+      new AlignPivotShoot(pivotSubsystem, shooterSubsystem, indexSubsystem), 
+      new LimelightTurnAlignCmd(swerveSubsystem, () -> 0.0, () -> 0.0, 0)
+    ));
+    NamedCommands.registerCommand("FeedPosition", new FeedPosition(elevatorSubsystem, pivotSubsystem, indexSubsystem, intakeSubsystem));
+    NamedCommands.registerCommand("RunToTopLim", new RunToTopLim(pivotSubsystem));
   }
 
   public Command getAutonomousCommand() {
@@ -274,7 +313,8 @@ public class RobotContainer {
     // return autonomousChooser.getSelected();
 
     // String autoName = autoNameChooser.getSelected(); 
-    return new PathPlannerAuto("A 4 note");
+    return new PathPlannerAuto("CB Shoot");
+
 
     // return new S_DriveToPositionCommand(swerveSubsystem, 0, 2, 0, false);
 

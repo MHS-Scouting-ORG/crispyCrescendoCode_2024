@@ -187,8 +187,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     else if (output < -ElevatorConstants.SPEED_CAP) {
       elevMotor.set(-ElevatorConstants.SPEED_CAP);
     }
-    else {
-      elevMotor.set(output);
+    else{
+    elevMotor.set(output);
     }
 
     // SmartDashboard

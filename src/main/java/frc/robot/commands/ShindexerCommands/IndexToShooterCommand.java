@@ -29,7 +29,7 @@ public class IndexToShooterCommand extends Command {
   public void execute() {
     // change statement to check if shooter rpm < specified speed
     if(shootSub.getRPM() > ShindexerConstants.RPM_SPEED_LIMIT){
-      indexSub.index(0.35);
+      indexSub.index(0.45);
       shootSub.shooter(ShindexerConstants.SHOOTER_SPEED);
     } else {
       shootSub.shooter(ShindexerConstants.SHOOTER_SPEED);

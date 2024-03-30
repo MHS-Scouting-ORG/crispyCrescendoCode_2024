@@ -12,9 +12,33 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "ShootAuto"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "CB Far Shoot"
+            "pathName": "CB Shoot uno"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AlignShootAuto"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CB Shoot Two"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AlignShootAuto"
           }
         }
       ]

@@ -1,5 +1,7 @@
 package frc.robot.commands.CrispyPositionCommands;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.ElevatorCommands.ElevatorToTopCmd;
 import frc.robot.commands.ElevatorCommands.ElevatorToTransferCmd;
@@ -15,17 +17,15 @@ public class AmpPosition extends SequentialCommandGroup {
 
   public AmpPosition(ElevatorSubsystem elevatorSubsystem, PivotSubsystem pivotSubsystem, IndexerSubsystem indexerSubsystem, UnderIntakeSubsystem intakeSubsystem, ShooterSubsystem shooterSubsystem) {
     addCommands(
-      new ElevatorToTransferCmd(elevatorSubsystem), 
+      new ParallelCommandGroup(
+        new ElevatorToTopCmd(elevatorSubsystem), 
+        new PivotPidCommand(pivotSubsystem, 45), 
+        new InstantCommand(() -> shooterSubsystem.shooter(0.15))
+      ), 
 
-      new PivotPidCommand(pivotSubsystem, 45), 
+      new IndexToShooterAmpCommand(shooterSubsystem, indexerSubsystem)
 
-      new FeedToIndexer(indexerSubsystem, intakeSubsystem), 
 
-      new ElevatorToTopCmd(elevatorSubsystem),
-
-      new IndexToShooterAmpCommand(shooterSubsystem, indexerSubsystem), 
-
-      new DownPosition(elevatorSubsystem, pivotSubsystem)
 
     );
   }

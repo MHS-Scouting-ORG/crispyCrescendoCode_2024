@@ -27,7 +27,7 @@ public class RunToTopLim extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute(){
-    pivotSubs.changeSetpoint(60 + offset);
+    pivotSubs.changeSetpoint(60);
 
   }
 

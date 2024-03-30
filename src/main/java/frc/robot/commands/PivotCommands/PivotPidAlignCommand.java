@@ -5,7 +5,7 @@ import frc.robot.Constants.LimelightHelpers;
 import frc.robot.subsystems.PivotSubsystem;
 
 public class PivotPidAlignCommand extends Command {
- PivotSubsystem pivotSubs;
+  PivotSubsystem pivotSubs;
 
   public PivotPidAlignCommand(PivotSubsystem pivotsub) {
     pivotSubs = pivotsub;
@@ -13,35 +13,34 @@ public class PivotPidAlignCommand extends Command {
   }
 
   @Override
-  public void initialize(){
+  public void initialize() {
     pivotSubs.init();
     pivotSubs.enablePid();
-  }
-
-  @Override
-  public void execute(){
+    // pivotSubs.changeSetpoint((int) (pivotSubs.returnCalcAngle()));
     if (!LimelightHelpers.getTV("limelight")) {
-      pivotSubs.changeSetpoint(60);
+      pivotSubs.changeSetpoint(32);
     } else {
-    if(pivotSubs.returnHorizontalDist() < 1.7){
-      pivotSubs.changeSetpoint(45);
+      if (pivotSubs.returnHorizontalDist() > 3.75 && pivotSubs.returnHorizontalDist() < 4.6) {
+        pivotSubs.changeSetpoint(32);
+      } else {
+        pivotSubs.changeSetpoint(pivotSubs.returnCalcAngle());
+      }
     }
-    else if(pivotSubs.returnHorizontalDist() > 1.7 && pivotSubs.returnHorizontalDist() < 2.1){
-      pivotSubs.changeSetpoint(40);
-    }
-    else{
-      pivotSubs.changeSetpoint((int)(pivotSubs.returnCalcAngle()));
-    }
-  }
   }
 
   @Override
-  public void end(boolean interrupted){
+  public void execute() {
+    
+  }
+
+  @Override
+  public void end(boolean interrupted) {
     pivotSubs.stopMotor();
   }
 
   @Override
   public boolean isFinished() {
-    return pivotSubs.returnEncoder() == 360 - pivotSubs.returnCalcAngle();
+    // return pivotSubs.returnEncoder() == 360 - pivotSubs.returnCalcAngle();
+    return pivotSubs.atSetpoint();
   }
 }

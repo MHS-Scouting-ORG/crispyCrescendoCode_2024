@@ -50,7 +50,7 @@ public class PivotSubsystem extends SubsystemBase {
     
     pid = new PIDController(PivotConstants.PIVOT_KP, PivotConstants.PIVOT_KI, PivotConstants.PIVOT_KD);
     setpoint = 0;
-    setpointTolerance = 1.5;
+    setpointTolerance = 2.5;
 
     manualSpeed = 0;
     maxPidSpeed = PivotConstants.MAX_SPEED;
@@ -72,7 +72,7 @@ public class PivotSubsystem extends SubsystemBase {
 
   // returns current encoder
   public double returnEncoder(){
-    return encoder.getPosition();
+    return 360 - encoder.getPosition();
   }
 
   ///////////////////
@@ -91,7 +91,7 @@ public class PivotSubsystem extends SubsystemBase {
 
     // changes setPoint for the pid 
   public void changeSetpoint(double newSetpoint){
-    setpoint = 360 - newSetpoint;
+    setpoint = newSetpoint;
   }
 
   /////////////////////
@@ -151,8 +151,8 @@ public class PivotSubsystem extends SubsystemBase {
   // }
 
   public double returnCalcAngle (){
-    statsCalcAngle = 84.3 + (-9.18 * horizontalDist) + (0.369 * Math.pow(horizontalDist, 2));
-    statsCalcAngle /= 2;
+    statsCalcAngle = 71 + (-16 * horizontalDist) + (1.58 * Math.pow(horizontalDist, 2));
+    // statsCalcAngle /= 2;
     return statsCalcAngle;
   }
 
@@ -168,7 +168,7 @@ public class PivotSubsystem extends SubsystemBase {
     double pidSpeed = 0;
 
     if(pidOn){
-      pidSpeed = pid.calculate(encoder.getPosition(), setpoint);
+      pidSpeed = -pid.calculate(returnEncoder(), setpoint);
     }
     else{
       pidSpeed = manualSpeed;
@@ -195,11 +195,11 @@ public class PivotSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("[P] Pid On?", pidOn);
     SmartDashboard.putNumber("[P] Speed", pidSpeed);
     SmartDashboard.putBoolean("[P] Top limit switch pressed?", topLimitSwitchPressed());
-    SmartDashboard.putNumber("[P] Degree of shooter", 360 - returnEncoder());
+    SmartDashboard.putNumber("[P] Degree of shooter", returnEncoder());
     SmartDashboard.putBoolean("[P] Bottom limit switch pressed?", bottomLimitSwitchPressed());
     SmartDashboard.putNumber("[P] distance from limelight", returnHorizontalDist());
     SmartDashboard.putBoolean("[P] at setpoint?", atSetpoint());
-    SmartDashboard.putNumber("[P] pid setpoint", 360 - setpoint);
+    SmartDashboard.putNumber("[P] pid setpoint", setpoint);
     SmartDashboard.putBoolean("[P] Bottom limit switch 2 pressed?", bottomLimitSwitch2Pressed());
 
     SmartDashboard.putNumber("[P] stats calc angle", returnCalcAngle());

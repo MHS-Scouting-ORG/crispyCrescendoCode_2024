@@ -35,8 +35,8 @@ public class LimelightTurnAlignCmd extends Command {
     this.pipeline = pipeline;
     ally = DriverStation.getAlliance();
 
-    anglePID = new PIDController(0.011, 0, 0);
-    anglePID.setTolerance(0.5);
+    anglePID = new PIDController(0.011, 0.003, 0);
+    anglePID.setTolerance(2);
 
     addRequirements(swerveSubs);
   }
@@ -68,6 +68,9 @@ public class LimelightTurnAlignCmd extends Command {
 
     
     double rotationSpeed = anglePID.calculate(LimelightHelpers.getTX("limelight"), -4.18);
+
+    SmartDashboard.putNumber("rotation Speed", rotationSpeed);
+    SmartDashboard.putBoolean("rotation at setpt", anglePID.atSetpoint()); 
    
     if(LimelightHelpers.getTV("limelight")){
      if (DriverStation.getAlliance().isPresent() && ((ally.get() == Alliance.Blue && swerveSubs.blueAllianceCheck()) || (ally.get() == Alliance.Red && swerveSubs.redAllianceCheck()))){

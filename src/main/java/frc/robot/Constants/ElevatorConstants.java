@@ -13,5 +13,5 @@ public class ElevatorConstants {
     public static final double ELEV_KD = 0;
 
     public static final int SMART_CURRENT_LIMIT = 20;
-    public static final double PID_TOLERANCE = 1;
+    public static final double PID_TOLERANCE = 2.5;
   }
