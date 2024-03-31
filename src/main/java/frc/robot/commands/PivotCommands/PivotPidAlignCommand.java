@@ -17,20 +17,15 @@ public class PivotPidAlignCommand extends Command {
     pivotSubs.init();
     pivotSubs.enablePid();
     // pivotSubs.changeSetpoint((int) (pivotSubs.returnCalcAngle()));
-    if (!LimelightHelpers.getTV("limelight")) {
-      pivotSubs.changeSetpoint(32);
-    } else {
-      if (pivotSubs.returnHorizontalDist() > 3.75 && pivotSubs.returnHorizontalDist() < 4.6) {
-        pivotSubs.changeSetpoint(32);
-      } else {
-        pivotSubs.changeSetpoint(pivotSubs.returnCalcAngle());
-      }
-    }
   }
 
   @Override
   public void execute() {
-    
+    if (!LimelightHelpers.getTV("limelight") || pivotSubs.returnHorizontalDist() > 3.75 && pivotSubs.returnHorizontalDist() < 4.6) {
+      pivotSubs.changeSetpoint(33);
+    } else {
+      pivotSubs.changeSetpoint((int) (pivotSubs.returnCalcAngle()));
+    }
   }
 
   @Override

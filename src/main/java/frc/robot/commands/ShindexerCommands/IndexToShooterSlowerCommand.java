@@ -6,6 +6,7 @@ import frc.robot.Constants.ShindexerConstants;
 import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
+//USED IN OLD AUTO COMMANDS 
 public class IndexToShooterSlowerCommand extends Command {
 
   private ShooterSubsystem shootSub;

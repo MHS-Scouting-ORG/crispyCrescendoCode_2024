@@ -3,89 +3,89 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.7713800042984719,
-        "y": 4.509192864539576
+        "x": 1.2788871226815193,
+        "y": 5.433828157242619
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.7349016236494026,
-        "y": 1.9832555049725498
+        "x": 1.679138742892872,
+        "y": 4.884136691350306
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "C_Start"
     },
     {
       "anchor": {
-        "x": 7.8361110568375,
-        "y": 0.6
+        "x": 2.3500908540278633,
+        "y": 4.075047380863993
       },
       "prevControl": {
-        "x": 6.602743205486412,
-        "y": 1.0261620523241057
+        "x": 2.4670907019487496,
+        "y": 3.5956730039659965
       },
       "nextControl": {
-        "x": 8.30241089382467,
-        "y": 0.4388807562065431
+        "x": 2.3328624118018553,
+        "y": 4.145636137206654
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.004298470135403,
-        "y": 1.6971141634590963
+        "x": 2.3500908540278633,
+        "y": 5.55
       },
       "prevControl": {
-        "x": 6.3253995543484525,
-        "y": 0.7534705318783448
+        "x": 2.122067353977788,
+        "y": 4.836575493407763
       },
       "nextControl": {
-        "x": 4.658955471757099,
-        "y": 1.9437877337293117
+        "x": 2.361070874983465,
+        "y": 5.584353547028715
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.8361110568375,
-        "y": 2.4272679314589416
+        "x": 2.3500908540278633,
+        "y": 6.956194681620133
       },
       "prevControl": {
-        "x": 7.125691174459274,
-        "y": 2.318731560540045
+        "x": 1.8292964403332503,
+        "y": 6.218454205809981
       },
       "nextControl": {
-        "x": 8.123143745664457,
-        "y": 2.471120147807505
+        "x": 2.3624422848076096,
+        "y": 6.973691317875777
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.201637326351578,
-        "y": 3.7593052109181144
+        "x": 7.589437486567283,
+        "y": 7.518610421836228
       },
       "prevControl": {
-        "x": 7.4068990445673215,
-        "y": 3.2807584845938926
+        "x": 4.615171206996046,
+        "y": 7.906558197432477
       },
       "nextControl": {
-        "x": 2.9963756081358337,
-        "y": 4.237851937242336
+        "x": 8.04331685586448,
+        "y": 7.459408764971376
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.8361110568375,
-        "y": 4.134249037728845
+        "x": 4.6096207577030555,
+        "y": 7.518610421836228
       },
       "prevControl": {
-        "x": 5.297840018756963,
-        "y": 4.195917430296399
+        "x": 7.549969715324048,
+        "y": 7.742664623922467
       },
       "nextControl": null,
       "isLocked": false,
@@ -94,16 +94,26 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.95,
+      "waypointRelativePos": 1,
+      "rotationDegrees": -35.0,
+      "rotateFast": false
+    },
+    {
+      "waypointRelativePos": 2,
       "rotationDegrees": 0,
-      "rotateFast": true
+      "rotateFast": false
+    },
+    {
+      "waypointRelativePos": 3,
+      "rotationDegrees": 20.0,
+      "rotateFast": false
     }
   ],
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "IntakeOn",
-      "waypointRelativePos": 0.8500000000000001,
+      "name": "Index",
+      "waypointRelativePos": 0,
       "command": {
         "type": "parallel",
         "data": {
@@ -111,7 +121,7 @@
             {
               "type": "named",
               "data": {
-                "name": "IntakeCommand"
+                "name": "ShootAuto"
               }
             }
           ]
@@ -119,8 +129,8 @@
       }
     },
     {
-      "name": "IntakeOff",
-      "waypointRelativePos": 1.2,
+      "name": "FeedPosition",
+      "waypointRelativePos": 0.4,
       "command": {
         "type": "parallel",
         "data": {
@@ -128,7 +138,7 @@
             {
               "type": "named",
               "data": {
-                "name": "StopIntake"
+                "name": "FeedPosition"
               }
             }
           ]
@@ -136,7 +146,41 @@
       }
     },
     {
-      "name": "Deliver",
+      "name": "Index",
+      "waypointRelativePos": 0.85,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Index"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "FeedPosition",
+      "waypointRelativePos": 1.5,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "FeedPosition"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Index",
       "waypointRelativePos": 1.9,
       "command": {
         "type": "parallel",
@@ -145,7 +189,7 @@
             {
               "type": "named",
               "data": {
-                "name": "DeliverCommand"
+                "name": "Index"
               }
             }
           ]
@@ -153,8 +197,8 @@
       }
     },
     {
-      "name": "IntakeOff",
-      "waypointRelativePos": 2.25,
+      "name": "FeedPosition",
+      "waypointRelativePos": 2.5,
       "command": {
         "type": "parallel",
         "data": {
@@ -162,7 +206,7 @@
             {
               "type": "named",
               "data": {
-                "name": "StopIntake"
+                "name": "FeedPosition"
               }
             }
           ]
@@ -170,8 +214,8 @@
       }
     },
     {
-      "name": "IntakeOn",
-      "waypointRelativePos": 2.8000000000000003,
+      "name": "Index",
+      "waypointRelativePos": 2.9,
       "command": {
         "type": "parallel",
         "data": {
@@ -179,7 +223,7 @@
             {
               "type": "named",
               "data": {
-                "name": "IntakeCommand"
+                "name": "Index"
               }
             }
           ]
@@ -187,8 +231,8 @@
       }
     },
     {
-      "name": "IntakeOff",
-      "waypointRelativePos": 3.25,
+      "name": "FeedPosition",
+      "waypointRelativePos": 3.7,
       "command": {
         "type": "parallel",
         "data": {
@@ -196,75 +240,7 @@
             {
               "type": "named",
               "data": {
-                "name": "StopIntake"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "Deliver",
-      "waypointRelativePos": 3.95,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "DeliverCommand"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": " IntakeOff",
-      "waypointRelativePos": 4.45,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "StopIntake"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "IntakeOn",
-      "waypointRelativePos": 4.9,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "IntakeCommand"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "IntakeOff",
-      "waypointRelativePos": 5.0,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "StopIntake"
+                "name": "FeedPosition"
               }
             }
           ]
@@ -284,9 +260,9 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "C Position",
+  "folder": "rev autos",
   "previewStartingState": {
-    "rotation": -59.7435628364707,
+    "rotation": 1.5074357587750136,
     "velocity": 0
   },
   "useDefaultConstraints": true

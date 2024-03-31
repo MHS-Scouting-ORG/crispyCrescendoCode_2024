@@ -4,16 +4,21 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ShindexerConstants;
 import frc.robot.subsystems.IndexerSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 
 public class IndexAuto extends Command {
 
-  private IndexerSubsystem indexSub;
+  private IndexerSubsystem indexSubsystem;
+  ShooterSubsystem shooterSubsystem; 
   private Timer timer; 
 
-  public IndexAuto(IndexerSubsystem indexSubsystem) {
-    indexSub = indexSubsystem;
+  public IndexAuto(IndexerSubsystem indexSubsystem, ShooterSubsystem shooterSubsystem) {
+    this.indexSubsystem = indexSubsystem;
+    this.shooterSubsystem = shooterSubsystem; 
     timer = new Timer();
-    addRequirements(indexSub);
+
+    addRequirements(indexSubsystem);
+    addRequirements(shooterSubsystem);
   }
 
   @Override
@@ -24,12 +29,20 @@ public class IndexAuto extends Command {
 
   @Override
   public void execute() {
-    indexSub.index(ShindexerConstants.INDEXER_SPEED);
+    indexSubsystem.index(ShindexerConstants.INDEXER_SPEED);
+
+    if(shooterSubsystem.getRPM() > ShindexerConstants.MAX_RPM * 0.9){
+      indexSubsystem.index(ShindexerConstants.INDEXER_SPEED);
+      shooterSubsystem.shooter(0.95);
+      
+    } else {
+      shooterSubsystem.shooter(0.95);
+    }
   }
 
   @Override
   public void end(boolean interrupted) {
-    indexSub.stop();
+    indexSubsystem.stop();
   }
 
   @Override

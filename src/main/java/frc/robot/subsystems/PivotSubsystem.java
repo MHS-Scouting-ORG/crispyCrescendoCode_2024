@@ -58,7 +58,7 @@ public class PivotSubsystem extends SubsystemBase {
     horizontalDist = 0;
 
     pid.enableContinuousInput(0, 360); 
-    pid.setTolerance(1.5);
+    pid.setTolerance(0.5);
   }
 
  // sets pivotMotor to brake mode

@@ -1,6 +1,5 @@
 package frc.robot;
 
-import com.fasterxml.jackson.databind.util.Named;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
@@ -8,7 +7,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -24,14 +22,10 @@ import frc.robot.Constants.IntegrationConstants.OperatorConstants;
 import frc.robot.Constants.LimelightHelpers;
 import frc.robot.Constants.SwerveConstants.OIConstants;
 import frc.robot.commands.LimelightTurnAlignCmd;
-import frc.robot.commands.AutonomousCommands.A_JustShoot;
-import frc.robot.commands.AutonomousCommands.A_PositionA;
-import frc.robot.commands.AutonomousCommands.A_PositionB;
 import frc.robot.commands.CrispyPositionCommands.AlignPivotShoot;
 import frc.robot.commands.CrispyPositionCommands.AmpPosition;
 import frc.robot.commands.CrispyPositionCommands.DownPosition;
 import frc.robot.commands.CrispyPositionCommands.FeedPosition;
-import frc.robot.commands.CrispyPositionCommands.FeedToIndexer;
 import frc.robot.commands.ElevatorCommands.ElevatorRestingPositionCmd;
 import frc.robot.commands.ElevatorCommands.ElevatorToTopCmd;
 import frc.robot.commands.IntakeCommands.IntakeCmd;
@@ -50,7 +44,6 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.UnderIntakeSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.commands.AutonomousCommands.A_PositionC;
 
 public class RobotContainer {
   //////////////////////////////
@@ -70,7 +63,6 @@ public class RobotContainer {
   //        CONTROLLERS       //
   //////////////////////////////
   private final XboxController xbox = new XboxController(OperatorConstants.kDriverControllerPort);
-  private final Joystick joystick = new Joystick(3);
   private final XboxController xboxOp = new XboxController(1);
 
   //////////////////////////////
@@ -82,26 +74,6 @@ public class RobotContainer {
   //////////////////////////////
   //      DRIVER BUTTONS      //
   //////////////////////////////
-  private final JoystickButton b_resetNavx = new JoystickButton(xbox, 7);
-  private final JoystickButton b_rotateAmp = new JoystickButton(xbox, XboxController.Button.kX.value); 
-  
-  private final JoystickButton b_intake = new JoystickButton(xbox, XboxController.Button.kLeftBumper.value); 
-  private final JoystickButton b_outtake = new JoystickButton(xbox, XboxController.Button.kRightBumper.value); 
-
-  private final JoystickButton b_indexerFeed = new JoystickButton(xbox, XboxController.Button.kY.value);
-
-  //////////////////////////////
-  //     OPERATOR BUTTONS     //
-  //////////////////////////////
-  private final JoystickButton b_elevToTop = new JoystickButton(joystick, 3);
-  private final JoystickButton b_elevToBottom = new JoystickButton(joystick, 4);
-
-  // private final JoystickButton b_ampShooting = new JoystickButton(xbox, XboxController.Button.kB.value);
-  private final JoystickButton b_shootah = new JoystickButton(xbox, XboxController.Button.kB.value);
-
-  //////////////////////////////
-  //     TESTING BUTTONS      //
-  //////////////////////////////
   private final JoystickButton Dy = new JoystickButton(xbox, XboxController.Button.kY.value); 
   private final JoystickButton Dx = new JoystickButton(xbox, XboxController.Button.kX.value);
   private final JoystickButton Da = new JoystickButton(xbox, XboxController.Button.kA.value);
@@ -110,6 +82,11 @@ public class RobotContainer {
   private final JoystickButton DLeftBumper = new JoystickButton(xbox, XboxController.Button.kLeftBumper.value);
   private final JoystickButton DRightBumper = new JoystickButton(xbox, XboxController.Button.kRightBumper.value);
 
+  private final JoystickButton b_resetNavx = new JoystickButton(xbox, 7); 
+
+  //////////////////////////////
+  //     OPERATOR BUTTONS     //
+  //////////////////////////////
   private final JoystickButton Oy = new JoystickButton(xboxOp, XboxController.Button.kY.value); 
   private final JoystickButton Ox = new JoystickButton(xboxOp, XboxController.Button.kX.value);
   private final JoystickButton Oa = new JoystickButton(xboxOp, XboxController.Button.kA.value);
@@ -129,29 +106,31 @@ public class RobotContainer {
   public SendableChooser<String> autoPositionChooser = new SendableChooser<>();
   public SendableChooser<String> autoNameChooser = new SendableChooser<>();
 
-  public Command PositionA = new A_PositionA(swerveSubsystem, intakeSubsystem, indexSubsystem, shooterSubsystem, elevatorSubsystem, pivotSubsystem); 
-  public Command PositionB = new A_PositionB(swerveSubsystem, intakeSubsystem, indexSubsystem, shooterSubsystem, elevatorSubsystem, pivotSubsystem); 
-  public Command PositionC = new A_PositionC(swerveSubsystem, intakeSubsystem, indexSubsystem, shooterSubsystem, elevatorSubsystem, pivotSubsystem);
-  public Command JustShoot = new A_JustShoot(swerveSubsystem, shooterSubsystem, indexSubsystem);
+  // public Command PositionA = new A_PositionA(swerveSubsystem, intakeSubsystem, indexSubsystem, shooterSubsystem, elevatorSubsystem, pivotSubsystem); 
+  // public Command PositionB = new A_PositionB(swerveSubsystem, intakeSubsystem, indexSubsystem, shooterSubsystem, elevatorSubsystem, pivotSubsystem); 
+  // public Command PositionC = new A_PositionC(swerveSubsystem, intakeSubsystem, indexSubsystem, shooterSubsystem, elevatorSubsystem, pivotSubsystem);
+  // public Command JustShoot = new A_JustShoot(swerveSubsystem, shooterSubsystem, indexSubsystem);
 
   public RobotContainer() {
-    // Configure the trigger bindings
+    //AUTO CHOOSER 
     selectAuto();
     registerAutoCommands();
+
+    //CONFIGURE BINDINGS
     configureBindings();
 
-        swerveSubsystem.setDefaultCommand(
-        // The left stick controls translation of the robot.
-        // Turning is controlled by the X axis of the right stick.
-        new RunCommand(
-            () -> swerveSubsystem.drive(
-                -MathUtil.applyDeadband(xbox.getLeftY(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(xbox.getLeftX(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(xbox.getRightX(), OIConstants.kDriveDeadband),
-                true, false),
-            swerveSubsystem));
+    //DEFAULT COMMANDS
+    swerveSubsystem.setDefaultCommand(
+      // The left stick controls translation of the robot.
+      // Turning is controlled by the X axis of the right stick.
+      new RunCommand(
+        () -> swerveSubsystem.drive(
+          -MathUtil.applyDeadband(xbox.getLeftY(), OIConstants.kDriveDeadband),
+          -MathUtil.applyDeadband(xbox.getLeftX(), OIConstants.kDriveDeadband),
+          -MathUtil.applyDeadband(xbox.getRightX(), OIConstants.kDriveDeadband),
+          true, false),
+          swerveSubsystem));
 
-        // pivotSubsystem.setDefaultCommand(new ManualPivotCommand(pivotSubsystem, xboxOp::getLeftY));
         // pivotSubsystem.setDefaultCommand(new RunToTopLim(pivotSubsystem)); //INDEX POS 
         // elevatorSubsystem.setDefaultCommand(new ElevatorRestingPositionCmd(elevatorSubsystem));
 
@@ -160,18 +139,18 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    //DRIVE 
-    b_resetNavx.onTrue(new InstantCommand(swerveSubsystem::zeroHeading));
-
     //TRIGGER 
     noteSensed.onTrue(new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceBlink("limelight")));
     // noteSensed.onFalse(new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOff("limelight")));
 
-    // indexTrigger.whileTrue(new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOn("limelight")));
-    // indexTrigger.whileFalse(new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOff("limelight")));
+    //////////////////////////////
+    //          DRIVER          //
+    //////////////////////////////
+    /* * * BUMPERS * * */
+    b_resetNavx.onTrue(new InstantCommand(swerveSubsystem::zeroHeading));
 
-    //DRIVER
-    DLeftBumper.whileTrue(
+    //INTAKE 
+    DLeftBumper.whileTrue(  
       new SequentialCommandGroup(
         new ParallelCommandGroup(
           new ElevatorRestingPositionCmd(elevatorSubsystem),
@@ -182,56 +161,68 @@ public class RobotContainer {
       )
     ); 
     DLeftBumper.whileFalse(new InstantCommand(intakeSubsystem::stopIntake)); 
-
-    DRightBumper.whileTrue(new SequentialCommandGroup(
-      new ParallelCommandGroup(
-      new PivotPidCommand(pivotSubsystem, 33), 
-      new IndexToShooterCommand(shooterSubsystem, indexSubsystem)
-    ), 
-    new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOff("limelight")))); 
+    //SHOOTING AT SET ANGLE 
+    DRightBumper.whileTrue(
+      new SequentialCommandGroup(
+        new ParallelCommandGroup(
+          new PivotPidCommand(pivotSubsystem, 33), 
+          new IndexToShooterAutoCommand(shooterSubsystem, indexSubsystem)
+        ), 
+        new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOff("limelight")), 
+        new RunToTopLim(pivotSubsystem))); 
     DRightBumper.whileTrue(new LimelightTurnAlignCmd(swerveSubsystem, xbox::getLeftY, xbox::getLeftX, 0));
     DRightBumper.whileFalse(new InstantCommand(shooterSubsystem::stop)); 
     DRightBumper.whileFalse(new InstantCommand(indexSubsystem::stop)); 
-    DRightBumper.whileFalse(new ElevatorRestingPositionCmd(elevatorSubsystem)); 
+    // DRightBumper.whileFalse(new RunToTopLim(pivotSubsystem)); 
 
-    // Dy.onTrue(new ElevatorToTopCmd(elevatorSubsystem)); 
+    /* * * BUTTONS * * */
+    // Dy.
+    //SHOOT WITH CALCULATION 
     Dx.onTrue(new SequentialCommandGroup(
       new AlignPivotShoot(pivotSubsystem, shooterSubsystem, indexSubsystem), 
       new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOff("limelight")))); 
     Dx.whileTrue(new LimelightTurnAlignCmd(swerveSubsystem, xbox::getLeftY, xbox::getLeftX, 0));
-    // Db.onTrue(new SequentialCommandGroup(
-    //   new AmpPosition(elevatorSubsystem, pivotSubsystem, indexSubsystem, intakeSubsystem, shooterSubsystem), 
-    //   new DownPosition(elevatorSubsystem, pivotSubsystem)
-    // )); 
+    //PASSING 
     Db.onTrue(new ParallelCommandGroup(
       new PivotPidCommand(pivotSubsystem, 50), 
-      new IndexToShooterSpeedCommand(shooterSubsystem, indexSubsystem, 0.45)
+      new IndexToShooterAutoCommand(shooterSubsystem, indexSubsystem, 0.45)
     ));
+    //OUTTAKE 
     Da.whileTrue(new OuttakeCmd(intakeSubsystem)); 
     Da.whileFalse(new InstantCommand(intakeSubsystem::stopIntake)); 
     
-    //OPERATOR 
+    //////////////////////////////
+    //         OPERATOR         //
+    //////////////////////////////
+    /* * * BUMPERS * * */
+    //TUCK 
     OLeftBumper.onTrue(new DownPosition(elevatorSubsystem, pivotSubsystem)); 
+    //ELEV UP 
     ORightBumper.onTrue(new ElevatorToTopCmd(elevatorSubsystem)); 
 
+    /* * * BUTTONS * * */
+    //AMP 
     Ob.onTrue(new SequentialCommandGroup(
       new AmpPosition(elevatorSubsystem, pivotSubsystem, indexSubsystem, intakeSubsystem, shooterSubsystem), 
       new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOff("limelight")),
       new DownPosition(elevatorSubsystem, pivotSubsystem)
     )); 
+    //INTAKE THROUGH SHOOTER 
     Oa.whileTrue(new SequentialCommandGroup(
       new IntakeShooterCommand(shooterSubsystem, indexSubsystem), 
       new RunToTopLim(pivotSubsystem))); 
     Oa.whileFalse(new InstantCommand(shooterSubsystem::stop)); 
     Oa.whileFalse(new InstantCommand(indexSubsystem::stop)); 
 
-    Ox.onTrue(new ParallelCommandGroup( //sub shot
+    //SUB SHOT 
+    Ox.onTrue(new ParallelCommandGroup(
       new PivotPidCommand(pivotSubsystem, 55), 
       new IndexToShooterAutoCommand(shooterSubsystem, indexSubsystem)
     )); 
 
-    Oy.whileTrue(new LimelightTurnAlignCmd(swerveSubsystem, xbox::getLeftY, xbox::getLeftX, 0)); 
-
+    //////////////////////////////
+    //        PIT CHECKS        //
+    //////////////////////////////
   /* 
     // Edrich pit checks
     DLeftBumper.whileTrue(new IndexerCommand(indexSubsystem));
@@ -287,7 +278,7 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("ShootAuto", new ParallelCommandGroup(
       new PivotPidCommand(pivotSubsystem, 54), 
-      new IndexToShooterAutoCommand(shooterSubsystem, indexSubsystem)
+      new IndexToShooterAutoCommand(shooterSubsystem, indexSubsystem, 0.6)
     ));
     NamedCommands.registerCommand("AlignShootAuto", new ParallelRaceGroup(
       new AlignPivotShoot(pivotSubsystem, shooterSubsystem, indexSubsystem), 
@@ -295,9 +286,10 @@ public class RobotContainer {
     ));
     NamedCommands.registerCommand("FeedPosition", new FeedPosition(elevatorSubsystem, pivotSubsystem, indexSubsystem, intakeSubsystem));
     NamedCommands.registerCommand("RunToTopLim", new RunToTopLim(pivotSubsystem));
-    NamedCommands.registerCommand("SetShooter", new InstantCommand(() -> shooterSubsystem.shooter(0.85)));
-    NamedCommands.registerCommand("Index", new IndexAuto(indexSubsystem));
-    NamedCommands.registerCommand("SetPivot32", new PivotPidCommand(pivotSubsystem, 32));
+    NamedCommands.registerCommand("SetShooter", new InstantCommand(() -> shooterSubsystem.shooter(0.95)));
+    // NamedCommands.registerCommand("Index", new IndexAuto(indexSubsystem, shooterSubsystem));
+    NamedCommands.registerCommand("Index", new IndexToShooterAutoCommand(shooterSubsystem, indexSubsystem, 0.95));
+    NamedCommands.registerCommand("SetPivot32", new PivotPidCommand(pivotSubsystem, 33));
   }
 
   public Command getAutonomousCommand() {
