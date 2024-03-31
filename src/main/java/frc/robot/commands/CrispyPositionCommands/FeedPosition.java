@@ -1,6 +1,7 @@
 package frc.robot.commands.CrispyPositionCommands;
 
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.ElevatorCommands.ElevatorToTransferCmd;
 import frc.robot.commands.IntakeCommands.IntakeCmd;
@@ -16,7 +17,10 @@ public class FeedPosition extends SequentialCommandGroup {
   public FeedPosition(ElevatorSubsystem elevatorSubsystem, PivotSubsystem pivotSubsystem, IndexerSubsystem indexerSubsystem, UnderIntakeSubsystem intakeSubsystem) {
 
     addCommands(
+      new ParallelCommandGroup(
       new PivotPidCommand(pivotSubsystem, 30), 
+      new IntakeCmd(intakeSubsystem)
+      ),
 
       new FeedToIndexer(indexerSubsystem, intakeSubsystem)
     );

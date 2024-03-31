@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 2.803970223325064,
+        "x": 3.0,
         "y": 5.5
       },
       "prevControl": {
-        "x": 1.8039702233250638,
+        "x": 2.0,
         "y": 5.5
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "B_First"
     }
   ],
   "rotationTargets": [],
@@ -33,7 +33,7 @@
   "eventMarkers": [
     {
       "name": "FeedPosition",
-      "waypointRelativePos": 0.8,
+      "waypointRelativePos": 0.0,
       "command": {
         "type": "parallel",
         "data": {

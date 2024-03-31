@@ -3,37 +3,59 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.47,
-        "y": 6.7
+        "x": 3.1,
+        "y": 7.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.718157128621951,
-        "y": 6.541783083566167
+        "x": 3.779228519655327,
+        "y": 6.894602471087966
       },
       "isLocked": false,
       "linkedName": "A_FirstNote"
     },
     {
       "anchor": {
-        "x": 7.75717551435103,
-        "y": 5.111076375998906
+        "x": 7.7,
+        "y": 5.5
       },
       "prevControl": {
-        "x": 5.9613919227838466,
-        "y": 6.127371485512203
+        "x": 6.4224135495209635,
+        "y": 6.039005966416484
+      },
+      "nextControl": {
+        "x": 8.894505327669716,
+        "y": 4.996045454858384
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.101198730214863,
+        "y": 6.686887667641241
+      },
+      "prevControl": {
+        "x": 6.466787712462727,
+        "y": 6.148428470455098
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "A_ShootPos"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.2,
+      "rotationDegrees": 0,
+      "rotateFast": true
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "IntakeOn",
-      "waypointRelativePos": 0.85,
+      "name": "Feed",
+      "waypointRelativePos": 0.4,
       "command": {
         "type": "parallel",
         "data": {
@@ -41,24 +63,7 @@
             {
               "type": "named",
               "data": {
-                "name": "IntakeCommand"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "IntakeOff",
-      "waypointRelativePos": 1.0,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "StopIntake"
+                "name": "FeedPosition"
               }
             }
           ]
@@ -74,13 +79,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
+    "rotation": 25.74514279956661,
     "rotateFast": false
   },
   "reversed": false,
   "folder": "A Position",
   "previewStartingState": {
-    "rotation": -16.805816855007144,
+    "rotation": 0.0,
     "velocity": 0
   },
   "useDefaultConstraints": true

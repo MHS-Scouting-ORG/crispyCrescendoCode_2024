@@ -3,80 +3,64 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.0,
-        "y": 5.5
+        "x": 0.7319122330552369,
+        "y": 6.581250854809402
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.943787733729313,
-        "y": 5.042007776323246
+        "x": 2.426549104168107,
+        "y": 5.703177397795595
       },
       "isLocked": false,
-      "linkedName": "B_First"
+      "linkedName": "A_StartPos"
     },
     {
       "anchor": {
-        "x": 5.822691702444745,
-        "y": 4.27445533921025
+        "x": 8.094593992326358,
+        "y": 5.656334051612468
       },
       "prevControl": {
-        "x": 4.432275471422584,
-        "y": 4.838682215567068
+        "x": 6.607317751012106,
+        "y": 6.9445260716484345
       },
       "nextControl": {
-        "x": 6.630739424103669,
-        "y": 3.946551915928368
+        "x": 8.112298093757321,
+        "y": 5.640999790530532
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.0,
-        "y": 3.9
+        "x": 4.101198730214863,
+        "y": 6.686887667641241
       },
       "prevControl": {
-        "x": 8.016021408424328,
-        "y": 3.89797879164597
-      },
-      "nextControl": {
-        "x": 6.888377828110863,
-        "y": 4.04023860829462
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 2.4499707772596704,
-        "y": 4.941973022319797
-      },
-      "prevControl": {
-        "x": 5.1321324411550435,
-        "y": 1.1593728180323688
+        "x": 7.052329539751803,
+        "y": 7.050162884480273
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "A_ShootPos"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.5,
-      "rotationDegrees": -22.82467789271186,
+      "waypointRelativePos": 0.2,
+      "rotationDegrees": -5.120735518493381,
       "rotateFast": false
     },
     {
-      "waypointRelativePos": 1.6,
-      "rotationDegrees": 19.556850762140936,
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": -0.8680514497455046,
       "rotateFast": false
     }
   ],
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "FeedPosition",
-      "waypointRelativePos": 1.0,
+      "name": "Feed",
+      "waypointRelativePos": 0.35,
       "command": {
         "type": "parallel",
         "data": {
@@ -100,13 +84,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -15.0,
+    "rotation": 16.699244233993618,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "B Position",
+  "folder": "A Position",
   "previewStartingState": {
-    "rotation": 0,
+    "rotation": 58.86893725711642,
     "velocity": 0
   },
   "useDefaultConstraints": true

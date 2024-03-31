@@ -33,7 +33,7 @@ public class IndexToShooterAutoCommand extends Command {
   @Override
   public void execute() {
     // change statement to check if shooter rpm < specified speed
-    if(shootSub.getRPM() > ShindexerConstants.RPM_SPEED_LIMIT){
+    if(shootSub.getRPM() > 4000 * 0.85){
       indexSub.index(ShindexerConstants.INDEXER_SPEED);
       shootSub.shooter(ShindexerConstants.SHOOTER_SPEED);
       
@@ -51,7 +51,7 @@ public class IndexToShooterAutoCommand extends Command {
   @Override
   public boolean isFinished() {
     //return shootSub.getRPM() > ShindexerConstants.RPM_SPEED_LIMIT + 200;
-    return timer.get() >= 2;
+    return timer.get() >= 1.5;
     //return false;
   }
 

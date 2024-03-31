@@ -12,16 +12,16 @@
         "y": 6.581250854809402
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "A_StartPos"
     },
     {
       "anchor": {
-        "x": 2.47,
-        "y": 6.7
+        "x": 3.1,
+        "y": 7.0
       },
       "prevControl": {
-        "x": 2.460133057189192,
-        "y": 6.7
+        "x": 3.090133057189192,
+        "y": 7.0
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,16 +30,16 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.6,
-      "rotationDegrees": 0,
+      "waypointRelativePos": 0.55,
+      "rotationDegrees": 22.6641908061497,
       "rotateFast": false
     }
   ],
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "IntakeOn",
-      "waypointRelativePos": 0.5,
+      "name": "Feed",
+      "waypointRelativePos": 0.0,
       "command": {
         "type": "parallel",
         "data": {
@@ -47,24 +47,7 @@
             {
               "type": "named",
               "data": {
-                "name": "IntakeCommand"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "IntakeOff",
-      "waypointRelativePos": 1.0,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "StopIntake"
+                "name": "FeedPosition"
               }
             }
           ]
@@ -80,7 +63,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -10.0,
+    "rotation": 35.27242144859838,
     "rotateFast": false
   },
   "reversed": false,

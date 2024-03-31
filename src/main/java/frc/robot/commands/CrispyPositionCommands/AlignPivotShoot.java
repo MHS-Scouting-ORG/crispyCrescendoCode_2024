@@ -6,8 +6,9 @@ import frc.robot.commands.ShindexerCommands.IndexToShooterAutoCommand;
 import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 
-public class AlignPivotShoot extends SequentialCommandGroup {
+public class AlignPivotShoot extends ParallelCommandGroup {
 
   public AlignPivotShoot(PivotSubsystem pivotSubsystem, ShooterSubsystem shooterSubsystem, IndexerSubsystem indexerSubsystem) {
     addCommands(

@@ -50,7 +50,7 @@ public class PivotSubsystem extends SubsystemBase {
     
     pid = new PIDController(PivotConstants.PIVOT_KP, PivotConstants.PIVOT_KI, PivotConstants.PIVOT_KD);
     setpoint = 0;
-    setpointTolerance = 2.5;
+    setpointTolerance = 0.5;
 
     manualSpeed = 0;
     maxPidSpeed = PivotConstants.MAX_SPEED;

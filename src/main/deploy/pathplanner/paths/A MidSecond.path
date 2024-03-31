@@ -3,59 +3,53 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.38,
-        "y": 3.43
+        "x": 4.101198730214863,
+        "y": 6.686887667641241
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.885895156408635,
-        "y": -0.3650768839962807
+        "x": 5.424523259888172,
+        "y": 6.94476535556824
       },
       "isLocked": false,
-      "linkedName": "C Shooting"
+      "linkedName": "A_ShootPos"
     },
     {
       "anchor": {
-        "x": 7.7,
-        "y": 2.0
+        "x": 7.56760634776619,
+        "y": 7.096766946743594
       },
       "prevControl": {
-        "x": 7.0270217463511875,
-        "y": 0.9472265098376368
+        "x": 5.526128283036243,
+        "y": 6.732939172831328
       },
       "nextControl": {
-        "x": 7.726735450921885,
-        "y": 2.0418236010234976
+        "x": 8.750400838890123,
+        "y": 7.307562004567661
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.38,
-        "y": 2.119661414786453
+        "x": 4.101198730214863,
+        "y": 6.686887667641241
       },
       "prevControl": {
-        "x": 4.897829857343028,
-        "y": -2.7169140786213104
+        "x": 7.1928595783011815,
+        "y": 6.9679477447399965
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "A_ShootPos"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 1.0,
-      "rotationDegrees": 10.0,
-      "rotateFast": false
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "feed",
-      "waypointRelativePos": 0.5,
+      "name": "Feed",
+      "waypointRelativePos": 0.35,
       "command": {
         "type": "parallel",
         "data": {
@@ -79,13 +73,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -40.0,
+    "rotation": 0,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "C Position",
+  "folder": "A Position",
   "previewStartingState": {
-    "rotation": -36.45277306157965,
+    "rotation": 9.211026540816611,
     "velocity": 0
   },
   "useDefaultConstraints": true
