@@ -5,7 +5,7 @@
       "x": 0.73,
       "y": 6.58
     },
-    "rotation": 60.0
+    "rotation": 53.094241322351095
   },
   "command": {
     "type": "sequential",
@@ -45,6 +45,12 @@
           "type": "path",
           "data": {
             "pathName": "A MidSecond"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AlignShootAuto"
           }
         }
       ]

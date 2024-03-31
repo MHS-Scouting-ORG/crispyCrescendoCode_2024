@@ -51,7 +51,7 @@ public class IndexToShooterAutoCommand extends Command {
   @Override
   public boolean isFinished() {
     //return shootSub.getRPM() > ShindexerConstants.RPM_SPEED_LIMIT + 200;
-    return timer.get() >= 1.5;
+    return timer.get() >= 1.3;
     //return false;
   }
 

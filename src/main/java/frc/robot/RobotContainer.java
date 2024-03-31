@@ -305,7 +305,7 @@ public class RobotContainer {
     // return autonomousChooser.getSelected();
 
     // String autoName = autoNameChooser.getSelected(); 
-    return new PathPlannerAuto("A 4 note");
+    return new PathPlannerAuto("CB Shoot");
 
 
     // return new S_DriveToPositionCommand(swerveSubsystem, 0, 2, 0, false);
