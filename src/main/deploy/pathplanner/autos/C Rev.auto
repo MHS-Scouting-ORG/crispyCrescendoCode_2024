@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.28,
-      "y": 5.43
+      "x": 0.7401886415755699,
+      "y": 4.50867207012588
     },
-    "rotation": 0
+    "rotation": -60.1984505774332
   },
   "command": {
     "type": "sequential",
@@ -18,9 +18,15 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "ShootAuto"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "B Rev One"
+            "pathName": "C Rev"
           }
         },
         {

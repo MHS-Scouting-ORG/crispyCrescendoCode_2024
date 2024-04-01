@@ -15,9 +15,9 @@
     "C Autos",
     "Rev"
   ],
-  "defaultMaxVel": 5.0,
+  "defaultMaxVel": 4.0,
   "defaultMaxAccel": 3.5,
-  "defaultMaxAngVel": 360.0,
-  "defaultMaxAngAccel": 720.0,
+  "defaultMaxAngVel": 180.0,
+  "defaultMaxAngAccel": 360.0,
   "maxModuleSpeed": 5.5
 }

@@ -1,5 +1,6 @@
 package frc.robot;
 
+import com.fasterxml.jackson.databind.util.Named;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
@@ -12,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -20,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.IntegrationConstants.OperatorConstants;
 import frc.robot.Constants.LimelightHelpers;
+import frc.robot.Constants.ShindexerConstants;
 import frc.robot.Constants.SwerveConstants.OIConstants;
 import frc.robot.commands.LimelightTurnAlignCmd;
 import frc.robot.commands.CrispyPositionCommands.AlignPivotShoot;
@@ -28,14 +31,13 @@ import frc.robot.commands.CrispyPositionCommands.DownPosition;
 import frc.robot.commands.CrispyPositionCommands.FeedPosition;
 import frc.robot.commands.ElevatorCommands.ElevatorRestingPositionCmd;
 import frc.robot.commands.ElevatorCommands.ElevatorToTopCmd;
+import frc.robot.commands.IntakeCommands.IntakeAuto;
 import frc.robot.commands.IntakeCommands.IntakeCmd;
 import frc.robot.commands.IntakeCommands.OuttakeCmd;
+import frc.robot.commands.PivotCommands.PivotPidAlignCommand;
 import frc.robot.commands.PivotCommands.PivotPidCommand;
 import frc.robot.commands.PivotCommands.RunToTopLim;
-import frc.robot.commands.ShindexerCommands.IndexAuto;
 import frc.robot.commands.ShindexerCommands.IndexToShooterAutoCommand;
-import frc.robot.commands.ShindexerCommands.IndexToShooterCommand;
-import frc.robot.commands.ShindexerCommands.IndexToShooterSpeedCommand;
 import frc.robot.commands.ShindexerCommands.IntakeShooterCommand;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IndexerSubsystem;
@@ -44,6 +46,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.UnderIntakeSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.ShindexerCommands.IndexToShooterCommand;
 
 public class RobotContainer {
   //////////////////////////////
@@ -140,8 +143,8 @@ public class RobotContainer {
 
   private void configureBindings() {
     //TRIGGER 
-    noteSensed.onTrue(new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceBlink("limelight")));
-    // noteSensed.onFalse(new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOff("limelight")));
+    // noteSensed.onTrue(new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceBlink("limelight")));
+    noteSensed.onFalse(new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOff("limelight")));
 
     //////////////////////////////
     //          DRIVER          //
@@ -166,7 +169,7 @@ public class RobotContainer {
       new SequentialCommandGroup(
         new ParallelCommandGroup(
           new PivotPidCommand(pivotSubsystem, 33), 
-          new IndexToShooterAutoCommand(shooterSubsystem, indexSubsystem)
+          new IndexToShooterCommand(shooterSubsystem, indexSubsystem)
         ), 
         new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOff("limelight")), 
         new RunToTopLim(pivotSubsystem))); 
@@ -179,13 +182,14 @@ public class RobotContainer {
     // Dy.
     //SHOOT WITH CALCULATION 
     Dx.onTrue(new SequentialCommandGroup(
-      new AlignPivotShoot(pivotSubsystem, shooterSubsystem, indexSubsystem), 
+      new PivotPidAlignCommand(pivotSubsystem), 
+      new IndexToShooterCommand(shooterSubsystem, indexSubsystem),
       new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOff("limelight")))); 
     Dx.whileTrue(new LimelightTurnAlignCmd(swerveSubsystem, xbox::getLeftY, xbox::getLeftX, 0));
     //PASSING 
     Db.onTrue(new ParallelCommandGroup(
       new PivotPidCommand(pivotSubsystem, 50), 
-      new IndexToShooterAutoCommand(shooterSubsystem, indexSubsystem, 0.45)
+      new IndexToShooterAutoCommand(shooterSubsystem, indexSubsystem, 0.45, 0.8)
     ));
     //OUTTAKE 
     Da.whileTrue(new OuttakeCmd(intakeSubsystem)); 
@@ -213,11 +217,10 @@ public class RobotContainer {
       new RunToTopLim(pivotSubsystem))); 
     Oa.whileFalse(new InstantCommand(shooterSubsystem::stop)); 
     Oa.whileFalse(new InstantCommand(indexSubsystem::stop)); 
-
     //SUB SHOT 
     Ox.onTrue(new ParallelCommandGroup(
       new PivotPidCommand(pivotSubsystem, 55), 
-      new IndexToShooterAutoCommand(shooterSubsystem, indexSubsystem)
+      new IndexToShooterCommand(shooterSubsystem, indexSubsystem)
     )); 
 
     //////////////////////////////
@@ -255,49 +258,66 @@ public class RobotContainer {
     // autonomousChooser.addOption("Just Shoot", JustShoot);
 
     //PP TESTING 
-    autoAllianceChooser.addOption("Blue", "B");
-    autoAllianceChooser.addOption("Red", "R");
+    // autoAllianceChooser.addOption("Blue", "B");
+    // autoAllianceChooser.addOption("Red", "R");
 
-    autoPositionChooser.addOption("A (amp)", "A");
-    autoPositionChooser.addOption("B", "B"); 
-    autoPositionChooser.addOption("C (source)", "C");
+    // autoPositionChooser.addOption("A (amp)", "A");
+    // autoPositionChooser.addOption("B", "B"); 
+    // autoPositionChooser.addOption("C (source)", "C");
 
-    autoNameChooser.addOption("Test Path", "Testing");
-    autoNameChooser.addOption("Shoot (3 note)", " Shoot");
-    autoNameChooser.addOption("Troll (disrupt)", " Troll");
+    // autoNameChooser.addOption("Test Path", "Testing");
+    // autoNameChooser.addOption("Shoot (3 note)", " Shoot");
+    // autoNameChooser.addOption("Troll (disrupt)", " Troll");
 
-    SmartDashboard.putData(autoAllianceChooser);
-    SmartDashboard.putData(autoPositionChooser); 
+    autoNameChooser.addOption("A (4 note)", "A 4 note");
+    autoNameChooser.addOption("B (3 note)", "B ToCenter");
+    autoNameChooser.addOption("B (rembrandts 5 note)", "B Rev");
+    autoNameChooser.addOption("C (3 note)", "CB Shoot");
+    autoNameChooser.addOption("C Rev", "C Rev");
+
+    // SmartDashboard.putData(autoAllianceChooser);
+    // SmartDashboard.putData(autoPositionChooser); 
     SmartDashboard.putData(autoNameChooser);
   }
 
   private void registerAutoCommands() {
-    NamedCommands.registerCommand("IntakeCommand", new IntakeCmd(intakeSubsystem)); 
+    NamedCommands.registerCommand("IntakeCommand", new IntakeAuto(intakeSubsystem)); 
     NamedCommands.registerCommand("StopIntake", new InstantCommand(intakeSubsystem::stopIntake));
     NamedCommands.registerCommand("Wait", new WaitCommand(5));
 
     NamedCommands.registerCommand("ShootAuto", new ParallelCommandGroup(
-      new PivotPidCommand(pivotSubsystem, 54), 
-      new IndexToShooterAutoCommand(shooterSubsystem, indexSubsystem, 0.6)
+      new PivotPidCommand(pivotSubsystem, 58), 
+      new IndexToShooterAutoCommand(shooterSubsystem, indexSubsystem, 0.4, 0.9)
     ));
     NamedCommands.registerCommand("AlignShootAuto", new ParallelRaceGroup(
       new AlignPivotShoot(pivotSubsystem, shooterSubsystem, indexSubsystem), 
       new LimelightTurnAlignCmd(swerveSubsystem, () -> 0.0, () -> 0.0, 0)
     ));
+    NamedCommands.registerCommand("AlignShootParallel", new ParallelDeadlineGroup( 
+      new IndexToShooterAutoCommand(shooterSubsystem, indexSubsystem), 
+      new PivotPidAlignCommand(pivotSubsystem),
+      new LimelightTurnAlignCmd(swerveSubsystem, () -> 0, () -> 0, 0)
+    ));
+    NamedCommands.registerCommand("AlignShootOneSec", new ParallelDeadlineGroup( 
+      new IndexToShooterAutoCommand(shooterSubsystem, indexSubsystem, ShindexerConstants.TELEOP_SHOOTER_SPEED, 1), 
+      new PivotPidAlignCommand(pivotSubsystem),
+      new LimelightTurnAlignCmd(swerveSubsystem, () -> 0, () -> 0, 0) 
+    ));
     NamedCommands.registerCommand("FeedPosition", new FeedPosition(elevatorSubsystem, pivotSubsystem, indexSubsystem, intakeSubsystem));
     NamedCommands.registerCommand("RunToTopLim", new RunToTopLim(pivotSubsystem));
-    NamedCommands.registerCommand("SetShooter", new InstantCommand(() -> shooterSubsystem.shooter(0.95)));
+    NamedCommands.registerCommand("SetShooter", new InstantCommand(() -> shooterSubsystem.shooter(0.80)));
     // NamedCommands.registerCommand("Index", new IndexAuto(indexSubsystem, shooterSubsystem));
-    NamedCommands.registerCommand("Index", new IndexToShooterAutoCommand(shooterSubsystem, indexSubsystem, 0.95));
+    NamedCommands.registerCommand("Index", new IndexToShooterAutoCommand(shooterSubsystem, indexSubsystem, 0.4, 0.8));
     NamedCommands.registerCommand("SetPivot32", new PivotPidCommand(pivotSubsystem, 33));
+    NamedCommands.registerCommand("SetPivot30", new PivotPidCommand(pivotSubsystem, 30));
+    NamedCommands.registerCommand("SetPivot41", new PivotPidCommand(pivotSubsystem, 41));
+    NamedCommands.registerCommand("SetPivot58", new PivotPidCommand(pivotSubsystem, 58));
   }
 
   public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-    // return autonomousChooser.getSelected();
-
-    // String autoName = autoNameChooser.getSelected(); 
-    return new PathPlannerAuto("CB Shoot");
+    String autoName = autoNameChooser.getSelected(); 
+    return new PathPlannerAuto(autoName); 
+    // return new PathPlannerAuto("CB Shoot");
 
 
     // return new S_DriveToPositionCommand(swerveSubsystem, 0, 2, 0, false);

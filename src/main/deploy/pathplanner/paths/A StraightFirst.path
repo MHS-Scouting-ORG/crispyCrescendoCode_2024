@@ -16,26 +16,32 @@
     },
     {
       "anchor": {
-        "x": 3.1,
-        "y": 7.0
+        "x": 2.9026396514331507,
+        "y": 6.393778941404038
       },
       "prevControl": {
-        "x": 3.090133057189192,
-        "y": 7.0
+        "x": 2.8927727086223425,
+        "y": 6.393778941404038
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "A_FirstNote"
     }
   ],
-  "rotationTargets": [
+  "rotationTargets": [],
+  "constraintZones": [
     {
-      "waypointRelativePos": 0.55,
-      "rotationDegrees": 22.6641908061497,
-      "rotateFast": false
+      "name": "note 1",
+      "minWaypointRelativePos": 0.45,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 3.0,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 360.0,
+        "maxAngularAcceleration": 720.0
+      }
     }
   ],
-  "constraintZones": [],
   "eventMarkers": [
     {
       "name": "Feed",
@@ -56,14 +62,14 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 5.0,
-    "maxAcceleration": 3.5,
-    "maxAngularVelocity": 360.0,
-    "maxAngularAcceleration": 720.0
+    "maxVelocity": 2.0,
+    "maxAcceleration": 2.0,
+    "maxAngularVelocity": 180.0,
+    "maxAngularAcceleration": 360.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 35.27242144859838,
+    "rotation": 9.926245506651819,
     "rotateFast": false
   },
   "reversed": false,
@@ -72,5 +78,5 @@
     "rotation": 60.80251395393561,
     "velocity": 0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

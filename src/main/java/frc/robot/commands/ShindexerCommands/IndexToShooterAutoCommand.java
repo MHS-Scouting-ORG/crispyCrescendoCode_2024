@@ -11,19 +11,21 @@ public class IndexToShooterAutoCommand extends Command {
   private ShooterSubsystem shootSub;
   private IndexerSubsystem indexSub;
   private double speed; 
+  double seconds; 
   private Timer timer;
 
-  public IndexToShooterAutoCommand(ShooterSubsystem sSub, IndexerSubsystem iSub, double speed) {
+  public IndexToShooterAutoCommand(ShooterSubsystem sSub, IndexerSubsystem iSub, double speed, double seconds) {
     shootSub = sSub;
     indexSub = iSub;
     this.speed = speed;
+    this.seconds = seconds; 
     timer = new Timer();
     addRequirements(shootSub);
     addRequirements(indexSub);
    }
 
   public IndexToShooterAutoCommand(ShooterSubsystem sSub, IndexerSubsystem iSub) {
-    this(sSub, iSub, ShindexerConstants.TELEOP_SHOOTER_SPEED);
+    this(sSub, iSub, ShindexerConstants.TELEOP_SHOOTER_SPEED, 0.8);
   }
 
  
@@ -39,7 +41,7 @@ public class IndexToShooterAutoCommand extends Command {
   @Override
   public void execute() {
     // change statement to check if shooter rpm < specified speed
-    if(shootSub.getRPM() > ShindexerConstants.MAX_RPM * speed - 0.5){
+    if(shootSub.getRPM() > ShindexerConstants.MAX_RPM * (speed)){
       indexSub.index(ShindexerConstants.INDEXER_SPEED);
       shootSub.shooter(speed);
       
@@ -56,8 +58,7 @@ public class IndexToShooterAutoCommand extends Command {
  
   @Override
   public boolean isFinished() {
-    //return shootSub.getRPM() > ShindexerConstants.RPM_SPEED_LIMIT + 200;
-    return timer.get() >= 1.3;
+    return timer.get() >= seconds;
     //return false;
   }
 

@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.7713800042984719,
-        "y": 4.509192864539576
+        "x": 0.7401886415755699,
+        "y": 4.50867207012588
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.2514214259197765,
-        "y": 2.1608604755671057
+        "x": 2.2202300631968748,
+        "y": 2.16033968115341
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "C_Start"
     },
     {
       "anchor": {
@@ -36,8 +36,40 @@
         "y": 2.979816728864227
       },
       "prevControl": {
-        "x": 3.622926476624439,
-        "y": 1.6971141634542524
+        "x": 3.4252793028663007,
+        "y": 0.9669603954592529
+      },
+      "nextControl": {
+        "x": 2.6013422889912627,
+        "y": 3.17949048650258
+      },
+      "isLocked": false,
+      "linkedName": "C Shooting"
+    },
+    {
+      "anchor": {
+        "x": 7.875578828080734,
+        "y": 2.3779332174048973
+      },
+      "prevControl": {
+        "x": 4.584920476719645,
+        "y": -0.3453702457904777
+      },
+      "nextControl": {
+        "x": 8.161720169594187,
+        "y": 2.6147398448643058
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.67569996678455,
+        "y": 2.979816728864227
+      },
+      "prevControl": {
+        "x": 5.181595123190249,
+        "y": -1.1149645376213826
       },
       "nextControl": null,
       "isLocked": false,
@@ -49,13 +81,46 @@
       "waypointRelativePos": 1.0,
       "rotationDegrees": -10.0,
       "rotateFast": false
+    },
+    {
+      "waypointRelativePos": 2,
+      "rotationDegrees": -35.33327520683762,
+      "rotateFast": false
+    },
+    {
+      "waypointRelativePos": 3,
+      "rotationDegrees": 0,
+      "rotateFast": false
     }
   ],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "note 1",
+      "minWaypointRelativePos": 0.65,
+      "maxWaypointRelativePos": 1.3,
+      "constraints": {
+        "maxVelocity": 3.0,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 360.0,
+        "maxAngularAcceleration": 720.0
+      }
+    },
+    {
+      "name": "note 2",
+      "minWaypointRelativePos": 2.9,
+      "maxWaypointRelativePos": 3.25,
+      "constraints": {
+        "maxVelocity": 3.0,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 360.0,
+        "maxAngularAcceleration": 720.0
+      }
+    }
+  ],
   "eventMarkers": [
     {
-      "name": "IntakeOn",
-      "waypointRelativePos": 0.6,
+      "name": "Index",
+      "waypointRelativePos": 0.0,
       "command": {
         "type": "parallel",
         "data": {
@@ -63,7 +128,7 @@
             {
               "type": "named",
               "data": {
-                "name": "IntakeCommand"
+                "name": "Index"
               }
             }
           ]
@@ -71,7 +136,7 @@
       }
     },
     {
-      "name": "feed",
+      "name": "FeedPosition",
       "waypointRelativePos": 0.6,
       "command": {
         "type": "parallel",
@@ -88,8 +153,8 @@
       }
     },
     {
-      "name": "Shoot Preload",
-      "waypointRelativePos": 0.4,
+      "name": "Index",
+      "waypointRelativePos": 1.9500000000000002,
       "command": {
         "type": "parallel",
         "data": {
@@ -105,8 +170,8 @@
       }
     },
     {
-      "name": "Piv to 32",
-      "waypointRelativePos": 0.15,
+      "name": "FeedPosition",
+      "waypointRelativePos": 2.75,
       "command": {
         "type": "parallel",
         "data": {
@@ -114,7 +179,7 @@
             {
               "type": "named",
               "data": {
-                "name": "SetPivot32"
+                "name": "FeedPosition"
               }
             }
           ]
@@ -130,11 +195,11 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -40.0,
-    "rotateFast": true
+    "rotation": -35.24241675654286,
+    "rotateFast": false
   },
   "reversed": false,
-  "folder": "C Position",
+  "folder": "rev autos",
   "previewStartingState": {
     "rotation": -59.7435628364707,
     "velocity": 0

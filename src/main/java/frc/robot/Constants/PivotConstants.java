@@ -13,5 +13,5 @@ public final class PivotConstants {
     public static final double PIVOT_KI = 0;
     public static final double PIVOT_KD = 0;
 
-    public static final double MAX_SPEED = 0.45;
+    public static final double MAX_SPEED = 0.8;
 }

@@ -20,7 +20,7 @@ public class AmpPosition extends SequentialCommandGroup {
       new ParallelCommandGroup(
         new ElevatorToTopCmd(elevatorSubsystem), 
         new PivotPidCommand(pivotSubsystem, 45), 
-        new InstantCommand(() -> shooterSubsystem.shooter(0.15))
+        new InstantCommand(() -> shooterSubsystem.shooter(0.095))
       ), 
 
       new IndexToShooterAmpCommand(shooterSubsystem, indexerSubsystem)

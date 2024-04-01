@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.73,
-      "y": 6.58
+      "x": 1.28,
+      "y": 5.43
     },
-    "rotation": 53.094241322351095
+    "rotation": 0
   },
   "command": {
     "type": "sequential",
@@ -26,31 +26,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "A StraightFirst"
+            "pathName": "B Rev One"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "AlignShootOneSec"
+            "name": "FeedPosition"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "SetShooter"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "A mid "
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "AlignShootOneSec"
+            "name": "AlignShootParallel"
           }
         },
         {
@@ -62,18 +50,66 @@
         {
           "type": "path",
           "data": {
-            "pathName": "A MidSecond"
+            "pathName": "B Rev Two"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "AlignShootOneSec"
+            "name": "FeedPosition"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AlignShootParallel"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SetShooter"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "B Rev Three"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FeedPosition"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AlignShootParallel"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SetShooter"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "B Rev Outer"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AlignShootParallel"
           }
         }
       ]
     }
   },
-  "folder": "A Autos",
+  "folder": "Rev",
   "choreoAuto": false
 }

@@ -3,41 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.2788871226815193,
-        "y": 5.433828157242619
+        "x": 0.7401886415755699,
+        "y": 4.50867207012588
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.758928544302824,
-        "y": 3.085495768270149
+        "x": 2.2202300631968748,
+        "y": 2.16033968115341
       },
       "isLocked": false,
       "linkedName": "C_Start"
     },
     {
       "anchor": {
-        "x": 7.65,
-        "y": 0.5
+        "x": 7.855844942459117,
+        "y": 0.9669603954592523
       },
       "prevControl": {
-        "x": 7.255322287567653,
-        "y": 0.5888024852972785
+        "x": 7.46116723002677,
+        "y": 1.055762880756531
       },
       "nextControl": {
-        "x": 7.897508063674112,
-        "y": 0.44431068567332466
+        "x": 8.103353006133233,
+        "y": 0.9112710811325769
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.38,
-        "y": 3.43
+        "x": 2.67569996678455,
+        "y": 2.979816728864227
       },
       "prevControl": {
-        "x": 3.327226509839889,
-        "y": 2.1472974345900253
+        "x": 3.622926476624439,
+        "y": 1.6971141634542524
       },
       "nextControl": null,
       "isLocked": false,
@@ -51,25 +51,20 @@
       "rotateFast": false
     }
   ],
-  "constraintZones": [],
-  "eventMarkers": [
+  "constraintZones": [
     {
-      "name": "IntakeOn",
-      "waypointRelativePos": 0.65,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "IntakeCommand"
-              }
-            }
-          ]
-        }
+      "name": "note 1",
+      "minWaypointRelativePos": 0.65,
+      "maxWaypointRelativePos": 1.3,
+      "constraints": {
+        "maxVelocity": 3.0,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 360.0,
+        "maxAngularAcceleration": 720.0
       }
-    },
+    }
+  ],
+  "eventMarkers": [
     {
       "name": "feed",
       "waypointRelativePos": 0.45,
@@ -88,8 +83,8 @@
       }
     },
     {
-      "name": "pivot up",
-      "waypointRelativePos": 1.4,
+      "name": "pivot",
+      "waypointRelativePos": 1.5,
       "command": {
         "type": "parallel",
         "data": {
@@ -97,7 +92,7 @@
             {
               "type": "named",
               "data": {
-                "name": "RunToTopLim"
+                "name": "SetPivot32"
               }
             }
           ]
@@ -106,10 +101,10 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 5.0,
+    "maxVelocity": 4.0,
     "maxAcceleration": 3.5,
-    "maxAngularVelocity": 360.0,
-    "maxAngularAcceleration": 720.0
+    "maxAngularVelocity": 180.0,
+    "maxAngularAcceleration": 360.0
   },
   "goalEndState": {
     "velocity": 0,
@@ -122,5 +117,5 @@
     "rotation": -59.7435628364707,
     "velocity": 0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

@@ -3,25 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.77,
-        "y": 4.51
+        "x": 2.429026396514333,
+        "y": 6.798323596647194
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.5868974814872723,
-        "y": 1.1248314804321928
+        "x": 3.468813556742662,
+        "y": 6.874261052373746
+      },
+      "isLocked": false,
+      "linkedName": "B Third"
+    },
+    {
+      "anchor": {
+        "x": 7.907220607593853,
+        "y": 6.9328152351026535
+      },
+      "prevControl": {
+        "x": 6.583896077920542,
+        "y": 6.780574360007493
+      },
+      "nextControl": {
+        "x": 8.260102994101834,
+        "y": 6.973412323815961
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.75,
-        "y": 2.2891307321076186
+        "x": 4.0777770571233,
+        "y": 6.4292492636340475
       },
       "prevControl": {
-        "x": 5.608873410054512,
-        "y": 1.2531017369727058
+        "x": 5.705583336986929,
+        "y": 6.6751768310954605
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,8 +48,8 @@
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "IntakeOn",
-      "waypointRelativePos": 0.85,
+      "name": "feed",
+      "waypointRelativePos": 0.4,
       "command": {
         "type": "parallel",
         "data": {
@@ -41,24 +57,7 @@
             {
               "type": "named",
               "data": {
-                "name": "IntakeCommand"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "StopIntake",
-      "waypointRelativePos": 1.0,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "StopIntake"
+                "name": "FeedPosition"
               }
             }
           ]
@@ -67,8 +66,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 3.5,
+    "maxVelocity": 4.5,
+    "maxAcceleration": 4.5,
     "maxAngularVelocity": 180.0,
     "maxAngularAcceleration": 360.0
   },
@@ -78,10 +77,10 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "C Position",
+  "folder": "rev autos",
   "previewStartingState": {
-    "rotation": -60.14915194515147,
+    "rotation": 21.80140948635194,
     "velocity": 0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

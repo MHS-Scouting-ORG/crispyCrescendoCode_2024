@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.2788871226815193,
-        "y": 5.433828157242619
+        "x": 1.3041949160821413,
+        "y": 5.436685488755594
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.679138742892872,
-        "y": 4.884136691350306
+        "x": 1.7876751138117675,
+        "y": 4.93347140540435
       },
       "isLocked": false,
-      "linkedName": "C_Start"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.3445732483476367,
-        "y": 4.2978770123018135
+        "x": 2.429026396514333,
+        "y": 4.2921201227017844
       },
       "prevControl": {
-        "x": 1.8706221808361498,
-        "y": 4.790055884292608
+        "x": 1.955075329002846,
+        "y": 4.784298994692579
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,8 +32,8 @@
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "Index",
-      "waypointRelativePos": 0,
+      "name": "Intake",
+      "waypointRelativePos": 0.35,
       "command": {
         "type": "parallel",
         "data": {
@@ -41,7 +41,7 @@
             {
               "type": "named",
               "data": {
-                "name": "ShootAuto"
+                "name": "IntakeCommand"
               }
             }
           ]
@@ -49,8 +49,8 @@
       }
     },
     {
-      "name": "FeedPosition",
-      "waypointRelativePos": 0.4,
+      "name": "Pivot",
+      "waypointRelativePos": 0.05,
       "command": {
         "type": "parallel",
         "data": {
@@ -58,7 +58,7 @@
             {
               "type": "named",
               "data": {
-                "name": "FeedPosition"
+                "name": "SetPivot30"
               }
             }
           ]
@@ -67,14 +67,14 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 5.0,
-    "maxAcceleration": 3.5,
-    "maxAngularVelocity": 360.0,
-    "maxAngularAcceleration": 720.0
+    "maxVelocity": 2.5,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 180.0,
+    "maxAngularAcceleration": 360.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -25.0,
+    "rotation": -30.067468127838815,
     "rotateFast": false
   },
   "reversed": false,
@@ -83,5 +83,5 @@
     "rotation": 1.5074357587750136,
     "velocity": 0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

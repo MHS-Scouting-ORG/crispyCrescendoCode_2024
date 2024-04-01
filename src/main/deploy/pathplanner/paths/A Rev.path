@@ -1,0 +1,190 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 0.7319122330552369,
+        "y": 6.581250854809402
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 0.7319122330552369,
+        "y": 6.581250854809402
+      },
+      "isLocked": false,
+      "linkedName": "A_StartPos"
+    },
+    {
+      "anchor": {
+        "x": 2.9026396514331507,
+        "y": 6.393778941404038
+      },
+      "prevControl": {
+        "x": 2.8927727086223425,
+        "y": 6.393778941404038
+      },
+      "nextControl": {
+        "x": 2.912506594243959,
+        "y": 6.393778941404038
+      },
+      "isLocked": false,
+      "linkedName": "A_FirstNote"
+    },
+    {
+      "anchor": {
+        "x": 7.7275746859186025,
+        "y": 5.762294601512281
+      },
+      "prevControl": {
+        "x": 6.800082061702586,
+        "y": 6.798323596647194
+      },
+      "nextControl": {
+        "x": 8.239773649968456,
+        "y": 5.190157460818296
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.7970926711084205,
+        "y": 6.581250854809402
+      },
+      "prevControl": {
+        "x": 6.7507473476485425,
+        "y": 7.104198823782262
+      },
+      "nextControl": {
+        "x": 4.671726891483466,
+        "y": 6.547693348142116
+      },
+      "isLocked": false,
+      "linkedName": "A Shooting"
+    },
+    {
+      "anchor": {
+        "x": 7.7275746859186025,
+        "y": 4.272386237080167
+      },
+      "prevControl": {
+        "x": 6.819815947324204,
+        "y": 7.202868251890351
+      },
+      "nextControl": {
+        "x": 7.748829424859317,
+        "y": 4.2037703950650345
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.7970926711084205,
+        "y": 6.581250854809402
+      },
+      "prevControl": {
+        "x": 6.948086203864716,
+        "y": 7.104198823782262
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "A Shooting"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.55,
+      "rotationDegrees": 22.6641908061497,
+      "rotateFast": false
+    },
+    {
+      "waypointRelativePos": 2,
+      "rotationDegrees": 0,
+      "rotateFast": false
+    },
+    {
+      "waypointRelativePos": 4,
+      "rotationDegrees": -15.461217740441874,
+      "rotateFast": false
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "note 1",
+      "minWaypointRelativePos": 0.45,
+      "maxWaypointRelativePos": 1.25,
+      "constraints": {
+        "maxVelocity": 3.0,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 360.0,
+        "maxAngularAcceleration": 720.0
+      }
+    },
+    {
+      "name": "note 2",
+      "minWaypointRelativePos": 1.85,
+      "maxWaypointRelativePos": 2.0,
+      "constraints": {
+        "maxVelocity": 3.0,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 360.0,
+        "maxAngularAcceleration": 720.0
+      }
+    }
+  ],
+  "eventMarkers": [
+    {
+      "name": "Feed",
+      "waypointRelativePos": 0.0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "FeedPosition"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Index",
+      "waypointRelativePos": 1.0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Index"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 4.0,
+    "maxAcceleration": 3.5,
+    "maxAngularVelocity": 180.0,
+    "maxAngularAcceleration": 360.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 11.768288932020644,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "rev autos",
+  "previewStartingState": {
+    "rotation": 60.80251395393561,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

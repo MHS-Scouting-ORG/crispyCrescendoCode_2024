@@ -18,6 +18,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "SetShooter"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "CB Shoot uno"
@@ -27,6 +33,12 @@
           "type": "named",
           "data": {
             "name": "AlignShootAuto"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SetShooter"
           }
         },
         {
