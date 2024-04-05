@@ -106,6 +106,24 @@
           "data": {
             "name": "AlignShootParallel"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SetShooter"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "B Rev Five"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AlignShootParallel"
+          }
         }
       ]
     }

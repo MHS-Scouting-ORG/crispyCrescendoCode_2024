@@ -8,10 +8,10 @@ public class ElevatorConstants {
     //FIXME Up speed after testing
     public static final double SPEED_CAP = 1;
 
-    public static final double ELEV_KP = 0.02;
-    public static final double ELEV_KI = 0;
-    public static final double ELEV_KD = 0;
+    public static final double ELEV_KP = 0.03;
+    public static final double ELEV_KI = 0.0;
+    public static final double ELEV_KD = 0.006;
 
     public static final int SMART_CURRENT_LIMIT = 20;
-    public static final double PID_TOLERANCE = 2.5;
+    public static final double PID_TOLERANCE = 1;
   }

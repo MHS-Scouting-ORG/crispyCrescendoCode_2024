@@ -1,6 +1,7 @@
 // make a command for each specific april tag and in each command, initialize to a specific pipeline that only detects certain april tags 
 package frc.robot.commands;
 
+import java.sql.Driver;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 
@@ -27,17 +28,25 @@ public class LimelightTurnAlignCmd extends Command {
   int pipeline;
   Optional<Alliance> ally;
 
-  public LimelightTurnAlignCmd(SwerveSubsystem swerveSubs, DoubleSupplier xSupp, DoubleSupplier ySupp, int pipeline) {
+  public LimelightTurnAlignCmd(SwerveSubsystem swerveSubs, DoubleSupplier xSupp, DoubleSupplier ySupp) {
     this.swerveSubs = swerveSubs; 
 
     this.xSupp = xSupp; 
     this.ySupp = ySupp; 
-    this.pipeline = pipeline;
-    ally = DriverStation.getAlliance();
+    this.pipeline = 0;
+    // ally = DriverStation.getAlliance();
 
     anglePID = new PIDController(0.011, 0.003, 0);
     anglePID.setTolerance(2);
 
+    // if (ally.isPresent()) {
+    //   if(ally.get() == Alliance.Blue){
+    //     this.pipeline = 0; 
+    //   }
+    //   else{
+    //     this.pipeline = 1;
+    //   }
+    //}
     addRequirements(swerveSubs);
   }
 
@@ -73,9 +82,9 @@ public class LimelightTurnAlignCmd extends Command {
     SmartDashboard.putBoolean("rotation at setpt", anglePID.atSetpoint()); 
    
     if(LimelightHelpers.getTV("limelight")){
-     if (DriverStation.getAlliance().isPresent() && ((ally.get() == Alliance.Blue && swerveSubs.blueAllianceCheck()) || (ally.get() == Alliance.Red && swerveSubs.redAllianceCheck()))){
+    //  if (DriverStation.getAlliance().isPresent() && ((ally.get() == Alliance.Blue && swerveSubs.blueAllianceCheck()) || (ally.get() == Alliance.Red && swerveSubs.redAllianceCheck()))){
         swerveSubs.drive(-MathUtil.applyDeadband(xSpeed, OIConstants.kDriveDeadband), -MathUtil.applyDeadband(ySpeed, OIConstants.kDriveDeadband), rotationSpeed, true, false); 
-      }
+      // }
     }
   }
 

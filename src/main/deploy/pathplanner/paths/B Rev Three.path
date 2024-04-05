@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 2.429026396514333,
-        "y": 6.798323596647194
+        "x": 2.53,
+        "y": 6.8
       },
       "prevControl": {
-        "x": 1.4324651726226545,
-        "y": 6.37404505578242
+        "x": 1.5334387761083215,
+        "y": 6.375721459135226
       },
       "nextControl": null,
       "isLocked": false,
@@ -67,15 +67,15 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 2.5,
-    "maxAcceleration": 2.75,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 4.0,
     "maxAngularVelocity": 180.0,
     "maxAngularAcceleration": 360.0
   },
   "goalEndState": {
     "velocity": 0,
     "rotation": 30.379126011368477,
-    "rotateFast": false
+    "rotateFast": true
   },
   "reversed": false,
   "folder": "rev autos",

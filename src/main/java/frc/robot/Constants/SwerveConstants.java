@@ -48,9 +48,9 @@ public final class SwerveConstants {
 
     // Angular offsets of the modules relative to the chassis in radians
     public static final double kFrontLeftChassisAngularOffset = (2.45); //5
-    public static final double kFrontRightChassisAngularOffset = (2.47 + Math.PI); //8
-    public static final double kBackLeftChassisAngularOffset = (3.51 + Math.PI); //6
-    public static final double kBackRightChassisAngularOffset = (3.36); //7
+    public static final double kFrontRightChassisAngularOffset = (4.78); //8
+    public static final double kBackLeftChassisAngularOffset = (4.79); //6
+    public static final double kBackRightChassisAngularOffset = (5.48); //7
 
     // SPARK MAX CAN IDs
     public static final int kFrontLeftDrivingCanId = 1;

@@ -12,6 +12,8 @@ import frc.robot.subsystems.UnderIntakeSubsystem;
 public class FeedToIndexer extends Command {
   IndexerSubsystem indexSub;
   UnderIntakeSubsystem underIntakeSub;
+  private boolean noteSensed = false; 
+
   public FeedToIndexer(IndexerSubsystem indexSub, UnderIntakeSubsystem underIntakeSub) {
     this.indexSub = indexSub;
     this.underIntakeSub = underIntakeSub; 
@@ -20,13 +22,21 @@ public class FeedToIndexer extends Command {
   }
 
   @Override
-  public void initialize() {}
+  public void initialize() {
+    noteSensed = false; 
+  }
 
   @Override
   public void execute() {
-    SmartDashboard.putString("CURRENT CMD", getName());
-    underIntakeSub.intake(0.6);
-    indexSub.index(ShindexerConstants.INDEXER_SPEED);
+    // if (underIntakeSub.getOpticalSensor()) {
+    //   noteSensed = true; 
+    // }
+
+    // if (noteSensed) {
+      SmartDashboard.putString("CURRENT CMD", getName());
+      underIntakeSub.intake(0.4);
+      indexSub.index(ShindexerConstants.INDEXER_SPEED);
+    // }
   }
 
   public void end(boolean interrupted) {
