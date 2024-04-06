@@ -98,7 +98,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "B Rev Outer"
+            "pathName": "B Rev Four"
           }
         },
         {
@@ -117,12 +117,6 @@
           "type": "path",
           "data": {
             "pathName": "B Rev Five"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "AlignShootParallel"
           }
         }
       ]

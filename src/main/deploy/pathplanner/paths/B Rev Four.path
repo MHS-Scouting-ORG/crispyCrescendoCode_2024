@@ -32,16 +32,16 @@
     },
     {
       "anchor": {
-        "x": 4.550419100838203,
+        "x": 3.5,
         "y": 6.60098474043102
       },
       "prevControl": {
-        "x": 6.2475332642972985,
+        "x": 5.197114163459095,
         "y": 6.610851683241829
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "B Mid Shooting"
+      "linkedName": null
     }
   ],
   "rotationTargets": [
