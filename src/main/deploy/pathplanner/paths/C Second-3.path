@@ -1,0 +1,92 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.67569996678455,
+        "y": 2.979816728864227
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 4.31199378803893,
+        "y": 3.3727209251850745
+      },
+      "isLocked": false,
+      "linkedName": "C Shooting"
+    },
+    {
+      "anchor": {
+        "x": 7.778401405590257,
+        "y": 4.122214464115091
+      },
+      "prevControl": {
+        "x": 6.500852302837271,
+        "y": 4.095736281122362
+      },
+      "nextControl": {
+        "x": 8.359059025805578,
+        "y": 4.134249037730346
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.042644547485956,
+        "y": 5.035659714686048
+      },
+      "prevControl": {
+        "x": 5.764137519715837,
+        "y": 3.9816844255657124
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "StageShooting"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": 0,
+      "rotateFast": true
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "feedd",
+      "waypointRelativePos": 0.25,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "FeedPosition"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 4.5,
+    "maxAcceleration": 4.5,
+    "maxAngularVelocity": 180.0,
+    "maxAngularAcceleration": 360.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -8.88065915052027,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "C Position",
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": false
+}

@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.77,
-        "y": 4.51
+        "x": 4.042644547485956,
+        "y": 5.035659714686048
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.5868974814872723,
-        "y": 1.1248314804321928
+        "x": 4.838981432599097,
+        "y": 4.391563704668065
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "StageShooting"
     },
     {
       "anchor": {
-        "x": 7.75,
-        "y": 2.2891307321076186
+        "x": 6.478498549008509,
+        "y": 4.028527771748839
       },
       "prevControl": {
-        "x": 5.608873410054512,
-        "y": 1.2531017369727058
+        "x": 5.635318317712241,
+        "y": 4.087081954477746
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,8 +32,8 @@
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "IntakeOn",
-      "waypointRelativePos": 0.85,
+      "name": "feedd",
+      "waypointRelativePos": 0.25,
       "command": {
         "type": "parallel",
         "data": {
@@ -41,24 +41,7 @@
             {
               "type": "named",
               "data": {
-                "name": "IntakeCommand"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "StopIntake",
-      "waypointRelativePos": 1.0,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "StopIntake"
+                "name": "FeedPosition"
               }
             }
           ]
@@ -67,21 +50,21 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 3.5,
+    "maxVelocity": 5.0,
+    "maxAcceleration": 5.0,
     "maxAngularVelocity": 180.0,
     "maxAngularAcceleration": 360.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
+    "rotation": 0.0,
     "rotateFast": false
   },
   "reversed": false,
   "folder": "C Position",
   "previewStartingState": {
-    "rotation": -60.14915194515147,
+    "rotation": -7.352379359892315,
     "velocity": 0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }
