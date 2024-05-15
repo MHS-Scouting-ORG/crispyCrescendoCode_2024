@@ -197,10 +197,15 @@ public class RobotContainer {
       new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOff("limelight")))); 
     Dx.whileTrue(new LimelightTurnAlignCmd(swerveSubsystem, xbox::getLeftY, xbox::getLeftX));
     //PASSING 
-    Db.onTrue(new ParallelCommandGroup(
+    // Db.onTrue(new ParallelCommandGroup(
+    //   new PivotPidCommand(pivotSubsystem, 50), 
+    //   new IndexToShooterAutoCommand(shooterSubsystem, indexSubsystem, 0.5, 0.8)
+    // ));
+      Db.onTrue(new ParallelCommandGroup(
       new PivotPidCommand(pivotSubsystem, 50), 
-      new IndexToShooterAutoCommand(shooterSubsystem, indexSubsystem, 0.5, 0.8)
+      new IndexToShooterAutoCommand(shooterSubsystem, indexSubsystem, 0.25, 0.8)
     ));
+
     //OUTTAKE 
     Da.whileTrue(new OuttakeCmd(intakeSubsystem)); 
     Da.whileFalse(new InstantCommand(intakeSubsystem::stopIntake)); 
@@ -284,6 +289,7 @@ public class RobotContainer {
     autoNameChooser.addOption("B (3 note)", "B ToCenter");
     autoNameChooser.addOption("B (rembrandts 5 note)", "B Rev");
     autoNameChooser.addOption("C (3 note)", "CB Shoot");
+    autoNameChooser.addOption("AW", "AW");
     // autoNameChooser.addOption("C Rev", "C Rev");
 
     // SmartDashboard.putData(autoAllianceChooser);
@@ -326,6 +332,14 @@ public class RobotContainer {
     NamedCommands.registerCommand("SetPivot30", new PivotPidCommand(pivotSubsystem, 30));
     NamedCommands.registerCommand("SetPivot41", new PivotPidCommand(pivotSubsystem, 41));
     NamedCommands.registerCommand("SetPivot58", new PivotPidCommand(pivotSubsystem, 58));
+    NamedCommands.registerCommand("ShootAW", new ParallelDeadlineGroup( 
+      new SequentialCommandGroup(
+        new WaitCommand(0.25),
+        new IndexToShooterAutoCommand(shooterSubsystem, indexSubsystem)
+      ),
+      new PivotPidCommand(pivotSubsystem, 33),
+      new LimelightTurnAlignCmd(swerveSubsystem, () -> 0, () -> 0)
+    ));
   }
 
   public Command getAutonomousCommand() {
