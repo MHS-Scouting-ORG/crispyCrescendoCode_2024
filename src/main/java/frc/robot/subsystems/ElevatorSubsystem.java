@@ -43,7 +43,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   ////////////////////////
-  // Accessor Methods //
+  // Accessor Methods   //
   ////////////////////////
 
   public double getEnc() {

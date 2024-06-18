@@ -131,9 +131,9 @@ public class RobotContainer {
       // Turning is controlled by the X axis of the right stick.
       new RunCommand(
         () -> swerveSubsystem.drive(
-          -MathUtil.applyDeadband(xbox.getLeftY(), OIConstants.kDriveDeadband),
-          -MathUtil.applyDeadband(xbox.getLeftX(), OIConstants.kDriveDeadband),
-          -MathUtil.applyDeadband(xbox.getRightX(), OIConstants.kDriveDeadband),
+          -MathUtil.applyDeadband(xbox.getLeftY(), OIConstants.kDriveDeadband) * 0.3,
+          -MathUtil.applyDeadband(xbox.getLeftX(), OIConstants.kDriveDeadband) * 0.3,
+          -MathUtil.applyDeadband(xbox.getRightX(), OIConstants.kDriveDeadband) * 0.3,
           true, false),
           swerveSubsystem));
 
@@ -173,35 +173,33 @@ public class RobotContainer {
     ); 
     DLeftBumper.whileFalse(new InstantCommand(intakeSubsystem::stopIntake)); 
     //SHOOTING AT SET ANGLE 
-    DRightBumper.whileTrue(
-      new SequentialCommandGroup(
-        new ParallelCommandGroup(
-          new PivotPidCommand(pivotSubsystem, 33), 
-          new IndexToShooterCommand(shooterSubsystem, indexSubsystem)
-        ), 
-        new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOff("limelight")), 
-        new RunToTopLim(pivotSubsystem))); 
-    // DRightBumper.whileTrue(new LimelightTurnAlignCmd(swerveSubsystem, xbox::getLeftY, xbox::getLeftX));
-    DRightBumper.whileFalse(new InstantCommand(shooterSubsystem::stop)); 
-    DRightBumper.whileFalse(new InstantCommand(indexSubsystem::stop)); 
-    // DRightBumper.whileFalse(new RunToTopLim(pivotSubsystem)); 
+    // DRightBumper.whileTrue(
+    //   new SequentialCommandGroup(
+    //     new ParallelCommandGroup(
+    //       new PivotPidCommand(pivotSubsystem, 33), 
+    //       new IndexToShooterCommand(shooterSubsystem, indexSubsystem)
+    //     ), 
+    //     new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOff("limelight")), 
+    //     new RunToTopLim(pivotSubsystem))); 
+    // DRightBumper.whileFalse(new InstantCommand(shooterSubsystem::stop)); 
+    // DRightBumper.whileFalse(new InstantCommand(indexSubsystem::stop)); 
 
     /* * * BUTTONS * * */
-    // Dy.onTrue(new PivotPidCommand(pivotSubsystem, 29));
     //SHOOT WITH CALCULATION 
-    Dx.onTrue(new SequentialCommandGroup(
-      new ParallelCommandGroup(
-        new PivotPidAlignCommand(pivotSubsystem), 
-        new IndexToShooterCommand(shooterSubsystem, indexSubsystem)
-      ),
-      new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOff("limelight")))); 
-    Dx.whileTrue(new LimelightTurnAlignCmd(swerveSubsystem, xbox::getLeftY, xbox::getLeftX));
+    // Dx.onTrue(new SequentialCommandGroup(
+    //   new ParallelCommandGroup(
+    //     new PivotPidAlignCommand(pivotSubsystem), 
+    //     new IndexToShooterCommand(shooterSubsystem, indexSubsystem)
+    //   ),
+    //   new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOff("limelight")))); 
+    // Dx.whileTrue(new LimelightTurnAlignCmd(swerveSubsystem, xbox::getLeftY, xbox::getLeftX));
     //PASSING 
     // Db.onTrue(new ParallelCommandGroup(
     //   new PivotPidCommand(pivotSubsystem, 50), 
     //   new IndexToShooterAutoCommand(shooterSubsystem, indexSubsystem, 0.5, 0.8)
     // ));
-      Db.onTrue(new ParallelCommandGroup(
+    
+    Db.onTrue(new ParallelCommandGroup(
       new PivotPidCommand(pivotSubsystem, 50), 
       new IndexToShooterAutoCommand(shooterSubsystem, indexSubsystem, 0.25, 0.8)
     ));
@@ -221,17 +219,17 @@ public class RobotContainer {
 
     /* * * BUTTONS * * */
     //AMP 
-    Ob.onTrue(new SequentialCommandGroup(
+    Dx.onTrue(new SequentialCommandGroup(
       new AmpPosition(elevatorSubsystem, pivotSubsystem, indexSubsystem, intakeSubsystem, shooterSubsystem), 
       new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOff("limelight")),
       new DownPosition(elevatorSubsystem, pivotSubsystem)
     )); 
     //INTAKE THROUGH SHOOTER 
-    Oa.whileTrue(new SequentialCommandGroup(
+    Dy.whileTrue(new SequentialCommandGroup(
       new IntakeShooterCommand(shooterSubsystem, indexSubsystem), 
       new RunToTopLim(pivotSubsystem))); 
-    Oa.whileFalse(new InstantCommand(shooterSubsystem::stop)); 
-    Oa.whileFalse(new InstantCommand(indexSubsystem::stop)); 
+    Dy.whileFalse(new InstantCommand(shooterSubsystem::stop)); 
+    Dy.whileFalse(new InstantCommand(indexSubsystem::stop)); 
     //SUB SHOT 
     Ox.onTrue(new ParallelCommandGroup(
       new PivotPidCommand(pivotSubsystem, 55), 
