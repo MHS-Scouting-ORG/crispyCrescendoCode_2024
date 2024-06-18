@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -62,7 +63,8 @@ public class SwerveSubsystem extends SubsystemBase {
   
 
   // The gyro sensor
-  private final AHRS navx = new AHRS();
+  private final Pigeon2 pigeon = new Pigeon2(0); 
+  // private final AHRS navx = new AHRS();
   private String m_autoName = ""; 
 
   // Slew rate filter variables for controlling lateral acceleration
@@ -81,7 +83,7 @@ public class SwerveSubsystem extends SubsystemBase {
   // Odometry class for tracking robot pose
   SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
       DriveConstants.kDriveKinematics,
-      (Rotation2d.fromDegrees(navx.getAngle()).unaryMinus()),
+      (Rotation2d.fromDegrees(pigeon.getAngle())/*Rotation2d.fromDegrees(navx.getAngle()).unaryMinus()*/),
       new SwerveModulePosition[] {
           m_frontLeft.getPosition(),
           m_frontRight.getPosition(),
@@ -185,15 +187,15 @@ public class SwerveSubsystem extends SubsystemBase {
     
   // }
 
-  public void setAngle(double angle) {
-    navx.setAngleAdjustment(angle);
-  }
+  // public void setAngle(double angle) {
+  //   navx.setAngleAdjustment(angle);
+  // }
 
   @Override
   public void periodic() {
     // Update the odometry in the periodic block
     m_odometry.update(
-        (Rotation2d.fromDegrees(navx.getAngle()).unaryMinus()),
+        (Rotation2d.fromDegrees(pigeon.getAngle())/*Rotation2d.fromDegrees(navx.getAngle()).unaryMinus()*/),
         new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
             m_frontRight.getPosition(),
@@ -206,7 +208,7 @@ public class SwerveSubsystem extends SubsystemBase {
     m_rearRight.print(); 
     m_frontRight.print();
 
-    SmartDashboard.putNumber("Navx", navx.getAngle());
+    SmartDashboard.putNumber("Pigeon", pigeon.getAngle()/*navx.getAngle()*/);
     SmartDashboard.putString("POSE", getPose().toString());
     // SmartDashboard.putNumber("auto starting ang", getAutoStartingAngle(m_autoName));
 
@@ -232,7 +234,7 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public void resetOdometry(Pose2d pose) {
     m_odometry.resetPosition(
-        (Rotation2d.fromDegrees(navx.getAngle()).unaryMinus()),
+        (Rotation2d.fromDegrees(pigeon.getAngle())/*Rotation2d.fromDegrees(navx.getAngle()).unaryMinus()*/),
         new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
             m_frontRight.getPosition(),
@@ -328,7 +330,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative
-            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered, navx.getRotation2d())
+            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered, pigeon.getRotation2d()/*navx.getRotation2d()*/)
             : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
     SwerveDriveKinematics.desaturateWheelSpeeds(
         swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
@@ -396,7 +398,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
   /** Zeroes the heading of the robot. */
   public void zeroHeading() {
-    navx.zeroYaw();
+    // navx.zeroYaw();
+    pigeon.reset();
   }
 
   /**
@@ -405,7 +408,8 @@ public class SwerveSubsystem extends SubsystemBase {
    * @return the robot's heading in degrees, from -180 to 180
    */
   public double getHeading() {
-    return navx.getYaw();
+    // return navx.getYaw();
+    return pigeon.getAngle(); 
   }
 
   /**
@@ -414,6 +418,6 @@ public class SwerveSubsystem extends SubsystemBase {
    * @return The turn rate of the robot, in degrees per second
    */
   public double getTurnRate() {
-    return navx.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+    return /*navx.getRate()*/ pigeon.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
   }
 }

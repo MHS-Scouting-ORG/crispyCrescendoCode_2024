@@ -362,8 +362,8 @@ public class RobotContainer {
     return setElevInit;
   }
 
-  public void autoInit() {
-    swerveSubsystem.setAngle(-60/*swerveSubsystem.getAutoStartingAngle(getAutonomousCommand().getName())*/);
-    swerveSubsystem.resetOdometry(new Pose2d(new Translation2d(0.77, 4.51), Rotation2d.fromDegrees(-60))/*PathPlannerAuto.getStaringPoseFromAutoFile(getAutonomousCommand().getName())*/);
-  }
+  // public void autoInit() {
+  //   swerveSubsystem.setAngle(-60/*swerveSubsystem.getAutoStartingAngle(getAutonomousCommand().getName())*/);
+  //   swerveSubsystem.resetOdometry(new Pose2d(new Translation2d(0.77, 4.51), Rotation2d.fromDegrees(-60))/*PathPlannerAuto.getStaringPoseFromAutoFile(getAutonomousCommand().getName())*/);
+  // }
 }
